@@ -1,3 +1,1 @@
-// This allows us to use absolute path referencing instead of relative
-// ex. src/screens/Login instead of ../../../screens/Login
 {"name":"src"}
