@@ -1,5 +1,7 @@
 {
-  "expo": {
+  "name": "frontend",
+  "displayName": "frontend",
+  "expo":{
     "sdkVersion": "27.0.0"
   }
 }

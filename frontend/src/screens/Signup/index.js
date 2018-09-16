@@ -1,6 +1,5 @@
 import React, { Component }from 'react';
-import { Text } from 'react-native';
-import Input from 'src/components/Input';
+import { Text, TextInput, View, StyleSheet } from 'react-native';
 
 export default class Signup extends Component{
     constructor(props){
@@ -8,8 +7,19 @@ export default class Signup extends Component{
     }
     render(){
         return (
-            <Input placeholder="email">
-            </Input>
+            <View>
+                <Text style={
+                    styles.text
+                }>Economica</Text>
+                <TextInput placeholder="email">
+                </TextInput>
+            </View>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    text: {
+        fontFamily: 'Economica'
+    }
+})
