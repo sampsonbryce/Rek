@@ -18,5 +18,5 @@ services:
             port: 5432
             user: db_user 
             database: theRek
-            schema: datamodel
-            migrations: true
+            schema: public
+            migrations: false
