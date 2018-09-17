@@ -17,7 +17,7 @@ const customTextInputProps = {
 
 const customTextProps = {
   style:{
-    // fontFamily: 'Economica'
+    fontFamily: 'Economica'
   }
 }
 
