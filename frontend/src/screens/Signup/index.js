@@ -28,11 +28,13 @@ export default class Signup extends Component{
     }
 
     signupSubmit(signup_mutation){
+        console.log('in signup submti');
         if(this.state.password != this.state.confirm_password){
             this.setState({error: 'Passwords do not match'});
             return;
         }
 
+        console.log('calling signup mutation');
         signup_mutation();
     }
 
