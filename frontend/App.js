@@ -3,6 +3,7 @@ import { ApolloProvider } from 'react-apollo';
 import ApolloClient from 'apollo-boost'
 import { StatusBar} from 'react-native';
 import { Font } from 'expo';
+import store from './src/store';
 import Main from './src/main';
 
 // set global styles for certain components
@@ -44,7 +45,7 @@ export default class App extends React.Component {
   }
   render() {
     return (
-      <ApolloProvider client={client}>
+      <ApolloProvider client={client} store={store}>
         <StatusBar hidden />
         {
           this.state.fontLoaded ? (
