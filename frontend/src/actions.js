@@ -1,5 +1,10 @@
-export const USER_LOGIN = 'USER_LOGIN';
+import { USER_LOGIN } from './constants';
 
-export function userLogin(user){
-    return { type: USER_LOGIN, user };
+function userLogin(user, token){
+    console.log('USER_LOGIN', USER_LOGIN);
+    return { type: USER_LOGIN, user, token };
+}
+
+export {
+    userLogin
 }

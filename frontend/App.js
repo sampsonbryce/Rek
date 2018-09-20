@@ -1,6 +1,7 @@
 import React from 'react';
 import { ApolloProvider } from 'react-apollo';
-import ApolloClient from 'apollo-boost'
+import ApolloClient from 'apollo-boost';
+import { Provider } from 'react-redux';
 import { StatusBar} from 'react-native';
 import { Font } from 'expo';
 import store from './src/store';
@@ -22,8 +23,8 @@ const customTextProps = {
   }
 }
 
-setCustomTextInput(customTextInputProps);
-setCustomText(customTextProps);
+// setCustomTextInput(customTextInputProps);
+// setCustomText(customTextProps);
 
 const client = new ApolloClient({
   // uri: "http://localhost:4000"
@@ -45,13 +46,14 @@ export default class App extends React.Component {
   }
   render() {
     return (
-      <ApolloProvider client={client} store={store}>
-        <StatusBar hidden />
-        {
-          this.state.fontLoaded ? (
-            <Main></Main>
-          ): null
-        }
+      <ApolloProvider client={client} >
+        <Provider store={store}>
+          {/* {
+            this.state.fontLoaded ? ( */}
+              <Main />
+            {/* ): null
+          } */}
+        </Provider>
       </ApolloProvider>
     );
   }

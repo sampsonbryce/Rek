@@ -1,39 +1,24 @@
-import React, { Component }from 'react';
-import { Text, TextInput, View, StyleSheet, Button } from 'react-native';
-import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
-import SignupForm from './Signup';
-
-const SIGNUP_MUTATION = gql`
-    mutation SignupMutation($name: String!, $email: String!, $password: String!){
-        signup(name: $name, email: $email, password: $password){
-            token
-            user{
-                id
-                name
-                email
-            }
-        }
-    }
-`
-
-
+import SignupForm from './SignupForm';
+import { userLogin } from '../../actions';
+import { connect } from 'react-redux';
 
 const mapStateToProps = state => {
+    console.log("mapping", state);
     return {
-        user: state.user
-
+        user: state.user,
+        token: state.token
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onUserSignup: user => {
-            dispatch(userLogin(user))
+        onUserSignup: (user, token) => {
+            console.log('dispatching', user, token, userLogin);
+            dispatch(userLogin(user, token));
         }
     }
 }
-
+// const SignupGql = graphql(SignupForm);
 const Signup = connect(
     mapStateToProps,
     mapDispatchToProps
