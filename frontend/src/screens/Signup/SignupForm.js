@@ -29,18 +29,19 @@ export default class SignupForm extends Component{
     }
 
     validate(){
-        if(this.state.password == this.state.confirm_password){
-            return true;
-        }
-        else{
+        if(this.state.password != this.state.confirm_password){
             this.setState({error: "Password do not match!"});
             return false;
         }
+        if(this.state.password.length < 6){
+            this.setState({error: "Password must be 6 or more characters!"});
+            return false;
+        }
+        return true;
     }
 
     render(){
         const { name, email, password } = this.state;
-        console.log(this.props);
         return (
             <View>
                 <Text>Signup</Text>
@@ -64,7 +65,6 @@ export default class SignupForm extends Component{
                     variables={{ name, email, password }}
                     onCompleted={(data) => {
                         let { signup: {user, token}} = data;
-                        console.log('on user signup:', this.props.onUserSignup, user, token);
                         this.props.onUserSignup(user, token);
                     }}
                 >{(signup, { loading, error }) => {
