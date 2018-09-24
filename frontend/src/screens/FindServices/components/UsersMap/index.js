@@ -24,8 +24,8 @@ export default class UsersMap extends Component{
     console.log('user location', this.props.userLocation);
     let markers = [
       {
-        latitude: this.props.userLocation.latitude,
-        longitude: this.props.userLocation.longitude
+        latitude: this.props.userLocation.coords.latitude,
+        longitude: this.props.userLocation.coords.longitude
       },
       {
         latitude: this.props.shop.latitude,
@@ -46,7 +46,7 @@ export default class UsersMap extends Component{
     let userLocationMarker = null;
 
     if(this.props.userLocation) {
-      userLocationMarker = <MapView.Marker coordinate={this.props.userLocation} key={this.props.userLocation.id}/>
+      userLocationMarker = <MapView.Marker coordinate={this.props.userLocation.coords} key={this.props.userLocation.id}/>
     }
 
     let shopMarkers = null;

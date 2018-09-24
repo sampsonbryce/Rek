@@ -82,7 +82,8 @@ export default class Map extends Component {
                 //         console.error("error", err);
                 //     });
                 // }
-                console.log(await this._getLocationAsync());
+                // console.log(await this._getLocationAsync());
+                this._getLocationAsync();
                 }
                     } title="Get Location" />
                 <Text>{this.state.errorMessage}</Text>
