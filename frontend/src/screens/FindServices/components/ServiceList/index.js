@@ -1,18 +1,22 @@
 import React, { Component } from 'react';
-import { Text, View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
 import gql from 'graphql-tag';
 import ServiceListItem from "../ServiceListItem";
 
-
+/*
+ * FlatList of people available to provide a searched service
+ * Renders ServiceListItem
+ * Uses dummy data
+ */
 export default class ServiceList extends Component {
     constructor(props){
         super(props);
         this.state = {
             data:[
-                { name: "Bob", job: "Barber"},
-                { name: "Dave", job: "Masseur"},
-                { name: "Dave", job: "Masseur"},
-                { name: "Dave", job: "Masseur"},
+                { name: "Bob", title:"Barber", services: ["Cutting", "Grooming", "Styling", "Shaving"]},
+                { name: "Dave", title: "Pedicurist", services: ["Pedicure"]},
+                { name: "Brian", title: "Masseur", services: ["Head", "Back", "Full body"]},
+                { name: "Janice", title:"Manicurist", services: ["Manicure"]},
             ]
         }
     }
@@ -25,7 +29,7 @@ export default class ServiceList extends Component {
                     showsHorizontalScrollIndicator={false}
                     data={this.state.data}
                     renderItem={({item}) => 
-                        <ServiceListItem name={item.name} job={item.job}/>
+                        <ServiceListItem name={item.name} title={item.title} services={item.services}/>
                     }
                 >
                </FlatList>

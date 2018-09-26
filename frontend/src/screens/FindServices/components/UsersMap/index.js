@@ -4,6 +4,9 @@ import MapView from 'react-native-maps';
 
 const DEFAULT_PADDING = { top: 40, right: 40, bottom: 40, left: 40 };
 
+/*
+ * Displays the Actual Map of the user and the store
+ */
 export default class UsersMap extends Component{
   constructor(props) {
     super(props);
@@ -11,17 +14,16 @@ export default class UsersMap extends Component{
   }
 
   componentDidUpdate(){
-    console.log('udpating');
-    console.log(this.props.userLocation);
-    console.log(this.props.shop);
+    // Only fit to markers if we have the users location
     if(this.props.userLocation && this.props.shop){
       this.fitAllMarkers();
     }
   }
 
-
+  /*
+   * Fits the map to show the users location and the shops location
+   */
   fitAllMarkers() {
-    console.log('user location', this.props.userLocation);
     let markers = [
       {
         latitude: this.props.userLocation.coords.latitude,
@@ -33,7 +35,7 @@ export default class UsersMap extends Component{
       },
     ];
 
-    console.log(markers);
+    // Calls build in react-native-maps fit function to fit the coordinates
     this.map.fitToCoordinates(markers, {
       edgePadding: DEFAULT_PADDING,
       animated: true,
@@ -43,14 +45,14 @@ export default class UsersMap extends Component{
 
   render(){
 
+    // Set the user location
     let userLocationMarker = null;
-
     if(this.props.userLocation) {
       userLocationMarker = <MapView.Marker coordinate={this.props.userLocation.coords} key={this.props.userLocation.id}/>
     }
 
+    // set the shop location
     let shopMarkers = null;
-
     if(this.props.shop) {
       shopMarkers = <MapView.Marker coordinate={this.props.shop} key={this.props.shop.id}/>
     }
@@ -60,14 +62,13 @@ export default class UsersMap extends Component{
         <MapView
         ref={(ref) => { this.map = ref }}
         showUsersLocation={true}
-        // initialRegion={{
-        //   latitude: 39.053421,
-        //   longitude: -97.672577,
-        //   //latitude: 37.78825,
-        //   //longitude: -122.4324,
-        //   latitudeDelta: 25,
-        //   longitudeDelta: 22,
-        // }}
+        // Initial Region shows US
+        initialRegion={{
+          latitude: 39.053421,
+          longitude: -97.672577,
+          latitudeDelta: 25,
+          longitudeDelta: 22,
+        }}
         region={this.props.userLocation}
         style={styles.map}>
           {userLocationMarker}
@@ -80,7 +81,6 @@ export default class UsersMap extends Component{
 
 const styles = StyleSheet.create({
   mapContainer: {
-
     width: '100%',
     flex:1,
   },

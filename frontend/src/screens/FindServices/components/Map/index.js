@@ -3,6 +3,11 @@ import { Platform, StyleSheet, Text, View, Button } from 'react-native';
 import UsersMap from 'src/screens/FindServices/components/UsersMap';
 import { Constants, Location, Permissions } from 'expo';
 
+/*
+ * Container Map component to show current user position and closest
+ * shop position. Renders UserMap 
+ * 
+ */
 export default class Map extends Component {
 
 
@@ -10,64 +15,57 @@ export default class Map extends Component {
         super(props);
         this.state = {
             location: null,
-            fakeShop: null,
+            shop: null,
             errorMessage: '',
         }
     }
 
     componentDidMount(){
-        console.log('mounted');
-        // this.getUserLocationHandler();
         this._getLocationAsync();
-
-
         this.getShopLocation();
     }
 
+    /*
+     * Gets the users location and checks for errors with disabled services 
+     * 
+     */
     _getLocationAsync = async () => {
         let { gpsAvailable, locationServicesEnabled }= await Expo.Location.getProviderStatusAsync();
-        console.log('gps: ', gpsAvailable);
-        console.log('locationServices: ', locationServicesEnabled);
+
+        if(!gpsAvailable){
+            let err = "GPS Unavailable";
+            this.setState({errorMessage: err});
+            console.error(err);
+        }
+        if(!locationServicesEnabled){
+            let err = "Location services not enabled"
+            this.setState({errorMessage: err});
+            console.error(err);
+        }
 
         let { status } = await Permissions.askAsync(Permissions.LOCATION);
-        console.log('status: ', status);
         if (status !== 'granted') {
+            let err = 'Permission to access location was denied';
             this.setState({
-                errorMessage: 'Permission to access location was denied',
+                errorMessage: err,
             });
+            console.error(err);
         }
 
         let location = await Location.getCurrentPositionAsync({});
-        console.log('location:', location);
         this.setState({ location });
     };
 
-    
-
-    // getUserLocationHandler(){
-    //     console.log('getting location');
-    //     navigator.geolocation.getCurrentPosition(
-    //         (position) => {
-    //             console.log('setting position', position);
-    //             this.setState({
-    //                 userLocation: {
-    //                     latitude: position.coords.latitude,
-    //                     longitude: position.coords.longitude,
-    //                     latitudeDelta: 0.0622,
-    //                     longitudeDelta: 0.0221,
-    //                     id: "My Location"
-    //                 }
-    //             });
-    //         }, (error) => {console.error('error', error);}
-    //     )
-    // }
-
+    /*
+     * Gets the closest shop location. Currently dummy data
+     * 
+     */
     getShopLocation = () => {
         this.setState({
-            fakeShop: {
+            shop: {
                 latitude: 39.728020,
                 longitude: -121.839910,
-                id: "Fake Shop",
+                id: "the_rek_chico",
             }
         });
     }
@@ -76,20 +74,15 @@ export default class Map extends Component {
         return (
             <View style={styles.container}>
                 <Button onPress={() => {
-                //     this._getLocationAsync().then((success) => {
-                //         console.log("success", success);
-                //     }, (err) =>{
-                //         console.error("error", err);
-                //     });
-                // }
-                // console.log(await this._getLocationAsync());
-                this._getLocationAsync();
+                    this._getLocationAsync();
                 }
                     } title="Get Location" />
                 <Text>{this.state.errorMessage}</Text>
+
+                {/* Actually create the user map */}
                 <UsersMap
                     userLocation={this.state.location}
-                    shop={this.state.fakeShop}
+                    shop={this.state.shop}
                 />
             </View>
         );
@@ -102,18 +95,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
-    },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-    },
-    instructions: {
-        textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5,
-    },
-    green: {
-        color: 'green',
     },
 });
