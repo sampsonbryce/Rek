@@ -3,4 +3,11 @@ type User {
   name: String!
   email: String! @unique
   password: String!
+  roles: Role!
+}
+
+type Role {
+  ADMIN: Boolean! @default(value: false)
+  EMPLOYEE: Boolean! @default(value: false)
+  USER: Boolean! @default(value: true)
 }

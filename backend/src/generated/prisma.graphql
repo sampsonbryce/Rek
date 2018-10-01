@@ -1,5 +1,9 @@
 # source: http://localhost:4466
-# timestamp: Sun Sep 16 2018 21:57:18 GMT-0700 (Pacific Daylight Time)
+# timestamp: Sun Sep 30 2018 15:37:33 GMT-0700 (Pacific Daylight Time)
+
+type AggregateRole {
+  count: Int!
+}
 
 type AggregateUser {
   count: Int!
@@ -18,11 +22,14 @@ scalar Long
 
 type Mutation {
   createUser(data: UserCreateInput!): User!
+  createRole(data: RoleCreateInput!): Role!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   deleteUser(where: UserWhereUniqueInput!): User
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  updateManyRoles(data: RoleUpdateInput!, where: RoleWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
+  deleteManyRoles(where: RoleWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -54,8 +61,10 @@ type PageInfo {
 
 type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  roles(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Role]!
   user(where: UserWhereUniqueInput!): User
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  rolesConnection(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RoleConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -64,8 +73,152 @@ type Query {
   ): Node
 }
 
+type Role {
+  ADMIN: Boolean!
+  EMPLOYEE: Boolean!
+  USER: Boolean!
+}
+
+"""A connection to a list of items."""
+type RoleConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [RoleEdge]!
+  aggregate: AggregateRole!
+}
+
+input RoleCreateInput {
+  ADMIN: Boolean
+  EMPLOYEE: Boolean
+  USER: Boolean
+}
+
+input RoleCreateOneInput {
+  create: RoleCreateInput
+}
+
+"""An edge in a connection."""
+type RoleEdge {
+  """The item at the end of the edge."""
+  node: Role!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum RoleOrderByInput {
+  ADMIN_ASC
+  ADMIN_DESC
+  EMPLOYEE_ASC
+  EMPLOYEE_DESC
+  USER_ASC
+  USER_DESC
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type RolePreviousValues {
+  ADMIN: Boolean!
+  EMPLOYEE: Boolean!
+  USER: Boolean!
+}
+
+type RoleSubscriptionPayload {
+  mutation: MutationType!
+  node: Role
+  updatedFields: [String!]
+  previousValues: RolePreviousValues
+}
+
+input RoleSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [RoleSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [RoleSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [RoleSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: RoleWhereInput
+}
+
+input RoleUpdateDataInput {
+  ADMIN: Boolean
+  EMPLOYEE: Boolean
+  USER: Boolean
+}
+
+input RoleUpdateInput {
+  ADMIN: Boolean
+  EMPLOYEE: Boolean
+  USER: Boolean
+}
+
+input RoleUpdateOneInput {
+  create: RoleCreateInput
+  disconnect: Boolean
+  delete: Boolean
+  update: RoleUpdateDataInput
+  upsert: RoleUpsertNestedInput
+}
+
+input RoleUpsertNestedInput {
+  update: RoleUpdateDataInput!
+  create: RoleCreateInput!
+}
+
+input RoleWhereInput {
+  """Logical AND on all given filters."""
+  AND: [RoleWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [RoleWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [RoleWhereInput!]
+  ADMIN: Boolean
+
+  """All values that are not equal to given value."""
+  ADMIN_not: Boolean
+  EMPLOYEE: Boolean
+
+  """All values that are not equal to given value."""
+  EMPLOYEE_not: Boolean
+  USER: Boolean
+
+  """All values that are not equal to given value."""
+  USER_not: Boolean
+}
+
 type Subscription {
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  role(where: RoleSubscriptionWhereInput): RoleSubscriptionPayload
 }
 
 type User implements Node {
@@ -73,6 +226,7 @@ type User implements Node {
   name: String!
   email: String!
   password: String!
+  roles(where: RoleWhereInput): Role
 }
 
 """A connection to a list of items."""
@@ -89,6 +243,7 @@ input UserCreateInput {
   name: String!
   email: String!
   password: String!
+  roles: RoleCreateOneInput
 }
 
 """An edge in a connection."""
@@ -165,6 +320,7 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
+  roles: RoleUpdateOneInput
 }
 
 input UserWhereInput {
@@ -336,6 +492,7 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   password_not_ends_with: String
+  roles: RoleWhereInput
 }
 
 input UserWhereUniqueInput {
