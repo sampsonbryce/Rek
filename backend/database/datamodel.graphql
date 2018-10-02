@@ -6,8 +6,15 @@ type User {
   roles: Role!
 }
 
+# enum Role{
+#   ADMIN
+#   EMPLOYEE
+#   USER
+# }
+
 type Role {
-  ADMIN: Boolean! @default(value: false)
-  EMPLOYEE: Boolean! @default(value: false)
-  USER: Boolean! @default(value: true)
+  owner: User!
+  admin: Boolean! @default(value: "false")
+  employee: Boolean! @default(value: "false")
+  user: Boolean! @default(value: "true")
 }

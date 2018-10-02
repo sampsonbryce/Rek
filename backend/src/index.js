@@ -1,5 +1,5 @@
 const { GraphQLServer } = require('graphql-yoga');
-const { Prisma } = require('prisma-binding')
+const { prisma } = require('./generated/prisma-client');
 const Query = require('./resolvers/Query');
 const Mutation = require('./resolvers/Mutation');
 const AuthPayload = require('./resolvers/AuthPayload');
@@ -17,12 +17,7 @@ const server = new GraphQLServer({
     resolvers,
     context: req => ({
         ...req,
-        db: new Prisma({
-            typeDefs: 'src/generated/prisma.graphql',
-            endpoint: 'http://localhost:4466',
-            secret: 'mysecret123',
-            debug: true,
-        })
+        db: prisma, // null???
     })
 })
 

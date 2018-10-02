@@ -9,9 +9,9 @@ const { EmptyRolesError } = require('../errors');
  * We override the default resolver by naming our function the name of the object (user)
  * Which resolves the user to the actual user info, not just the id
  */
-async function user(root, args, context, info){
+async function user(root, args, ctx, info){
     console.log('id: ', root.user.id);
-    let user = await context.db.query.user({ where: {id: root.user.id}}, info);
+    let user = await ctx.db.user({id: root.user.id}, info);
     console.log('user: ', user);
 
     // if(user.roles.length == 0){

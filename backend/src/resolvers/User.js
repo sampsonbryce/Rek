@@ -1,6 +1,6 @@
-async function roles(root, args, context, info){
+async function roles(root, args, ctx, info){
     console.log("root", root);
-    let roles = await context.db.query.user({ where: {id: root.id}}).role();
+    let roles = await ctx.db.user({id: root.id}).roles();
     console.log('roles: ', roles);
 
     return roles;

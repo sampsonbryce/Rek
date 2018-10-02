@@ -12,22 +12,18 @@ async function signup(parent, args, context, info){
     // console.log("ARGS", args);
 
     console.log('creating user: ', info);
+    console.log(context);
+    console.log(context.db);
     // Create user
-    const user = await context.db.mutation.createUser(
-        {data: { ...args, password },
-        // {query:
-        // gql`mutation{
-        //     createUser(data: {
-        //         name: ${args.name}
-        //         email: ${args.email}
-        //         password: ${password}            
-        //         roles: { set : [USER] }
-        //     })
-        // }
-        // `
+    const user = await context.db.createUser({ ...args, password, 
+        roles: { 
+            create: {
+                user: true
+            }
         }
-    , `{ id }`);
+    });
 
+// , `{ id }`
 
     // await context.db.mutation.updateUser()
 
@@ -43,7 +39,7 @@ async function signup(parent, args, context, info){
 // User login functionality
 async function login(parent, args, context, info){
     // check if email exists
-    const user = await context.db.query.user({ where: { email: args.email }},`{ id password }`);
+    const user = await context.db.user({ where: { email: args.email }},`{ id password }`);
     if(!user){
         throw new Error('No such user found');
     }
