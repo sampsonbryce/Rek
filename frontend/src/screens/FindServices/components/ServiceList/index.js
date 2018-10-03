@@ -3,6 +3,7 @@ import { View, FlatList, StyleSheet } from 'react-native';
 import gql from 'graphql-tag';
 import ServiceListItem from "../ServiceListItem";
 
+
 /*
  * FlatList of people available to provide a searched service
  * Renders ServiceListItem

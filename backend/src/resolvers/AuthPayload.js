@@ -10,13 +10,8 @@ const { EmptyRolesError } = require('../errors');
  * Which resolves the user to the actual user info, not just the id
  */
 async function user(root, args, ctx, info){
-    console.log('id: ', root.user.id);
     let user = await ctx.db.user({id: root.user.id}, info);
-    console.log('user: ', user);
 
-    // if(user.roles.length == 0){
-    //     throw new EmptyRolesError();
-    // }
     return user;
 }
 

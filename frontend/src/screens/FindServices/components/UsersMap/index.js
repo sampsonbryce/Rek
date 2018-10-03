@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { View, StyleSheet } from 'react-native';
-import MapView from 'react-native-maps';
+import { MapView } from 'expo';
+// import MapView from 'react-native-maps';
 
 const DEFAULT_PADDING = { top: 40, right: 40, bottom: 40, left: 40 };
 

@@ -4,12 +4,23 @@ function info(){
 
 async function user(root, args, ctx, info){
     let user = await ctx.db.user({email: args.email}, info);
-    console.log('user', user);
     return user;
+}
+
+async function users(root, args, ctx, info){
+    let users = await ctx.db.users();
+    return users;
+}
+
+async function userSearch(root, args, ctx, info){
+
+    return ctx.db.users({where: {name_contains: args.name}});
 }
 
 
 module.exports = {
     info,
-    user
+    user,
+    users,
+    userSearch
 }

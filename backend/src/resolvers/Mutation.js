@@ -1,19 +1,12 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { APP_SECRET, getUserId } = require('../utils');
-// const gql = require('graphql-tag');
 
 // User Signup functionality
 async function signup(parent, args, context, info){
     // hash the password
     const password = await bcrypt.hash(args.password, 10);
 
-    // args.roles = ["USER"];
-    // console.log("ARGS", args);
-
-    console.log('creating user: ', info);
-    console.log(context);
-    console.log(context.db);
     // Create user
     const user = await context.db.createUser({ ...args, password, 
         roles: { 
@@ -22,10 +15,6 @@ async function signup(parent, args, context, info){
             }
         }
     });
-
-// , `{ id }`
-
-    // await context.db.mutation.updateUser()
 
     // create JWT
     const token = jwt.sign({ userId: user.id}, APP_SECRET);

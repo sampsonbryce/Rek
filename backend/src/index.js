@@ -17,7 +17,7 @@ const server = new GraphQLServer({
     resolvers,
     context: req => ({
         ...req,
-        db: prisma, // null???
+        db: prisma, 
     })
 })
 
