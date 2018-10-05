@@ -3,7 +3,7 @@ function info(){
 }
 
 async function user(root, args, ctx, info){
-    let user = await ctx.db.user({email: args.email}, info);
+    let user = await ctx.db.user({id: args.id}, info);
     return user;
 }
 

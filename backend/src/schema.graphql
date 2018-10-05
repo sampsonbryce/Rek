@@ -1,7 +1,7 @@
 # import Role from "./generated/prisma.graphql"
 type Query {
     info: String!
-    user(email: String!): User!
+    user(id: String!): User!
     users: [User!]!
     userSearch(name: String!): [User!]!
 }
