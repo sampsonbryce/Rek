@@ -1,4 +1,4 @@
-let GraphqlUtils = {
+let GQLUtils = {
     /*
      * Graphql returns your data with the __typename and 
      * Symbol keys with their respective values. This function 
@@ -29,4 +29,4 @@ let GraphqlUtils = {
     }
 }
 
-export default GraphqlUtils;
+export default GQLUtils;

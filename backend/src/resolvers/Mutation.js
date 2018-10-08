@@ -49,7 +49,24 @@ async function login(parent, args, context, info){
     }
 }
 
+async function updateUserWithRoles(parent, args, context, info){
+    const user = await context.db.updateUser({
+        data: {
+            email: args.email,
+            name: args.name,
+            roles: {
+                update: args.roles
+            }
+        },
+        where: {
+            id: args.id
+        }
+    });
+    return user;
+}
+
 module.exports = {
     signup,
     login,
+    updateUserWithRoles,
 }

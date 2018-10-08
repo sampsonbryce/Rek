@@ -9,6 +9,7 @@ type Query {
 type Mutation {
     signup(email: String!, password: String!, name: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
+    updateUserWithRoles(id: String!, email: String!, name: String!, roles: UpdateRoleInput!): User
 }
 
 type AuthPayload {
@@ -21,4 +22,10 @@ type User {
     name: String!
     email: String!
     roles: Role!
+}
+
+input UpdateRoleInput{
+    user: Boolean!
+    admin: Boolean!
+    employee: Boolean!
 }

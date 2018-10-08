@@ -6,6 +6,13 @@ import { View, StatusBar } from 'react-native';
 // import { Font } from 'expo';
 import store from './src/store';
 import Main from './src/main';
+import t from 'tcomb-form-native/lib';
+import Theme from './src/theme';
+
+
+// initialize our theme styles
+Theme.init();
+
 
 const client = new ApolloClient({
   // uri: "http://localhost:4000"
