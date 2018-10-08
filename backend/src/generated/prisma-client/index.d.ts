@@ -144,8 +144,6 @@ export type RoleOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type MutationType = "CREATED" | "UPDATED" | "DELETED";
-
 export type UserOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -160,24 +158,16 @@ export type UserOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export interface UserUpdateInput {
-  name?: String;
-  email?: String;
-  password?: String;
-  roles?: RoleUpdateOneRequiredInput;
-}
+export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export interface RoleCreateInput {
-  admin?: Boolean;
-  employee?: Boolean;
-  user?: Boolean;
-}
-
-export interface RoleCreateOneInput {
-  create?: RoleCreateInput;
+export interface UserCreateWithoutRolesInput {
+  name: String;
+  email: String;
+  password: String;
 }
 
 export interface RoleWhereInput {
+  owner?: UserWhereInput;
   admin?: Boolean;
   admin_not?: Boolean;
   employee?: Boolean;
@@ -189,26 +179,64 @@ export interface RoleWhereInput {
   NOT?: RoleWhereInput[] | RoleWhereInput;
 }
 
-export interface RoleUpsertNestedInput {
-  update: RoleUpdateDataInput;
-  create: RoleCreateInput;
+export interface RoleCreateOneWithoutOwnerInput {
+  create?: RoleCreateWithoutOwnerInput;
 }
 
-export interface RoleUpdateInput {
+export interface UserUpdateWithoutRolesDataInput {
+  name?: String;
+  email?: String;
+  password?: String;
+}
+
+export interface UserCreateInput {
+  name: String;
+  email: String;
+  password: String;
+  roles: RoleCreateOneWithoutOwnerInput;
+}
+
+export interface UserUpdateOneRequiredWithoutRolesInput {
+  create?: UserCreateWithoutRolesInput;
+  update?: UserUpdateWithoutRolesDataInput;
+  upsert?: UserUpsertWithoutRolesInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface UserUpsertWithoutRolesInput {
+  update: UserUpdateWithoutRolesDataInput;
+  create: UserCreateWithoutRolesInput;
+}
+
+export interface RoleSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: RoleWhereInput;
+  AND?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
+  OR?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
+  NOT?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
+}
+
+export interface RoleUpdateWithoutOwnerDataInput {
   admin?: Boolean;
   employee?: Boolean;
   user?: Boolean;
 }
 
-export interface UserSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: UserWhereInput;
-  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+export interface UserUpdateInput {
+  name?: String;
+  email?: String;
+  password?: String;
+  roles?: RoleUpdateOneRequiredWithoutOwnerInput;
+}
+
+export interface RoleUpdateInput {
+  owner?: UserUpdateOneRequiredWithoutRolesInput;
+  admin?: Boolean;
+  employee?: Boolean;
+  user?: Boolean;
 }
 
 export interface UserWhereInput {
@@ -274,14 +302,13 @@ export interface UserWhereInput {
   NOT?: UserWhereInput[] | UserWhereInput;
 }
 
-export interface UserCreateInput {
-  name: String;
-  email: String;
-  password: String;
-  roles: RoleCreateOneInput;
+export interface UserCreateOneWithoutRolesInput {
+  create?: UserCreateWithoutRolesInput;
+  connect?: UserWhereUniqueInput;
 }
 
-export interface RoleUpdateDataInput {
+export interface RoleCreateInput {
+  owner: UserCreateOneWithoutRolesInput;
   admin?: Boolean;
   employee?: Boolean;
   user?: Boolean;
@@ -292,41 +319,36 @@ export type UserWhereUniqueInput = AtLeastOne<{
   email?: String;
 }>;
 
-export interface RoleSubscriptionWhereInput {
+export interface RoleUpdateOneRequiredWithoutOwnerInput {
+  create?: RoleCreateWithoutOwnerInput;
+  update?: RoleUpdateWithoutOwnerDataInput;
+  upsert?: RoleUpsertWithoutOwnerInput;
+}
+
+export interface RoleUpsertWithoutOwnerInput {
+  update: RoleUpdateWithoutOwnerDataInput;
+  create: RoleCreateWithoutOwnerInput;
+}
+
+export interface UserSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: RoleWhereInput;
-  AND?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
-  OR?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
-  NOT?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
+  node?: UserWhereInput;
+  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
 }
 
-export interface RoleUpdateOneRequiredInput {
-  create?: RoleCreateInput;
-  update?: RoleUpdateDataInput;
-  upsert?: RoleUpsertNestedInput;
+export interface RoleCreateWithoutOwnerInput {
+  admin?: Boolean;
+  employee?: Boolean;
+  user?: Boolean;
 }
 
 export interface NodeNode {
   id: ID_Output;
-}
-
-export interface RoleEdgeNode {
-  cursor: String;
-}
-
-export interface RoleEdge extends Promise<RoleEdgeNode>, Fragmentable {
-  node: <T = Role>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface RoleEdgeSubscription
-  extends Promise<AsyncIterator<RoleEdgeNode>>,
-    Fragmentable {
-  node: <T = RoleSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface UserPreviousValuesNode {
@@ -354,6 +376,61 @@ export interface UserPreviousValuesSubscription
   password: () => Promise<AsyncIterator<String>>;
 }
 
+export interface AggregateRoleNode {
+  count: Int;
+}
+
+export interface AggregateRole
+  extends Promise<AggregateRoleNode>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateRoleSubscription
+  extends Promise<AsyncIterator<AggregateRoleNode>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface RoleSubscriptionPayloadNode {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface RoleSubscriptionPayload
+  extends Promise<RoleSubscriptionPayloadNode>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = Role>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = RolePreviousValues>() => T;
+}
+
+export interface RoleSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<RoleSubscriptionPayloadNode>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = RoleSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = RolePreviousValuesSubscription>() => T;
+}
+
+export interface RoleEdgeNode {
+  cursor: String;
+}
+
+export interface RoleEdge extends Promise<RoleEdgeNode>, Fragmentable {
+  node: <T = Role>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface RoleEdgeSubscription
+  extends Promise<AsyncIterator<RoleEdgeNode>>,
+    Fragmentable {
+  node: <T = RoleSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
 export interface PageInfoNode {
   hasNextPage: Boolean;
   hasPreviousPage: Boolean;
@@ -375,131 +452,6 @@ export interface PageInfoSubscription
   hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
   startCursor: () => Promise<AsyncIterator<String>>;
   endCursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateUserNode {
-  count: Int;
-}
-
-export interface AggregateUser
-  extends Promise<AggregateUserNode>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateUserSubscription
-  extends Promise<AsyncIterator<AggregateUserNode>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface RoleConnectionNode {}
-
-export interface RoleConnection
-  extends Promise<RoleConnectionNode>,
-    Fragmentable {
-  pageInfo: <T = PageInfo>() => T;
-  edges: <T = Promise<Array<RoleEdgeNode>>>() => T;
-  aggregate: <T = AggregateRole>() => T;
-}
-
-export interface RoleConnectionSubscription
-  extends Promise<AsyncIterator<RoleConnectionNode>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<Array<RoleEdgeSubscription>>>>() => T;
-  aggregate: <T = AggregateRoleSubscription>() => T;
-}
-
-export interface UserEdgeNode {
-  cursor: String;
-}
-
-export interface UserEdge extends Promise<UserEdgeNode>, Fragmentable {
-  node: <T = User>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface UserEdgeSubscription
-  extends Promise<AsyncIterator<UserEdgeNode>>,
-    Fragmentable {
-  node: <T = UserSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface RoleNode {
-  admin: Boolean;
-  employee: Boolean;
-  user: Boolean;
-}
-
-export interface Role extends Promise<RoleNode>, Fragmentable {
-  admin: () => Promise<Boolean>;
-  employee: () => Promise<Boolean>;
-  user: () => Promise<Boolean>;
-}
-
-export interface RoleSubscription
-  extends Promise<AsyncIterator<RoleNode>>,
-    Fragmentable {
-  admin: () => Promise<AsyncIterator<Boolean>>;
-  employee: () => Promise<AsyncIterator<Boolean>>;
-  user: () => Promise<AsyncIterator<Boolean>>;
-}
-
-export interface BatchPayloadNode {
-  count: Long;
-}
-
-export interface BatchPayload extends Promise<BatchPayloadNode>, Fragmentable {
-  count: () => Promise<Long>;
-}
-
-export interface BatchPayloadSubscription
-  extends Promise<AsyncIterator<BatchPayloadNode>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Long>>;
-}
-
-export interface UserNode {
-  id: ID_Output;
-  name: String;
-  email: String;
-  password: String;
-}
-
-export interface User extends Promise<UserNode>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  email: () => Promise<String>;
-  password: () => Promise<String>;
-  roles: <T = Role>() => T;
-}
-
-export interface UserSubscription
-  extends Promise<AsyncIterator<UserNode>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  email: () => Promise<AsyncIterator<String>>;
-  password: () => Promise<AsyncIterator<String>>;
-  roles: <T = RoleSubscription>() => T;
-}
-
-export interface AggregateRoleNode {
-  count: Int;
-}
-
-export interface AggregateRole
-  extends Promise<AggregateRoleNode>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateRoleSubscription
-  extends Promise<AsyncIterator<AggregateRoleNode>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface UserSubscriptionPayloadNode {
@@ -547,27 +499,115 @@ export interface RolePreviousValuesSubscription
   user: () => Promise<AsyncIterator<Boolean>>;
 }
 
-export interface RoleSubscriptionPayloadNode {
-  mutation: MutationType;
-  updatedFields?: String[];
+export interface UserNode {
+  id: ID_Output;
+  name: String;
+  email: String;
+  password: String;
 }
 
-export interface RoleSubscriptionPayload
-  extends Promise<RoleSubscriptionPayloadNode>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = Role>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = RolePreviousValues>() => T;
+export interface User extends Promise<UserNode>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
+  roles: <T = Role>() => T;
 }
 
-export interface RoleSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<RoleSubscriptionPayloadNode>>,
+export interface UserSubscription
+  extends Promise<AsyncIterator<UserNode>>,
     Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = RoleSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = RolePreviousValuesSubscription>() => T;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  email: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
+  roles: <T = RoleSubscription>() => T;
+}
+
+export interface RoleConnectionNode {}
+
+export interface RoleConnection
+  extends Promise<RoleConnectionNode>,
+    Fragmentable {
+  pageInfo: <T = PageInfo>() => T;
+  edges: <T = Promise<Array<RoleEdgeNode>>>() => T;
+  aggregate: <T = AggregateRole>() => T;
+}
+
+export interface RoleConnectionSubscription
+  extends Promise<AsyncIterator<RoleConnectionNode>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<Array<RoleEdgeSubscription>>>>() => T;
+  aggregate: <T = AggregateRoleSubscription>() => T;
+}
+
+export interface AggregateUserNode {
+  count: Int;
+}
+
+export interface AggregateUser
+  extends Promise<AggregateUserNode>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateUserSubscription
+  extends Promise<AsyncIterator<AggregateUserNode>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface UserEdgeNode {
+  cursor: String;
+}
+
+export interface UserEdge extends Promise<UserEdgeNode>, Fragmentable {
+  node: <T = User>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface UserEdgeSubscription
+  extends Promise<AsyncIterator<UserEdgeNode>>,
+    Fragmentable {
+  node: <T = UserSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface BatchPayloadNode {
+  count: Long;
+}
+
+export interface BatchPayload extends Promise<BatchPayloadNode>, Fragmentable {
+  count: () => Promise<Long>;
+}
+
+export interface BatchPayloadSubscription
+  extends Promise<AsyncIterator<BatchPayloadNode>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Long>>;
+}
+
+export interface RoleNode {
+  admin: Boolean;
+  employee: Boolean;
+  user: Boolean;
+}
+
+export interface Role extends Promise<RoleNode>, Fragmentable {
+  owner: <T = User>() => T;
+  admin: () => Promise<Boolean>;
+  employee: () => Promise<Boolean>;
+  user: () => Promise<Boolean>;
+}
+
+export interface RoleSubscription
+  extends Promise<AsyncIterator<RoleNode>>,
+    Fragmentable {
+  owner: <T = UserSubscription>() => T;
+  admin: () => Promise<AsyncIterator<Boolean>>;
+  employee: () => Promise<AsyncIterator<Boolean>>;
+  user: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface UserConnectionNode {}
@@ -589,27 +629,27 @@ export interface UserConnectionSubscription
 }
 
 /*
-The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+The `Boolean` scalar type represents `true` or `false`.
 */
-export type String = string;
+export type Boolean = boolean;
 
 /*
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
 */
 export type Int = number;
 
+export type Long = string;
+
 /*
-The `Boolean` scalar type represents `true` or `false`.
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
-export type Boolean = boolean;
+export type String = string;
 
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
 */
 export type ID_Input = string | number;
 export type ID_Output = string;
-
-export type Long = string;
 
 /**
  * Type Defs

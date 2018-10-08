@@ -52,6 +52,7 @@ type Query {
 }
 
 type Role {
+  owner: User!
   admin: Boolean!
   employee: Boolean!
   user: Boolean!
@@ -64,13 +65,20 @@ type RoleConnection {
 }
 
 input RoleCreateInput {
+  owner: UserCreateOneWithoutRolesInput!
   admin: Boolean
   employee: Boolean
   user: Boolean
 }
 
-input RoleCreateOneInput {
-  create: RoleCreateInput
+input RoleCreateOneWithoutOwnerInput {
+  create: RoleCreateWithoutOwnerInput
+}
+
+input RoleCreateWithoutOwnerInput {
+  admin: Boolean
+  employee: Boolean
+  user: Boolean
 }
 
 type RoleEdge {
@@ -117,30 +125,32 @@ input RoleSubscriptionWhereInput {
   NOT: [RoleSubscriptionWhereInput!]
 }
 
-input RoleUpdateDataInput {
-  admin: Boolean
-  employee: Boolean
-  user: Boolean
-}
-
 input RoleUpdateInput {
+  owner: UserUpdateOneRequiredWithoutRolesInput
   admin: Boolean
   employee: Boolean
   user: Boolean
 }
 
-input RoleUpdateOneRequiredInput {
-  create: RoleCreateInput
-  update: RoleUpdateDataInput
-  upsert: RoleUpsertNestedInput
+input RoleUpdateOneRequiredWithoutOwnerInput {
+  create: RoleCreateWithoutOwnerInput
+  update: RoleUpdateWithoutOwnerDataInput
+  upsert: RoleUpsertWithoutOwnerInput
 }
 
-input RoleUpsertNestedInput {
-  update: RoleUpdateDataInput!
-  create: RoleCreateInput!
+input RoleUpdateWithoutOwnerDataInput {
+  admin: Boolean
+  employee: Boolean
+  user: Boolean
+}
+
+input RoleUpsertWithoutOwnerInput {
+  update: RoleUpdateWithoutOwnerDataInput!
+  create: RoleCreateWithoutOwnerInput!
 }
 
 input RoleWhereInput {
+  owner: UserWhereInput
   admin: Boolean
   admin_not: Boolean
   employee: Boolean
@@ -175,7 +185,18 @@ input UserCreateInput {
   name: String!
   email: String!
   password: String!
-  roles: RoleCreateOneInput!
+  roles: RoleCreateOneWithoutOwnerInput!
+}
+
+input UserCreateOneWithoutRolesInput {
+  create: UserCreateWithoutRolesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutRolesInput {
+  name: String!
+  email: String!
+  password: String!
 }
 
 type UserEdge {
@@ -227,7 +248,25 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
-  roles: RoleUpdateOneRequiredInput
+  roles: RoleUpdateOneRequiredWithoutOwnerInput
+}
+
+input UserUpdateOneRequiredWithoutRolesInput {
+  create: UserCreateWithoutRolesInput
+  update: UserUpdateWithoutRolesDataInput
+  upsert: UserUpsertWithoutRolesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateWithoutRolesDataInput {
+  name: String
+  email: String
+  password: String
+}
+
+input UserUpsertWithoutRolesInput {
+  update: UserUpdateWithoutRolesDataInput!
+  create: UserCreateWithoutRolesInput!
 }
 
 input UserWhereInput {
