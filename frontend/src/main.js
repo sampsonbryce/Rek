@@ -6,6 +6,9 @@ import { View, Text} from 'react-native';
 import Admin from 'src/screens/Admin';
 import EditUser from 'src/screens/Admin/components/EditUser';
 
+//For navigation
+import AppNavigator from 'src/components/nav';
+
 export default class Main extends Component{
     render(){
         return (
@@ -13,8 +16,9 @@ export default class Main extends Component{
                 {/* <Signup></Signup>
                   <Login></Login> */}
                 {/* <FindServices /> */}
+                <AppNavigator />
                 {/* <Admin /> */}
-                <EditUser />
+                {/* <EditUser /> */}
                 {/* <Text>Hello</Text> */}
             </View>
         )

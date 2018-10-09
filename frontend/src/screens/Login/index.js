@@ -36,8 +36,14 @@ class LoginComponent extends Component{
         const { email, password } = this.state;
         return (
             <View>
-                <Text>Signup</Text>
-                {this.state.error ? 
+                <Button
+                  title="Signup"
+                  onPress={()=> {
+                      this.props.navigation.navigate("Signup")
+                    }
+                  }
+                />
+                {this.state.error ?
                     (<Text>{this.state.error}</Text>)
                 : null}
                 <TextInput placeholder="Email"
@@ -46,8 +52,8 @@ class LoginComponent extends Component{
                 <TextInput placeholder="Password"
                     onChangeText={(text) => this.setState({password: text})}
                  />
-                <Mutation 
-                    mutation={LOGIN_MUTATION} 
+                <Mutation
+                    mutation={LOGIN_MUTATION}
                     variables={{ email, password }}
                     onCompleted={(data) => {
                         let { login: {user, token}} = data;
@@ -67,6 +73,13 @@ class LoginComponent extends Component{
 
                 <Text>User: { this.props.user ? this.props.user.name : ""}</Text>
                 <Text>Token: { this.props.token ? this.props.token : ""}</Text>
+                <Button
+                  title="For Testing. Skip to Find Services"
+                  onPress={() => {
+                      this.props.navigation.navigate("FindServices")
+                    }
+                  }
+                />
             </View>
         )
     }
