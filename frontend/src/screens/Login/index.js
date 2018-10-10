@@ -37,6 +37,11 @@ const LOGIN_MUTATION = gql`
 `
 
 class LoginComponent extends Component{
+
+  static navigationOptions = {
+        header: null,
+        title: 'Login',
+    }
     constructor(props){
         super(props);
         this.state = {
