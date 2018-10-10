@@ -4,8 +4,8 @@ import { View, StyleSheet, Text } from 'react-native';
 
 export default class TestComp extends Component {
   static navigationOptions = {
-        header: null,
-        headerLeft: null,
+        //header: null,
+        //headerLeft: null,
     }
 
     render(){
