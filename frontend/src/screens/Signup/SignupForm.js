@@ -17,6 +17,9 @@ const SIGNUP_MUTATION = gql`
 `
 
 export default class SignupForm extends Component{
+  static navigationOptions = {
+        header: null
+    }
     constructor(props){
         super(props);
         this.state = {
@@ -45,10 +48,10 @@ export default class SignupForm extends Component{
         return (
             <View>
                 <Text>Signup</Text>
-                {this.state.error ? 
+                {this.state.error ?
                     (<Text>{this.state.error}</Text>)
                 : null}
-                <TextInput placeholder="Name" 
+                <TextInput placeholder="Name"
                     onChangeText={(text) => this.setState({name: text})}
                 />
                 <TextInput placeholder="Email"
@@ -57,11 +60,11 @@ export default class SignupForm extends Component{
                 <TextInput placeholder="Password"
                     onChangeText={(text) => this.setState({password: text})}
                  />
-                <TextInput placeholder="Confirm Password" 
+                <TextInput placeholder="Confirm Password"
                     onChangeText={(text) => this.setState({confirm_password: text})}
                 />
-                <Mutation 
-                    mutation={SIGNUP_MUTATION} 
+                <Mutation
+                    mutation={SIGNUP_MUTATION}
                     variables={{ name, email, password }}
                     onCompleted={(data) => {
                         let { signup: {user, token}} = data;
@@ -73,6 +76,7 @@ export default class SignupForm extends Component{
                         onPress={() => {
                             if(!this.validate()) return;
                             signup();
+                            if(this.props.user) this.props.navigation.navigate("Login");
                         }}
                         title={title}
                     />)
