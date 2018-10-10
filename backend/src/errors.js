@@ -1,18 +1,21 @@
+const { createError } = require('apollo-errors');
 
-class EmptyRolesError extends Error {
-    constructor(message){
-        super(message);
-        // make sure the name is the same and the class name
-        this.name = this.constructor.name;
-        this.type = "empty_role";
-        this.message = message || 
-            'User must have a role';
-        this.details = "User's cannot have an empty list of roles. \
-                Their default role is User. Something went wrong \
-                when creating or updating the user";
-    }
-}
+const ServerError = createError("ServerError", {
+    message: "Something went wrong on the server"
+});
+
+const InvalidCredentialsError = createError("InvalidCredentialsError", {
+    message: "The provided credentials are invalid"
+});
+
+const UniqueFieldAlreadyExists = createError("UniqueFieldAlreadyExists", {
+    message: "A field already exists"
+});
+
+
 
 module.exports = {
-    EmptyRolesError
+    InvalidCredentialsError,
+    UniqueFieldAlreadyExists,
+    ServerError,
 }

@@ -2,22 +2,46 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { APP_SECRET, getUserId } = require('../utils');
 
+const { ServerError, 
+        InvalidCredentialsError, 
+        UniqueFieldAlreadyExists } = require('../errors.js');
+
 // User Signup functionality
 async function signup(parent, args, context, info){
     // hash the password
     const password = await bcrypt.hash(args.password, 10);
 
     // Create user
-    const user = await context.db.createUser({ ...args, password, 
-        roles: { 
-            create: {
-                user: true
+    let user = null;
+    try{
+        user = await context.db.createUser({ ...args, password, 
+            roles: { 
+                create: {
+                    user: true
+                }
             }
+        });
+    }catch(err){
+        console.log("err json: ", JSON.stringify(err));
+        let e = err.result.errors[0];
+
+        // handle unique field already exists error
+        if(e.code == "3010"){
+            let field = e.message.split("=")[1].trim();
+            throw new UniqueFieldAlreadyExists({data: {
+                message: `${field} already exists`
+            }});
         }
-    });
+        else{
+            // default error
+            throw new ServerError({data: {
+                message: e.message
+            }});
+        }
+    }
 
     // create JWT
-    const token = jwt.sign({ userId: user.id}, APP_SECRET);
+    const token = jwt.sign({ userId: user.id }, APP_SECRET);
 
     return {
         token, 
@@ -28,15 +52,17 @@ async function signup(parent, args, context, info){
 // User login functionality
 async function login(parent, args, context, info){
     // check if email exists
-    const user = await context.db.user({ where: { email: args.email }},`{ id password }`);
+    const user = await context.db.user({ email: args.email },`{ id password }`);
+
     if(!user){
-        throw new Error('No such user found');
+        // throw new Error('No such user found');
+        throw new InvalidCredentialsError();
     }
 
     // check if password matched email
     const valid = await bcrypt.compare(args.password, user.password);
     if(!valid){
-        throw new Error('Invalid Password');
+        throw new InvalidCredentialsError();
     }
 
 
@@ -50,7 +76,7 @@ async function login(parent, args, context, info){
 }
 
 async function updateUserWithRoles(parent, args, context, info){
-    const user = await context.db.updateUser({
+   const user = await context.db.updateUser({
         data: {
             email: args.email,
             name: args.name,

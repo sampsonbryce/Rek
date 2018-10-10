@@ -67,24 +67,30 @@ export default class Admin extends Component {
                 message: "",
                 type: ""
 
-            }
+            },
+            id:"cjmrairyl001q0a5913h4tuvx"
         }
     }
 
-    async _submit(updateUser){
+    async _submit(updateUser, refetch){
         let value = this.form.getValue();
         console.log('value:', value);
         let response = await updateUser({ variables : value });
         console.log("Response", response);
-        this.setState({ status: { message: "Updated User!" }});
+        let id = response.data.updateUserWithRoles.id;
+
+        refetch();
+        this.setState({ id, status: { message: "Updated User!" }});
     }
 
     render(){
+        console.log('rendering again');
         return (
             <View>
                 <Text>{this.state.status.message}</Text>
-                <Query variables={{id:"cjmrairyl001q0a5913h4tuvx"}} query={GET_USER}>
-                {({loading, error, data}) => {
+                <Query variables={{id: this.state.id}} query={GET_USER}>
+                {({loading, error, data, refetch}) => {
+                    console.log('loading', loading);
                     if(loading) return (<Text>Loading...</Text>);
                     if(error) return (<Text>`Error! ${error.message}`</Text>);
                     
@@ -92,7 +98,17 @@ export default class Admin extends Component {
                     
                     return (
                         <Mutation mutation={UPDATE_USER}>
-                        {(updateUser, {loading, error}) => (
+                        {(updateUser, {loading, error}) => {
+                            if(error) {
+                                this.setState({
+                                    status: {
+                                        message: "Could not update",
+                                        type: "error"
+                                    }
+                                });
+                            }
+
+                            return (
                             <View>
                                 <Form
                                     ref={(form) => this.form = form }
@@ -101,12 +117,11 @@ export default class Admin extends Component {
                                     value={user}
                                 />
                                 <Button
-                                    // title={() => { return (loading : "Submitting" ? "Update")}}
                                     title={loading ? "Submitting..." : "Update"}
-                                    onPress={this._submit.bind(this, updateUser)}
+                                    onPress={this._submit.bind(this, updateUser, refetch)}
                                 />
                             </View>
-                        )}
+                        )}}
                         </Mutation>
                    );
                 }}
