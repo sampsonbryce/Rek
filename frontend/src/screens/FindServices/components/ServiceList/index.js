@@ -16,13 +16,13 @@ export default class ServiceList extends Component {
         this.state = {
             data:[
                 { name: "Bob", title:"Barber", services: ["Cutting", "Grooming", "Styling", "Shaving"],
-                    image: Images.profilePic },
+                    image: Images.profilePic3 },
                 { name: "Dave", title: "Pedicurist", services: ["Pedicure"],
-                    image: Images.profilePic },
+                    image: Images.profilePic2 },
                 { name: "Brian", title: "Masseur", services: ["Head", "Back", "Full body"],
-                    image: Images.profilePic },
+                    image: Images.profilePic1 },
                 { name: "Janice", title:"Manicurist", services: ["Manicure"],
-                    image: Images.profilePic },
+                    image: Images.profilePic4 }
             ]
         }
     }

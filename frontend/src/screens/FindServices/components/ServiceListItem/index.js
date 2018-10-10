@@ -7,12 +7,9 @@ import Button from 'src/components/Button';
  */
 export default class ServiceListItem extends Component {
     render(){
-        let pic = this.props.image;
-        console.log("here is that Image");
-        console.log(this.props.image);
         return (
             <View style={styles.item}>
-                <Image source={this.props.image}/>
+                <Image source={this.props.image} style={styles.image}/>
                 <Text style={styles.text}>{this.props.name}</Text>
                 <Text style={styles.text}>{this.props.title}</Text>
 
@@ -40,4 +37,12 @@ const styles = StyleSheet.create({
     text:{
         textAlign: 'center',
     },
+    image:{
+        borderRadius: 10,
+        margin: 10,
+        position: 'relative',
+        left: 40,
+        height: 50,
+        width: 50
+    }
 })
