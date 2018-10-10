@@ -19,10 +19,6 @@ export default class ServiceListItem extends Component {
                 })}
                 <Button
                     title="View"
-                    onPress={()=> {
-                        this.props.navigation.navigate("TestComp")
-                      }
-                    }
                 />
             </View>
         )
