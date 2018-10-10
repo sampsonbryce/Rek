@@ -19,6 +19,11 @@ const LOGIN_MUTATION = gql`
 `
 
 class LoginComponent extends Component{
+
+  static navigationOptions = {
+        header: null,
+        title: 'Login',
+    }
     constructor(props){
         super(props);
         this.state = {
@@ -65,6 +70,7 @@ class LoginComponent extends Component{
                         onPress={() => {
                             if(!this.validate()) return;
                             login();
+                            //this.props.navigation.navigate("FindServices")
                         }}
                         title={title}
                     />)
