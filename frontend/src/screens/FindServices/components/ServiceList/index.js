@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import gql from 'graphql-tag';
 import ServiceListItem from "../ServiceListItem";
+import Images from '@assets/images';
 
 
 /*
@@ -14,10 +15,14 @@ export default class ServiceList extends Component {
         super(props);
         this.state = {
             data:[
-                { name: "Bob", title:"Barber", services: ["Cutting", "Grooming", "Styling", "Shaving"]},
-                { name: "Dave", title: "Pedicurist", services: ["Pedicure"]},
-                { name: "Brian", title: "Masseur", services: ["Head", "Back", "Full body"]},
-                { name: "Janice", title:"Manicurist", services: ["Manicure"]},
+                { name: "Bob", title:"Barber", services: ["Cutting", "Grooming", "Styling", "Shaving"],
+                    image: Images.profilePic },
+                { name: "Dave", title: "Pedicurist", services: ["Pedicure"],
+                    image: Images.profilePic },
+                { name: "Brian", title: "Masseur", services: ["Head", "Back", "Full body"],
+                    image: Images.profilePic },
+                { name: "Janice", title:"Manicurist", services: ["Manicure"],
+                    image: Images.profilePic },
             ]
         }
     }
@@ -30,7 +35,7 @@ export default class ServiceList extends Component {
                     showsHorizontalScrollIndicator={false}
                     data={this.state.data}
                     renderItem={({item}) => 
-                        <ServiceListItem name={item.name} title={item.title} services={item.services}/>
+                        <ServiceListItem name={item.name} title={item.title} services={item.services} image={item.image}/>
                     }
                 >
                </FlatList>

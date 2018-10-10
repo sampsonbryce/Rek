@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, Image } from 'react-native';
 import Button from 'src/components/Button';
 
 /*
@@ -7,8 +7,12 @@ import Button from 'src/components/Button';
  */
 export default class ServiceListItem extends Component {
     render(){
+        let pic = this.props.image;
+        console.log("here is that Image");
+        console.log(this.props.image);
         return (
             <View style={styles.item}>
+                <Image source={this.props.image}/>
                 <Text style={styles.text}>{this.props.name}</Text>
                 <Text style={styles.text}>{this.props.title}</Text>
 
