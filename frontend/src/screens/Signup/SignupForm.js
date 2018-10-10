@@ -17,7 +17,7 @@ let SignupType = t.struct({
 let SignupOptions = {
     fields: {
         password: {
-            password: true
+            secureTextEntry: true
         }
     },
     auto: 'placeholders'

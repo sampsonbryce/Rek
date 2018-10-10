@@ -18,11 +18,22 @@ const GET_USERS = gql`
  * Admin service for store admins
  */
 export default class Admin extends Component {
+    static navigationOptions = {
+        // header: null,
+        title: 'Admin',
+    }
+
+    constructor(props){
+        super(props);
+    }
+
     _renderListItem({item, index}){
         return (<UserListItem 
             name={item.name}
+            id={item.id}
             key={item.id}
             index={index}
+            navigation={this.props.navigation}
         />);
     }
 
@@ -37,12 +48,10 @@ export default class Admin extends Component {
                     if(loading) return (<Text>Loading...</Text>);
                     if(error) return (<Text>`Error! ${error.message}`</Text>);
 
-                    console.log('data', data);
-
                     return (
                         <FlatList 
                             data={data.users}
-                            renderItem={this._renderListItem}
+                            renderItem={this._renderListItem.bind(this)}
                             keyExtractor={(item, index) => item.id}
                         />
                     );

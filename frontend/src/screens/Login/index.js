@@ -17,7 +17,7 @@ let LoginType = t.struct({
 let LoginOptions = {
     fields: {
         password: {
-            password: true
+            secureTextEntry: true
         }
     },
     auto: 'placeholders'
@@ -38,7 +38,7 @@ const LOGIN_MUTATION = gql`
 
 class LoginComponent extends Component{
 
-  static navigationOptions = {
+    static navigationOptions = {
         header: null,
         title: 'Login',
     }
@@ -81,7 +81,7 @@ class LoginComponent extends Component{
         this.props.onUserLogin(user, token);
         // update gui
         this.setState({ status: { message: "User Logged in!" }});
-        this.props.navigation.navigate("FindServices")
+        this.props.navigation.navigate("Dashboard");
     }
 
     render(){

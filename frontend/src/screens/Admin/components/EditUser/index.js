@@ -4,6 +4,7 @@ import { Query, Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import t from 'tcomb-form-native';
 import Button from 'src/components/Button';
+import StatusBar from 'src/components/StatusBar';
 // import { BERRY_LIGHT_BLUE, BERRY_MAROON } from '../../constants';
 
 var Form = t.form.Form;
@@ -58,7 +59,11 @@ var User = t.struct({
 /*
  * Admin service for store admins
  */
-export default class Admin extends Component {
+export default class EditUser extends Component {
+    static navigationOptions = {
+        header: null,
+        title: 'EditUser',
+    }
     constructor(props){
         super(props);
         this.state = {
@@ -68,66 +73,68 @@ export default class Admin extends Component {
                 type: ""
 
             },
-            id:"cjmrairyl001q0a5913h4tuvx"
         }
     }
 
     async _submit(updateUser, refetch){
         let value = this.form.getValue();
-        console.log('value:', value);
         let response = await updateUser({ variables : value });
-        console.log("Response", response);
         let id = response.data.updateUserWithRoles.id;
 
+        // refetch user query
         refetch();
-        this.setState({ id, status: { message: "Updated User!" }});
+        this.setState({ id, status: { message: "Updated User!", type: "success"}});
     }
 
     render(){
-        console.log('rendering again');
+        const { navigation } = this.props;
+        const id = navigation.getParam('id');
         return (
-            <View>
-                <Text>{this.state.status.message}</Text>
-                <Query variables={{id: this.state.id}} query={GET_USER}>
+            <StatusBar message={this.state.status.message} type={this.state.status.type}>
+                <Query variables={{ id }} query={GET_USER}>
                 {({loading, error, data, refetch}) => {
-                    console.log('loading', loading);
                     if(loading) return (<Text>Loading...</Text>);
                     if(error) return (<Text>`Error! ${error.message}`</Text>);
                     
                     let user = data.user;
                     
                     return (
-                        <Mutation mutation={UPDATE_USER}>
-                        {(updateUser, {loading, error}) => {
-                            if(error) {
-                                this.setState({
-                                    status: {
-                                        message: "Could not update",
-                                        type: "error"
-                                    }
-                                });
-                            }
-
-                            return (
+                    
                             <View>
+                                {/* User info form */}
                                 <Form
                                     ref={(form) => this.form = form }
                                     type={User}
                                     options={options}
                                     value={user}
                                 />
-                                <Button
-                                    title={loading ? "Submitting..." : "Update"}
-                                    onPress={this._submit.bind(this, updateUser, refetch)}
-                                />
+
+                                {/* Update user mutation button */}
+                                <Mutation mutation={UPDATE_USER}>
+                                {(updateUser, {loading, error}) => {
+                                    if(error) {
+                                        this.setState({
+                                            status: {
+                                                message: "Could not update",
+                                                type: "error"
+                                            }
+                                        });
+                                    }
+
+                                    return (
+                                        <Button
+                                            title={loading ? "Submitting..." : "Update"}
+                                            onPress={this._submit.bind(this, updateUser, refetch)}
+                                        />
+
+                                    )
+                                }}
+                                </Mutation>
                             </View>
-                        )}}
-                        </Mutation>
                    );
                 }}
                 </Query>
-
-            </View>
+            </StatusBar>
         )
     }
 }

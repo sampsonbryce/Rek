@@ -18,6 +18,11 @@ export default class UserListItem extends Component{
                     <Button 
                         title="Edit"
                         styles={styles.button}
+                        onPress={() => {
+                            this.props.navigation.navigate("EditUser", {
+                                id: this.props.id
+                            });
+                        }}
                     />
                 </View>
             </View>

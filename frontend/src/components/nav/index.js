@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
 import Signup from 'src/screens/Signup'
 import Login from 'src/screens/Login'
 import FindServices from 'src/screens/FindServices';
+import Dashboard from 'src/screens/Dashboard';
+import adminNav from 'src/screens/Admin/nav';
 
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 
 
-const serviceNav = createStackNavigator(
+const dashboardNav = createStackNavigator(
   {
-    FindServices: FindServices,
+    FindServices,
+    Dashboard,
+    Admin: adminNav,
     //Additional routes go here
   },
   {
-    initialRouteName: 'FindServices',
+    initialRouteName: 'Dashboard',
   },
   {
     headerMode: 'none',
@@ -43,10 +46,11 @@ const loginNav = createStackNavigator(
 const AppNavigator = createSwitchNavigator(
   {
     Auth: loginNav,
-    FindServices: serviceNav,
+    Dashboard: dashboardNav,
   },
   {
     initialRouteName: 'Auth',
+    // initialRouteName: 'Dashboard',
   },
   {
   headerMode: 'none',
