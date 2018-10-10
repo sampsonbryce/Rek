@@ -16,8 +16,12 @@ export default class ServiceListItem extends Component {
                 {this.props.services.map((service, index) => {
                     return <Text style={styles.text}>{service}</Text>
                 })}
-                <Button 
+                <Button
                     title="View"
+                    onPress={()=> {
+                        this.props.navigation.navigate("TestComp")
+                      }
+                    }
                 />
             </View>
         )

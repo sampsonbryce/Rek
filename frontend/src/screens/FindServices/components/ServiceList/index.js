@@ -25,12 +25,12 @@ export default class ServiceList extends Component {
     render(){
         return (
             <View style={styles.list}>
-                <FlatList 
+                <FlatList
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
                     data={this.state.data}
-                    renderItem={({item}) => 
-                        <ServiceListItem name={item.name} title={item.title} services={item.services}/>
+                    renderItem={({item}) =>
+                        <ServiceListItem name={item.name} title={item.title} services={item.services} navigation={this.props.navigation}/>
                     }
                 >
                </FlatList>
