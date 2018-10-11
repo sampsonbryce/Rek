@@ -12,12 +12,17 @@ export default class Dashboard extends Component{
         return (
             <View>
                 <Text>No appointments</Text>
+
+                {/* Button to Schedule Appointments */}
                 <Button 
                     onPress={() => {
                         this.props.navigation.navigate('FindServices');
                     }}
                     title="Schedule Appointment"
                 />
+
+
+                {/* Button to Admin*/}
                 <Button 
                     onPress={() => {
                         this.props.navigation.navigate('Admin');

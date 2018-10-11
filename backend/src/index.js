@@ -39,5 +39,4 @@ const server = new GraphQLServer({
     middlewares: [log]
 })
 
-// server.start(() => console.log('Server is running on http://localhost:4000'));
 server.start(options, () => console.log('Server is running on http://localhost:4000'));

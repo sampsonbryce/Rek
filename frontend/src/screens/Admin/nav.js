@@ -14,7 +14,8 @@ const adminNav = createStackNavigator(
   {
     headerMode: 'none',
     navigationOptions: {
-      headerVisible: false,
+        header: null,
+        headerVisible: false,
     }
   },
 );

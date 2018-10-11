@@ -77,8 +77,12 @@ export default class EditUser extends Component {
     }
 
     async _submit(updateUser, refetch){
+        // get form data
         let value = this.form.getValue();
-        let response = await updateUser({ variables : value });
+
+        // update user
+        let response = await updateUser({ variables : value }); 
+        //TODO: handle error
         let id = response.data.updateUserWithRoles.id;
 
         // refetch user query
@@ -88,9 +92,13 @@ export default class EditUser extends Component {
 
     render(){
         const { navigation } = this.props;
+
+        // get user id sent during navivation
         const id = navigation.getParam('id');
         return (
-            <StatusBar message={this.state.status.message} type={this.state.status.type}>
+            <View>
+                <StatusBar message={this.state.status.message} type={this.state.status.type} />
+                {/* Get User */}
                 <Query variables={{ id }} query={GET_USER}>
                 {({loading, error, data, refetch}) => {
                     if(loading) return (<Text>Loading...</Text>);
@@ -134,7 +142,7 @@ export default class EditUser extends Component {
                    );
                 }}
                 </Query>
-            </StatusBar>
+            </View>
         )
     }
 }

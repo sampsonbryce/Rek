@@ -17,12 +17,7 @@ export default class StatusBar extends Component{
 
     render(){
         let status_bar = this._bar();
-        return(
-            <View>
-                {status_bar}
-                {this.props.children}
-            </View>
-        )
+        return status_bar;
     }
 }
 

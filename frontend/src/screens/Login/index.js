@@ -6,6 +6,7 @@ import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import Button from 'src/components/Button';
 import t from 'tcomb-form-native';
+import StatusBar from 'src/components/StatusBar';
 
 let Form = t.form.Form;
 
@@ -46,7 +47,7 @@ class LoginComponent extends Component{
         super(props);
         this.state = {
             status: {
-                msg: "",
+                message: "",
                 type: null
 
             }
@@ -59,37 +60,38 @@ class LoginComponent extends Component{
         let value = this.form.getValue();
         if(!value){
             // Validation failed
-            this.setState({ status: { msg: "Login or Password is incorrect", type: "error" }})
+            this.setState({ status: { message: "Login or Password is incorrect", type: "error" }})
             return;
         }
-        console.log('value:', value);
+
         // login
         let response = null;
         try{
             response = await login({ variables : value });
         }catch(err){
             let e = err.graphQLErrors[0];
-            this.setState({ status: { msg: e.message, type: "error" }})
+            this.setState({ status: { message: e.message, type: "error" }})
             return;
         }
 
-        console.log("Response", response);
         // get response data
         let { user, token } = response.data.login;
 
         // update redux
         this.props.onUserLogin(user, token);
+
         // update gui
         this.setState({ status: { message: "User Logged in!" }});
+
+        // Success! Navigate 
         this.props.navigation.navigate("Dashboard");
     }
 
     render(){
         return (
             <View>
-
-                <Text>{this.state.status.msg}</Text>
-
+                <StatusBar message={this.state.status.message} type={this.state.status.type} />
+            
                 {/* Render Form */}
                 <Form 
                     ref={(form) => this.form = form }

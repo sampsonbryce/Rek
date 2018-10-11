@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import t from 'tcomb-form-native';
@@ -59,11 +59,13 @@ export default class SignupForm extends Component{
             this.setState({ status: { msg: "Login or Password is incorrect", type: "error" }})
             return;
         }
-        console.log('value:', value);
+
         // signup
         let response = null;
         try{
             response = await signup({ variables : value });
+
+        // Error Handling
         }catch(err){
             console.log(JSON.stringify(err));
             // parse error
@@ -78,7 +80,6 @@ export default class SignupForm extends Component{
             return;
         }
 
-        console.log("Response", response);
         // get response data
         let { user, token } = response.data.signup;
 
@@ -86,12 +87,12 @@ export default class SignupForm extends Component{
         this.props.onUserSignup(user, token);
         // update gui
         this.setState({ status: { msg: "New user created!" }});
-        this.props.navigation.navigate("FindServices")
+        this.props.navigation.navigate("Dashboard")
     }
 
     render(){
         return (
-            <View>
+            <View style={styles.container}>
                 {/* Page Status */}
                 <Text>{this.state.status.msg}</Text>
                 
@@ -111,10 +112,19 @@ export default class SignupForm extends Component{
                     />)
                 }}
                 </Mutation>
-
-                <Text>User: { this.props.user ? this.props.user.name : ""}</Text>
-                <Text>Token: { this.props.token ? this.props.token : ""}</Text>
+                <Button
+                    onPress={() => {this.props.navigation.navigate('Login')}}
+                    title="Login"
+                />
             </View>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        justifyContent: 'center',
+        // alignItems: 'center',
+        padding: 20
+    }
+})

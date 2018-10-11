@@ -55,6 +55,7 @@ const AppNavigator = createSwitchNavigator(
   {
   headerMode: 'none',
   navigationOptions: {
+    header: null,
     headerVisible: false,
   }
  }
