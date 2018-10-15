@@ -1,12 +1,31 @@
 import { userLogin } from '../../actions';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { View, Text, TextInput, Button} from 'react-native';
+import { View, Text, TextInput } from 'react-native';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
+import Button from 'src/components/Button';
+import t from 'tcomb-form-native';
+import StatusBar from 'src/components/StatusBar';
+
+let Form = t.form.Form;
+
+let LoginType = t.struct({
+    email: t.String,
+    password: t.String,
+})
+
+let LoginOptions = {
+    fields: {
+        password: {
+            secureTextEntry: true
+        }
+    },
+    auto: 'placeholders'
+}
 
 const LOGIN_MUTATION = gql`
-    mutation SignupMutation($email: String!, $password: String!){
+    mutation LoginMutation($email: String!, $password: String!){
         login(email: $email, password: $password){
             token
             user{
@@ -20,69 +39,86 @@ const LOGIN_MUTATION = gql`
 
 class LoginComponent extends Component{
 
-  static navigationOptions = {
+    static navigationOptions = {
         header: null,
         title: 'Login',
     }
     constructor(props){
         super(props);
         this.state = {
-            email: '',
-            password: '',
-            error: '',
+            status: {
+                message: "",
+                type: null
+
+            }
         }
     }
 
-    validate(){
-        return true;
+    // Handle form submition
+    async _submit(login){
+        // get form data
+        let value = this.form.getValue();
+        if(!value){
+            // Validation failed
+            this.setState({ status: { message: "Login or Password is incorrect", type: "error" }})
+            return;
+        }
+
+        // login
+        let response = null;
+        try{
+            response = await login({ variables : value });
+        }catch(err){
+            let e = err.graphQLErrors[0];
+            this.setState({ status: { message: e.message, type: "error" }})
+            return;
+        }
+
+        // get response data
+        let { user, token } = response.data.login;
+
+        // update redux
+        this.props.onUserLogin(user, token);
+
+        // update gui
+        this.setState({ status: { message: "User Logged in!" }});
+
+        // Success! Navigate 
+        this.props.navigation.navigate("Dashboard");
     }
 
     render(){
-        const { email, password } = this.state;
         return (
             <View>
-                <Button
-                  title="Signup"
-                  onPress={()=> {
-                      this.props.navigation.navigate("Signup")
-                    }
-                  }
+                <StatusBar message={this.state.status.message} type={this.state.status.type} />
+            
+                {/* Render Form */}
+                <Form 
+                    ref={(form) => this.form = form }
+                    type={LoginType}
+                    options={LoginOptions}
                 />
-                {this.state.error ?
-                    (<Text>{this.state.error}</Text>)
-                : null}
-                <TextInput placeholder="Email"
-                    onChangeText={(text) => this.setState({email: text})}
-                />
-                <TextInput placeholder="Password"
-                    onChangeText={(text) => this.setState({password: text})}
-                 />
+
+                {/* Login submit mutation */}
                 <Mutation
                     mutation={LOGIN_MUTATION}
-                    variables={{ email, password }}
                     onCompleted={(data) => {
                         let { login: {user, token}} = data;
                         this.props.onUserLogin(user, token);
                     }}
                 >{(login, { loading, error }) => {
-                    let title = loading ? "Loading...": "Login";
                     return (<Button
-                        onPress={() => {
-                            if(!this.validate()) return;
-                            login();
-                            //this.props.navigation.navigate("FindServices")
-                        }}
-                        title={title}
+                        onPress={this._submit.bind(this, login)}
+                        title={loading ? "Loading..." : "Login"}
                     />)
                 }}
                 </Mutation>
 
-                <Text>User: { this.props.user ? this.props.user.name : ""}</Text>
-                <Text>Token: { this.props.token ? this.props.token : ""}</Text>
+                {/* Signup link */}
                 <Button
-                  title="For Testing. Skip to Find Services"
-                  onPress={() => {
-                      this.props.navigation.navigate("FindServices")
+                  title="Signup"
+                  onPress={()=> {
+                      this.props.navigation.navigate("Signup")
                     }
                   }
                 />
@@ -107,6 +143,7 @@ const mapDispatchToProps = dispatch => {
         }
     }
 }
+
 const Login = connect(
     mapStateToProps,
     mapDispatchToProps

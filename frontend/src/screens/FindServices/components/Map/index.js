@@ -30,7 +30,7 @@ export default class Map extends Component {
      * 
      */
     _getLocationAsync = async () => {
-        let { gpsAvailable, locationServicesEnabled }= await Expo.Location.getProviderStatusAsync();
+        let { gpsAvailable, locationServicesEnabled } = await Expo.Location.getProviderStatusAsync();
 
         if(!gpsAvailable){
             let err = "GPS Unavailable";

@@ -1,7 +1,27 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, Button} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
+import t from 'tcomb-form-native';
+import Button from 'src/components/Button';
+
+let Form = t.form.Form;
+
+let SignupType = t.struct({
+    name: t.String,
+    email: t.String,
+    password: t.String,
+    confirm_password: t.String,
+})
+
+let SignupOptions = {
+    fields: {
+        password: {
+            secureTextEntry: true
+        }
+    },
+    auto: 'placeholders'
+}
 
 const SIGNUP_MUTATION = gql`
     mutation SignupMutation($name: String!, $email: String!, $password: String!){
@@ -23,69 +43,88 @@ export default class SignupForm extends Component{
     constructor(props){
         super(props);
         this.state = {
-            name: '',
-            email: '',
-            password: '',
-            confirm_password: '',
-            error: '',
+            status: {
+                msg: "",
+                type: null
+
+            }
         }
     }
 
-    validate(){
-        if(this.state.password != this.state.confirm_password){
-            this.setState({error: "Password do not match!"});
-            return false;
+    async _submit(signup){
+        // get form data
+        let value = this.form.getValue();
+        if(!value){
+            // Validation failed
+            this.setState({ status: { msg: "Login or Password is incorrect", type: "error" }})
+            return;
         }
-        if(this.state.password.length < 6){
-            this.setState({error: "Password must be 6 or more characters!"});
-            return false;
+
+        // signup
+        let response = null;
+        try{
+            response = await signup({ variables : value });
+
+        // Error Handling
+        }catch(err){
+            console.log(JSON.stringify(err));
+            // parse error
+            let e = err.graphQLErrors[0];
+            let msg = null;
+            if(e.name == "UniqueFieldAlreadyExists"){
+                msg = e.data.message;
+            }else{
+                msg = e.message
+            }
+            this.setState({ status: { msg, type: "error" }})
+            return;
         }
-        return true;
+
+        // get response data
+        let { user, token } = response.data.signup;
+
+        // update redux
+        this.props.onUserSignup(user, token);
+        // update gui
+        this.setState({ status: { msg: "New user created!" }});
+        this.props.navigation.navigate("Dashboard")
     }
 
     render(){
-        const { name, email, password } = this.state;
         return (
-            <View>
-                <Text>Signup</Text>
-                {this.state.error ?
-                    (<Text>{this.state.error}</Text>)
-                : null}
-                <TextInput placeholder="Name"
-                    onChangeText={(text) => this.setState({name: text})}
+            <View style={styles.container}>
+                {/* Page Status */}
+                <Text>{this.state.status.msg}</Text>
+                
+                {/* Signup Form */}
+                <Form
+                    ref={(form) => this.form = form }
+                    type={SignupType}
+                    options={SignupOptions}
                 />
-                <TextInput placeholder="Email"
-                    onChangeText={(text) => this.setState({email: text})}
-                />
-                <TextInput placeholder="Password"
-                    onChangeText={(text) => this.setState({password: text})}
-                 />
-                <TextInput placeholder="Confirm Password"
-                    onChangeText={(text) => this.setState({confirm_password: text})}
-                />
-                <Mutation
-                    mutation={SIGNUP_MUTATION}
-                    variables={{ name, email, password }}
-                    onCompleted={(data) => {
-                        let { signup: {user, token}} = data;
-                        this.props.onUserSignup(user, token);
-                    }}
-                >{(signup, { loading, error }) => {
-                    let title = loading ? "Loading...": "Signup";
+
+                 {/* Submit form button/mutation */}
+                <Mutation mutation={SIGNUP_MUTATION}>
+                {(signup, { loading }) => {
                     return (<Button
-                        onPress={() => {
-                            if(!this.validate()) return;
-                            signup();
-                            if(this.props.user) this.props.navigation.navigate("Login");
-                        }}
-                        title={title}
+                        onPress={this._submit.bind(this, signup)}
+                        title={loading ? "Loading..." : "Signup"}
                     />)
                 }}
                 </Mutation>
-
-                <Text>User: { this.props.user ? this.props.user.name : ""}</Text>
-                <Text>Token: { this.props.token ? this.props.token : ""}</Text>
+                <Button
+                    onPress={() => {this.props.navigation.navigate('Login')}}
+                    title="Login"
+                />
             </View>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        justifyContent: 'center',
+        // alignItems: 'center',
+        padding: 20
+    }
+})
