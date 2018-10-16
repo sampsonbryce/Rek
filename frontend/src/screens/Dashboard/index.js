@@ -4,7 +4,7 @@ import Button from 'src/components/Button';
 import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation';
 
-function Dashboard(props) {
+const Dashboard = props => {
     const { navigation } = props;
     return (
         <View>
@@ -27,7 +27,7 @@ function Dashboard(props) {
             />
         </View>
     );
-}
+};
 
 Dashboard.propTypes = {
     navigation: PropTypes.instanceOf(Navigation).isRequired,

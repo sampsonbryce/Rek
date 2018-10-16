@@ -48,6 +48,7 @@ class LoginComponent extends Component {
     };
 
     static propTypes = {
+        onUserLogin: PropTypes.func.isRequired,
         navigation: PropTypes.instanceOf(Navigation).isRequired,
     };
 
@@ -143,6 +144,9 @@ const mapDispatchToProps = dispatch => ({
     },
 });
 
-const Login = connect(mapDispatchToProps)(LoginComponent);
+const Login = connect(
+    null,
+    mapDispatchToProps
+)(LoginComponent);
 
 export default Login;

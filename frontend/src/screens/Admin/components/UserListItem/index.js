@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation';
 import { BERRY_BLUE } from '../../../../constants';
 
-function UserListItem(props) {
+const UserListItem = props => {
     const item_styles = [styles.item];
 
     const { index, name, id, navigation } = props;
@@ -31,7 +31,7 @@ function UserListItem(props) {
             </View>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     darkblue: {

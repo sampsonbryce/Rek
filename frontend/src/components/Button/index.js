@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 /*
  * Customized button component to use instead of the builtin
  */
-function Button(props) {
+const Button = props => {
     const { activeOpacity, style, onPress, textStyle, title } = props;
     return (
         <TouchableHighlight
@@ -18,7 +18,7 @@ function Button(props) {
             <Text style={[textStyle, styles.text]}>{title}</Text>
         </TouchableHighlight>
     );
-}
+};
 
 const styles = StyleSheet.create({
     button: {

@@ -2,9 +2,13 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
-function StatusBar(props) {
+/*
+ * Status bar for rendering ui messages to the user
+ */
+const StatusBar = props => {
     const { message, type } = props;
 
+    // render a status if one exists
     if (message) {
         return (
             <View style={[styles[type], styles.bar]}>
@@ -12,8 +16,10 @@ function StatusBar(props) {
             </View>
         );
     }
+
+    // otherwise render an empty view
     return <View />;
-}
+};
 
 const styles = StyleSheet.create({
     text: {
@@ -36,7 +42,7 @@ StatusBar.propTypes = {
 };
 
 StatusBar.defaultProps = {
-    message: null,
+    message: '',
     type: null,
 };
 

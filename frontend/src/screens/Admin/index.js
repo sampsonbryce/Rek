@@ -30,7 +30,7 @@ export default class Admin extends Component {
         navigation: PropTypes.instanceOf(Navigation).isRequired,
     };
 
-    _renderListItem({ item, index }) {
+    renderListItem(item, index) {
         const { navigation } = this.props;
         return (
             <UserListItem
@@ -57,7 +57,7 @@ export default class Admin extends Component {
                         return (
                             <FlatList
                                 data={data.users}
-                                renderItem={this.renderListItem}
+                                renderItem={({ item, index }) => this.renderListItem(item, index)}
                                 keyExtractor={item => item.id}
                             />
                         );

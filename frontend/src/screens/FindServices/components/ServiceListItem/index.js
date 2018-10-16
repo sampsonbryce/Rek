@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 /*
  * Individual employee that can provide a service
  */
-function ServiceListItem(props) {
+const ServiceListItem = props => {
     const { name, title, services } = props;
     return (
         <View style={styles.item}>
@@ -20,7 +20,7 @@ function ServiceListItem(props) {
             <Button title="View" />
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     item: {
