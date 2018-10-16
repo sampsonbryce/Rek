@@ -4,120 +4,141 @@ import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import t from 'tcomb-form-native';
 import Button from 'src/components/Button';
+import { PropTypes } from 'prop-types';
+import { Navigation } from 'react-native-navigation';
 
-let Form = t.form.Form;
+// create form structure
+const { Form } = t.form;
 
-let SignupType = t.struct({
+const SignupType = t.struct({
     name: t.String,
     email: t.String,
     password: t.String,
     confirm_password: t.String,
-})
+});
 
-let SignupOptions = {
+const SignupOptions = {
     fields: {
         password: {
-            secureTextEntry: true
-        }
+            secureTextEntry: true,
+        },
     },
-    auto: 'placeholders'
-}
+    auto: 'placeholders',
+};
 
+// create signup mutation
 const SIGNUP_MUTATION = gql`
-    mutation SignupMutation($name: String!, $email: String!, $password: String!){
-        signup(name: $name, email: $email, password: $password){
+    mutation SignupMutation($name: String!, $email: String!, $password: String!) {
+        signup(name: $name, email: $email, password: $password) {
             token
-            user{
+            user {
                 id
                 name
                 email
             }
         }
     }
-`
+`;
 
-export default class SignupForm extends Component{
-  static navigationOptions = {
-        header: null
-    }
-    constructor(props){
+export default class SignupForm extends Component {
+    static navigationOptions = {
+        header: null,
+    };
+
+    static propTypes = {
+        navigation: PropTypes.instanceOf(Navigation).isRequired,
+    };
+
+    constructor(props) {
         super(props);
+        // create form ref
+        this.form = React.createRef();
+
+        // init state
         this.state = {
             status: {
-                msg: "",
-                type: null
-
-            }
-        }
+                msg: '',
+                type: null,
+            },
+        };
     }
 
-    async _submit(signup){
+    async submit(signup) {
+        const { onUserSignup, navigation } = this.props;
         // get form data
-        let value = this.form.getValue();
-        if(!value){
+        const value = this.form.current.getValue();
+        if (!value) {
             // Validation failed
-            this.setState({ status: { msg: "Login or Password is incorrect", type: "error" }})
+            this.setState({ status: { msg: 'Login or Password is incorrect', type: 'error' } });
             return;
         }
 
         // signup
         let response = null;
-        try{
-            response = await signup({ variables : value });
+        try {
+            response = await signup({ variables: value });
 
-        // Error Handling
-        }catch(err){
-            console.log(JSON.stringify(err));
+            // Error Handling
+        } catch (err) {
             // parse error
-            let e = err.graphQLErrors[0];
+            const e = err.graphQLErrors[0];
+
+            // get message
             let msg = null;
-            if(e.name == "UniqueFieldAlreadyExists"){
+            if (e.name === 'UniqueFieldAlreadyExists') {
                 msg = e.data.message;
-            }else{
-                msg = e.message
+            } else {
+                msg = e.message;
             }
-            this.setState({ status: { msg, type: "error" }})
+
+            this.setState({ status: { msg, type: 'error' } });
             return;
         }
 
         // get response data
-        let { user, token } = response.data.signup;
+        const { user, token } = response.data.signup;
 
         // update redux
-        this.props.onUserSignup(user, token);
+        onUserSignup(user, token);
+
         // update gui
-        this.setState({ status: { msg: "New user created!" }});
-        this.props.navigation.navigate("Dashboard")
+        this.setState({ status: { msg: 'New user created!' } });
+
+        // navigate on success
+        navigation.navigate('Dashboard');
     }
 
-    render(){
+    render() {
+        const { status } = this.state;
+        const { navigation } = this.props;
+
         return (
             <View style={styles.container}>
                 {/* Page Status */}
-                <Text>{this.state.status.msg}</Text>
-                
-                {/* Signup Form */}
-                <Form
-                    ref={(form) => this.form = form }
-                    type={SignupType}
-                    options={SignupOptions}
-                />
+                <Text>{status.msg}</Text>
 
-                 {/* Submit form button/mutation */}
+                {/* Signup Form */}
+                <Form ref={this.form} type={SignupType} options={SignupOptions} />
+
+                {/* Submit form button/mutation */}
                 <Mutation mutation={SIGNUP_MUTATION}>
-                {(signup, { loading }) => {
-                    return (<Button
-                        onPress={this._submit.bind(this, signup)}
-                        title={loading ? "Loading..." : "Signup"}
-                    />)
-                }}
+                    {(signup, { loading }) => (
+                        <Button
+                            onPress={() => this.submit(signup)}
+                            title={loading ? 'Loading...' : 'Signup'}
+                        />
+                    )}
                 </Mutation>
+
+                {/* Go to login */}
                 <Button
-                    onPress={() => {this.props.navigation.navigate('Login')}}
+                    onPress={() => {
+                        navigation.navigate('Login');
+                    }}
                     title="Login"
                 />
             </View>
-        )
+        );
     }
 }
 
@@ -125,6 +146,6 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         // alignItems: 'center',
-        padding: 20
-    }
-})
+        padding: 20,
+    },
+});

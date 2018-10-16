@@ -12,6 +12,7 @@
     "apollo-boost": "^0.1.16",
     "expo": "^30.0.1",
     "graphql": "^14.0.2",
+    "lodash": "^4.17.11",
     "react": "16.3.1",
     "react-apollo": "^2.1.11",
     "react-native": "https://github.com/expo/react-native/archive/sdk-30.0.0.tar.gz",
@@ -22,5 +23,18 @@
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
     "tcomb-form-native": "^0.6.19"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.7.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^3.1.0",
+    "eslint-import-resolver-reactnative": "^1.0.2",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react-native": "^3.4.0",
+    "prettier": "^1.14.3"
   }
 }

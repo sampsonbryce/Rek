@@ -1,72 +1,68 @@
-import React, { Component } from 'react';
-import Signup from 'src/screens/Signup'
-import Login from 'src/screens/Login'
+import React from 'react';
+import Signup from 'src/screens/Signup';
+import Login from 'src/screens/Login';
 import FindServices from 'src/screens/FindServices';
 import Dashboard from 'src/screens/Dashboard';
 import adminNav from 'src/screens/Admin/nav';
 
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 
-
 const dashboardNav = createStackNavigator(
-  {
-    FindServices,
-    Dashboard,
-    Admin: adminNav,
-    //Additional routes go here
-  },
-  {
-    initialRouteName: 'Dashboard',
-  },
-  {
-    headerMode: 'none',
-    navigationOptions: {
-      headerVisible: false,
+    {
+        FindServices,
+        Dashboard,
+        Admin: adminNav,
+        // Additional routes go here
+    },
+    {
+        initialRouteName: 'Dashboard',
+    },
+    {
+        headerMode: 'none',
+        navigationOptions: {
+            headerVisible: false,
+        },
     }
-  },
 );
 
 const loginNav = createStackNavigator(
-  {
-    Login: Login,
-    Signup: Signup,
-    //Additional routes go here
-  },
-  {
-    initialRouteName: 'Login',
-  },
-  {
-    headerMode: 'none',
-    navigationOptions: {
-      headerVisible: false,
+    {
+        Login,
+        Signup,
+        // Additional routes go here
+    },
+    {
+        initialRouteName: 'Login',
+    },
+    {
+        headerMode: 'none',
+        navigationOptions: {
+            headerVisible: false,
+        },
     }
-  },
 );
 
 const AppNavigator = createSwitchNavigator(
-  {
-    Auth: loginNav,
-    Dashboard: dashboardNav,
-  },
-  {
-    initialRouteName: 'Auth',
-    // initialRouteName: 'Dashboard',
-  },
-  {
-  headerMode: 'none',
-  navigationOptions: {
-    header: null,
-    headerVisible: false,
-  }
- }
+    {
+        Auth: loginNav,
+        Dashboard: dashboardNav,
+    },
+    {
+        initialRouteName: 'Auth',
+        // initialRouteName: 'Dashboard',
+    },
+    {
+        headerMode: 'none',
+        navigationOptions: {
+            header: null,
+            headerVisible: false,
+        },
+    }
 );
 
-
-
-export default class Main extends Component{
-    render(){
-        return (
-          <AppNavigator></AppNavigator>
-        )
-    }
+// Navigator component
+function Main() {
+    return <AppNavigator />;
 }
+
+export default Main;
