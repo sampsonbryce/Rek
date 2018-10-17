@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, Image } from 'react-native';
 import Button from 'src/components/Button';
 
 /*
@@ -9,6 +9,7 @@ export default class ServiceListItem extends Component {
     render(){
         return (
             <View style={styles.item}>
+                <Image source={this.props.image} style={styles.image}/>
                 <Text style={styles.text}>{this.props.name}</Text>
                 <Text style={styles.text}>{this.props.title}</Text>
 
@@ -36,4 +37,12 @@ const styles = StyleSheet.create({
     text:{
         textAlign: 'center',
     },
+    image:{
+        borderRadius: 10,
+        margin: 10,
+        position: 'relative',
+        left: 40,
+        height: 50,
+        width: 50
+    }
 })
