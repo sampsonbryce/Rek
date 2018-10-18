@@ -1,35 +1,36 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, Text } from 'react-native';
 import Button from 'src/components/Button';
+import PropTypes from 'prop-types';
+import { Navigation } from 'react-native-navigation';
 
+const Dashboard = props => {
+    const { navigation } = props;
+    return (
+        <View>
+            <Text>No appointments</Text>
 
-export default class Dashboard extends Component{
-    constructor(props){
-        super(props);
-    }
+            {/* Button to Schedule Appointments */}
+            <Button
+                onPress={() => {
+                    navigation.navigate('FindServices');
+                }}
+                title="Schedule Appointment"
+            />
 
-    render(){
-        return (
-            <View>
-                <Text>No appointments</Text>
+            {/* Button to Admin */}
+            <Button
+                onPress={() => {
+                    navigation.navigate('Admin');
+                }}
+                title="Admin"
+            />
+        </View>
+    );
+};
 
-                {/* Button to Schedule Appointments */}
-                <Button 
-                    onPress={() => {
-                        this.props.navigation.navigate('FindServices');
-                    }}
-                    title="Schedule Appointment"
-                />
+Dashboard.propTypes = {
+    navigation: PropTypes.instanceOf(Navigation).isRequired,
+};
 
-
-                {/* Button to Admin*/}
-                <Button 
-                    onPress={() => {
-                        this.props.navigation.navigate('Admin');
-                    }}
-                    title="Admin"
-                />
-            </View>
-        )
-    }
-}
+export default Dashboard;

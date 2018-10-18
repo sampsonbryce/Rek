@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
-import gql from 'graphql-tag';
-import ServiceListItem from "../ServiceListItem";
-
+import PropTypes from 'prop-types';
+import { Navigation } from 'react-native-navigation/lib/dist/Navigation';
+import ServiceListItem from '../ServiceListItem';
 
 /*
  * FlatList of people available to provide a searched service
@@ -10,49 +10,64 @@ import ServiceListItem from "../ServiceListItem";
  * Uses dummy data
  */
 export default class ServiceList extends Component {
-    constructor(props){
+    static propTypes = {
+        navigation: PropTypes.instanceOf(Navigation).isRequired,
+    };
+
+    constructor(props) {
         super(props);
         this.state = {
-            data:[
-                { name: "Bob", title:"Barber", services: ["Cutting", "Grooming", "Styling", "Shaving"]},
-                { name: "Dave", title: "Pedicurist", services: ["Pedicure"]},
-                { name: "Brian", title: "Masseur", services: ["Head", "Back", "Full body"]},
-                { name: "Janice", title:"Manicurist", services: ["Manicure"]},
-            ]
-        }
+            data: [
+                {
+                    name: 'Bob',
+                    title: 'Barber',
+                    services: ['Cutting', 'Grooming', 'Styling', 'Shaving'],
+                },
+                { name: 'Dave', title: 'Pedicurist', services: ['Pedicure'] },
+                { name: 'Brian', title: 'Masseur', services: ['Head', 'Back', 'Full body'] },
+                { name: 'Janice', title: 'Manicurist', services: ['Manicure'] },
+            ],
+        };
     }
 
-    render(){
+    render() {
+        const { data } = this.state;
+        const { navigation } = this.props;
+
         return (
             <View style={styles.list}>
                 <FlatList
-                    horizontal={true}
+                    horizontal
                     showsHorizontalScrollIndicator={false}
-                    data={this.state.data}
-                    renderItem={({item}) =>
-                        <ServiceListItem name={item.name} title={item.title} services={item.services} navigation={this.props.navigation}/>
-                    }
-                >
-               </FlatList>
+                    data={data}
+                    renderItem={({ item }) => (
+                        <ServiceListItem
+                            name={item.name}
+                            title={item.title}
+                            services={item.services}
+                            navigation={navigation}
+                        />
+                    )}
+                />
             </View>
-        )
+        );
     }
 }
 
 const styles = StyleSheet.create({
-    list:{
-        flex:1,
+    list: {
+        flex: 1,
     },
-    item:{
-        flex:1,
-        width:300,
-        backgroundColor:'red',
+    item: {
+        flex: 1,
+        width: 300,
+        backgroundColor: 'red',
         shadowColor: 'black',
         shadowOffset: {
-            width:3,
-            height:3
+            width: 3,
+            height: 3,
         },
         shadowRadius: 5,
         shadowOpacity: 1.0,
-    }
-})
+    },
+});
