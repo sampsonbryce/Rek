@@ -18,7 +18,8 @@ jobs:
 
     steps:
       - checkout
-      - run: cd TheRek/frontend
+      - run: ls -la 
+      - run: cd ~/TheRek/frontend
 
       # Download and cache dependencies
       - restore_cache:
