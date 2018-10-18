@@ -1,5 +1,13 @@
 module.exports = {
-        typeDefs: /* GraphQL */ `type AggregateRole {
+        typeDefs: /* GraphQL */ `type AggregateEmployeeToService {
+  count: Int!
+}
+
+type AggregateRole {
+  count: Int!
+}
+
+type AggregateService {
   count: Int!
 }
 
@@ -11,12 +19,81 @@ type BatchPayload {
   count: Long!
 }
 
+type EmployeeToService {
+  employee: User!
+  service: Service!
+}
+
+type EmployeeToServiceConnection {
+  pageInfo: PageInfo!
+  edges: [EmployeeToServiceEdge]!
+  aggregate: AggregateEmployeeToService!
+}
+
+input EmployeeToServiceCreateInput {
+  employee: UserCreateOneInput!
+  service: ServiceCreateOneInput!
+}
+
+type EmployeeToServiceEdge {
+  node: EmployeeToService!
+  cursor: String!
+}
+
+enum EmployeeToServiceOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type EmployeeToServiceSubscriptionPayload {
+  mutation: MutationType!
+  node: EmployeeToService
+  updatedFields: [String!]
+}
+
+input EmployeeToServiceSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: EmployeeToServiceWhereInput
+  AND: [EmployeeToServiceSubscriptionWhereInput!]
+  OR: [EmployeeToServiceSubscriptionWhereInput!]
+  NOT: [EmployeeToServiceSubscriptionWhereInput!]
+}
+
+input EmployeeToServiceUpdateInput {
+  employee: UserUpdateOneRequiredInput
+  service: ServiceUpdateOneRequiredInput
+}
+
+input EmployeeToServiceWhereInput {
+  employee: UserWhereInput
+  service: ServiceWhereInput
+  AND: [EmployeeToServiceWhereInput!]
+  OR: [EmployeeToServiceWhereInput!]
+  NOT: [EmployeeToServiceWhereInput!]
+}
+
 scalar Long
 
 type Mutation {
+  createEmployeeToService(data: EmployeeToServiceCreateInput!): EmployeeToService!
+  updateManyEmployeeToServices(data: EmployeeToServiceUpdateInput!, where: EmployeeToServiceWhereInput): BatchPayload!
+  deleteManyEmployeeToServices(where: EmployeeToServiceWhereInput): BatchPayload!
   createRole(data: RoleCreateInput!): Role!
   updateManyRoles(data: RoleUpdateInput!, where: RoleWhereInput): BatchPayload!
   deleteManyRoles(where: RoleWhereInput): BatchPayload!
+  createService(data: ServiceCreateInput!): Service!
+  updateService(data: ServiceUpdateInput!, where: ServiceWhereUniqueInput!): Service
+  updateManyServices(data: ServiceUpdateInput!, where: ServiceWhereInput): BatchPayload!
+  upsertService(where: ServiceWhereUniqueInput!, create: ServiceCreateInput!, update: ServiceUpdateInput!): Service!
+  deleteService(where: ServiceWhereUniqueInput!): Service
+  deleteManyServices(where: ServiceWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
@@ -43,8 +120,13 @@ type PageInfo {
 }
 
 type Query {
+  employeeToServices(where: EmployeeToServiceWhereInput, orderBy: EmployeeToServiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmployeeToService]!
+  employeeToServicesConnection(where: EmployeeToServiceWhereInput, orderBy: EmployeeToServiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeToServiceConnection!
   roles(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Role]!
   rolesConnection(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RoleConnection!
+  service(where: ServiceWhereUniqueInput!): Service
+  services(where: ServiceWhereInput, orderBy: ServiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Service]!
+  servicesConnection(where: ServiceWhereInput, orderBy: ServiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ServiceConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
@@ -162,8 +244,128 @@ input RoleWhereInput {
   NOT: [RoleWhereInput!]
 }
 
+type Service {
+  id: ID!
+  name: String!
+}
+
+type ServiceConnection {
+  pageInfo: PageInfo!
+  edges: [ServiceEdge]!
+  aggregate: AggregateService!
+}
+
+input ServiceCreateInput {
+  name: String!
+}
+
+input ServiceCreateOneInput {
+  create: ServiceCreateInput
+  connect: ServiceWhereUniqueInput
+}
+
+type ServiceEdge {
+  node: Service!
+  cursor: String!
+}
+
+enum ServiceOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ServicePreviousValues {
+  id: ID!
+  name: String!
+}
+
+type ServiceSubscriptionPayload {
+  mutation: MutationType!
+  node: Service
+  updatedFields: [String!]
+  previousValues: ServicePreviousValues
+}
+
+input ServiceSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ServiceWhereInput
+  AND: [ServiceSubscriptionWhereInput!]
+  OR: [ServiceSubscriptionWhereInput!]
+  NOT: [ServiceSubscriptionWhereInput!]
+}
+
+input ServiceUpdateDataInput {
+  name: String
+}
+
+input ServiceUpdateInput {
+  name: String
+}
+
+input ServiceUpdateOneRequiredInput {
+  create: ServiceCreateInput
+  update: ServiceUpdateDataInput
+  upsert: ServiceUpsertNestedInput
+  connect: ServiceWhereUniqueInput
+}
+
+input ServiceUpsertNestedInput {
+  update: ServiceUpdateDataInput!
+  create: ServiceCreateInput!
+}
+
+input ServiceWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  AND: [ServiceWhereInput!]
+  OR: [ServiceWhereInput!]
+  NOT: [ServiceWhereInput!]
+}
+
+input ServiceWhereUniqueInput {
+  id: ID
+  name: String
+}
+
 type Subscription {
+  employeeToService(where: EmployeeToServiceSubscriptionWhereInput): EmployeeToServiceSubscriptionPayload
   role(where: RoleSubscriptionWhereInput): RoleSubscriptionPayload
+  service(where: ServiceSubscriptionWhereInput): ServiceSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
@@ -186,6 +388,11 @@ input UserCreateInput {
   email: String!
   password: String!
   roles: RoleCreateOneWithoutOwnerInput!
+}
+
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutRolesInput {
@@ -244,11 +451,25 @@ input UserSubscriptionWhereInput {
   NOT: [UserSubscriptionWhereInput!]
 }
 
+input UserUpdateDataInput {
+  name: String
+  email: String
+  password: String
+  roles: RoleUpdateOneRequiredWithoutOwnerInput
+}
+
 input UserUpdateInput {
   name: String
   email: String
   password: String
   roles: RoleUpdateOneRequiredWithoutOwnerInput
+}
+
+input UserUpdateOneRequiredInput {
+  create: UserCreateInput
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+  connect: UserWhereUniqueInput
 }
 
 input UserUpdateOneRequiredWithoutRolesInput {
@@ -262,6 +483,11 @@ input UserUpdateWithoutRolesDataInput {
   name: String
   email: String
   password: String
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
 }
 
 input UserUpsertWithoutRolesInput {

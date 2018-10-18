@@ -1,21 +1,14 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text, FlatList } from 'react-native';
-import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
+import { View, StyleSheet, Text, FlatList, TouchableHighlight } from 'react-native';
 import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation';
-import UserListItem from './components/UserListItem';
 import { BERRY_LIGHT_BLUE, BERRY_MAROON } from '../../constants';
 
-// define graphql queries
-const GET_USERS = gql`
-    {
-        users {
-            id
-            name
-        }
-    }
-`;
+const renderListItem = item => (
+    <TouchableHighlight key={item.title} onPress={item.onPress}>
+        <Text>item.title</Text>
+    </TouchableHighlight>
+);
 
 /*
  * Admin service for store admins
@@ -30,39 +23,34 @@ export default class Admin extends Component {
         navigation: PropTypes.instanceOf(Navigation).isRequired,
     };
 
-    renderListItem(item, index) {
+    getListItems() {
         const { navigation } = this.props;
-        return (
-            <UserListItem
-                name={item.name}
-                id={item.id}
-                key={item.id}
-                index={index}
-                navigation={navigation}
-            />
-        );
+        // list items
+        const items = [
+            {
+                title: 'Users',
+                onPress: () => {
+                    navigation.navigate('UsersList');
+                },
+            },
+            {
+                title: 'Services',
+                onPress: () => {
+                    navigation.navigate('UsersList');
+                },
+            },
+        ];
+
+        return items;
     }
 
     render() {
         return (
             <View style={styles.admin}>
-                <View style={styles.titleContainer}>
-                    <Text style={styles.title}>Admin</Text>
-                </View>
-                <Query query={GET_USERS}>
-                    {({ loading, error, data }) => {
-                        if (loading) return <Text>Loading...</Text>;
-                        if (error) return <Text>`Error! ${error.message}`</Text>;
-
-                        return (
-                            <FlatList
-                                data={data.users}
-                                renderItem={({ item, index }) => this.renderListItem(item, index)}
-                                keyExtractor={item => item.id}
-                            />
-                        );
-                    }}
-                </Query>
+                <FlatList
+                    data={this.getListItems()}
+                    renderItem={({ item }) => renderListItem(item)}
+                />
             </View>
         );
     }

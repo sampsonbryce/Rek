@@ -11,7 +11,9 @@ type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
   U[keyof U];
 
 export interface Exists {
+  employeeToService: (where?: EmployeeToServiceWhereInput) => Promise<boolean>;
   role: (where?: RoleWhereInput) => Promise<boolean>;
+  service: (where?: ServiceWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
 }
 
@@ -33,6 +35,28 @@ export interface Prisma {
    * Queries
    */
 
+  employeeToServices: (
+    args?: {
+      where?: EmployeeToServiceWhereInput;
+      orderBy?: EmployeeToServiceOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => Promise<Array<EmployeeToServiceNode>>;
+  employeeToServicesConnection: (
+    args?: {
+      where?: EmployeeToServiceWhereInput;
+      orderBy?: EmployeeToServiceOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => EmployeeToServiceConnection;
   roles: (
     args?: {
       where?: RoleWhereInput;
@@ -55,6 +79,29 @@ export interface Prisma {
       last?: Int;
     }
   ) => RoleConnection;
+  service: (where: ServiceWhereUniqueInput) => Service;
+  services: (
+    args?: {
+      where?: ServiceWhereInput;
+      orderBy?: ServiceOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => Promise<Array<ServiceNode>>;
+  servicesConnection: (
+    args?: {
+      where?: ServiceWhereInput;
+      orderBy?: ServiceOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => ServiceConnection;
   user: (where: UserWhereUniqueInput) => User;
   users: (
     args?: {
@@ -84,11 +131,39 @@ export interface Prisma {
    * Mutations
    */
 
+  createEmployeeToService: (
+    data: EmployeeToServiceCreateInput
+  ) => EmployeeToService;
+  updateManyEmployeeToServices: (
+    args: {
+      data: EmployeeToServiceUpdateInput;
+      where?: EmployeeToServiceWhereInput;
+    }
+  ) => BatchPayload;
+  deleteManyEmployeeToServices: (
+    where?: EmployeeToServiceWhereInput
+  ) => BatchPayload;
   createRole: (data: RoleCreateInput) => Role;
   updateManyRoles: (
     args: { data: RoleUpdateInput; where?: RoleWhereInput }
   ) => BatchPayload;
   deleteManyRoles: (where?: RoleWhereInput) => BatchPayload;
+  createService: (data: ServiceCreateInput) => Service;
+  updateService: (
+    args: { data: ServiceUpdateInput; where: ServiceWhereUniqueInput }
+  ) => Service;
+  updateManyServices: (
+    args: { data: ServiceUpdateInput; where?: ServiceWhereInput }
+  ) => BatchPayload;
+  upsertService: (
+    args: {
+      where: ServiceWhereUniqueInput;
+      create: ServiceCreateInput;
+      update: ServiceUpdateInput;
+    }
+  ) => Service;
+  deleteService: (where: ServiceWhereUniqueInput) => Service;
+  deleteManyServices: (where?: ServiceWhereInput) => BatchPayload;
   createUser: (data: UserCreateInput) => User;
   updateUser: (
     args: { data: UserUpdateInput; where: UserWhereUniqueInput }
@@ -114,9 +189,15 @@ export interface Prisma {
 }
 
 export interface Subscription {
+  employeeToService: (
+    where?: EmployeeToServiceSubscriptionWhereInput
+  ) => EmployeeToServiceSubscriptionPayloadSubscription;
   role: (
     where?: RoleSubscriptionWhereInput
   ) => RoleSubscriptionPayloadSubscription;
+  service: (
+    where?: ServiceSubscriptionWhereInput
+  ) => ServiceSubscriptionPayloadSubscription;
   user: (
     where?: UserSubscriptionWhereInput
   ) => UserSubscriptionPayloadSubscription;
@@ -130,6 +211,14 @@ export interface ClientConstructor<T> {
  * Types
  */
 
+export type EmployeeToServiceOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
 export type RoleOrderByInput =
   | "admin_ASC"
   | "admin_DESC"
@@ -139,6 +228,16 @@ export type RoleOrderByInput =
   | "user_DESC"
   | "id_ASC"
   | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type ServiceOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -160,10 +259,146 @@ export type UserOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export interface UserCreateWithoutRolesInput {
-  name: String;
-  email: String;
-  password: String;
+export interface RoleCreateWithoutOwnerInput {
+  admin?: Boolean;
+  employee?: Boolean;
+  user?: Boolean;
+}
+
+export interface EmployeeToServiceWhereInput {
+  employee?: UserWhereInput;
+  service?: ServiceWhereInput;
+  AND?: EmployeeToServiceWhereInput[] | EmployeeToServiceWhereInput;
+  OR?: EmployeeToServiceWhereInput[] | EmployeeToServiceWhereInput;
+  NOT?: EmployeeToServiceWhereInput[] | EmployeeToServiceWhereInput;
+}
+
+export interface EmployeeToServiceUpdateInput {
+  employee?: UserUpdateOneRequiredInput;
+  service?: ServiceUpdateOneRequiredInput;
+}
+
+export interface ServiceWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  AND?: ServiceWhereInput[] | ServiceWhereInput;
+  OR?: ServiceWhereInput[] | ServiceWhereInput;
+  NOT?: ServiceWhereInput[] | ServiceWhereInput;
+}
+
+export type UserWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  email?: String;
+}>;
+
+export interface RoleUpdateOneRequiredWithoutOwnerInput {
+  create?: RoleCreateWithoutOwnerInput;
+  update?: RoleUpdateWithoutOwnerDataInput;
+  upsert?: RoleUpsertWithoutOwnerInput;
+}
+
+export interface ServiceUpsertNestedInput {
+  update: ServiceUpdateDataInput;
+  create: ServiceCreateInput;
+}
+
+export interface UserUpdateOneRequiredInput {
+  create?: UserCreateInput;
+  update?: UserUpdateDataInput;
+  upsert?: UserUpsertNestedInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface ServiceUpdateDataInput {
+  name?: String;
+}
+
+export interface ServiceSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ServiceWhereInput;
+  AND?: ServiceSubscriptionWhereInput[] | ServiceSubscriptionWhereInput;
+  OR?: ServiceSubscriptionWhereInput[] | ServiceSubscriptionWhereInput;
+  NOT?: ServiceSubscriptionWhereInput[] | ServiceSubscriptionWhereInput;
+}
+
+export interface ServiceUpdateOneRequiredInput {
+  create?: ServiceCreateInput;
+  update?: ServiceUpdateDataInput;
+  upsert?: ServiceUpsertNestedInput;
+  connect?: ServiceWhereUniqueInput;
+}
+
+export interface EmployeeToServiceSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: EmployeeToServiceWhereInput;
+  AND?:
+    | EmployeeToServiceSubscriptionWhereInput[]
+    | EmployeeToServiceSubscriptionWhereInput;
+  OR?:
+    | EmployeeToServiceSubscriptionWhereInput[]
+    | EmployeeToServiceSubscriptionWhereInput;
+  NOT?:
+    | EmployeeToServiceSubscriptionWhereInput[]
+    | EmployeeToServiceSubscriptionWhereInput;
+}
+
+export interface UserUpsertNestedInput {
+  update: UserUpdateDataInput;
+  create: UserCreateInput;
+}
+
+export interface ServiceUpdateInput {
+  name?: String;
+}
+
+export interface UserUpdateWithoutRolesDataInput {
+  name?: String;
+  email?: String;
+  password?: String;
+}
+
+export interface RoleUpdateInput {
+  owner?: UserUpdateOneRequiredWithoutRolesInput;
+  admin?: Boolean;
+  employee?: Boolean;
+  user?: Boolean;
+}
+
+export interface EmployeeToServiceCreateInput {
+  employee: UserCreateOneInput;
+  service: ServiceCreateOneInput;
 }
 
 export interface RoleWhereInput {
@@ -179,14 +414,14 @@ export interface RoleWhereInput {
   NOT?: RoleWhereInput[] | RoleWhereInput;
 }
 
-export interface RoleCreateOneWithoutOwnerInput {
-  create?: RoleCreateWithoutOwnerInput;
+export interface UserCreateOneInput {
+  create?: UserCreateInput;
+  connect?: UserWhereUniqueInput;
 }
 
-export interface UserUpdateWithoutRolesDataInput {
-  name?: String;
-  email?: String;
-  password?: String;
+export interface UserCreateOneWithoutRolesInput {
+  create?: UserCreateWithoutRolesInput;
+  connect?: UserWhereUniqueInput;
 }
 
 export interface UserCreateInput {
@@ -196,33 +431,19 @@ export interface UserCreateInput {
   roles: RoleCreateOneWithoutOwnerInput;
 }
 
-export interface UserUpdateOneRequiredWithoutRolesInput {
-  create?: UserCreateWithoutRolesInput;
-  update?: UserUpdateWithoutRolesDataInput;
-  upsert?: UserUpsertWithoutRolesInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface UserUpsertWithoutRolesInput {
-  update: UserUpdateWithoutRolesDataInput;
-  create: UserCreateWithoutRolesInput;
-}
-
-export interface RoleSubscriptionWhereInput {
+export interface UserSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: RoleWhereInput;
-  AND?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
-  OR?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
-  NOT?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
+  node?: UserWhereInput;
+  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
 }
 
-export interface RoleUpdateWithoutOwnerDataInput {
-  admin?: Boolean;
-  employee?: Boolean;
-  user?: Boolean;
+export interface RoleCreateOneWithoutOwnerInput {
+  create?: RoleCreateWithoutOwnerInput;
 }
 
 export interface UserUpdateInput {
@@ -230,13 +451,6 @@ export interface UserUpdateInput {
   email?: String;
   password?: String;
   roles?: RoleUpdateOneRequiredWithoutOwnerInput;
-}
-
-export interface RoleUpdateInput {
-  owner?: UserUpdateOneRequiredWithoutRolesInput;
-  admin?: Boolean;
-  employee?: Boolean;
-  user?: Boolean;
 }
 
 export interface UserWhereInput {
@@ -302,9 +516,44 @@ export interface UserWhereInput {
   NOT?: UserWhereInput[] | UserWhereInput;
 }
 
-export interface UserCreateOneWithoutRolesInput {
+export interface UserUpdateOneRequiredWithoutRolesInput {
   create?: UserCreateWithoutRolesInput;
+  update?: UserUpdateWithoutRolesDataInput;
+  upsert?: UserUpsertWithoutRolesInput;
   connect?: UserWhereUniqueInput;
+}
+
+export interface ServiceCreateOneInput {
+  create?: ServiceCreateInput;
+  connect?: ServiceWhereUniqueInput;
+}
+
+export interface UserCreateWithoutRolesInput {
+  name: String;
+  email: String;
+  password: String;
+}
+
+export interface UserUpdateDataInput {
+  name?: String;
+  email?: String;
+  password?: String;
+  roles?: RoleUpdateOneRequiredWithoutOwnerInput;
+}
+
+export interface RoleUpdateWithoutOwnerDataInput {
+  admin?: Boolean;
+  employee?: Boolean;
+  user?: Boolean;
+}
+
+export interface RoleUpsertWithoutOwnerInput {
+  update: RoleUpdateWithoutOwnerDataInput;
+  create: RoleCreateWithoutOwnerInput;
+}
+
+export interface ServiceCreateInput {
+  name: String;
 }
 
 export interface RoleCreateInput {
@@ -314,37 +563,25 @@ export interface RoleCreateInput {
   user?: Boolean;
 }
 
-export type UserWhereUniqueInput = AtLeastOne<{
+export type ServiceWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
-  email?: String;
+  name?: String;
 }>;
 
-export interface RoleUpdateOneRequiredWithoutOwnerInput {
-  create?: RoleCreateWithoutOwnerInput;
-  update?: RoleUpdateWithoutOwnerDataInput;
-  upsert?: RoleUpsertWithoutOwnerInput;
+export interface UserUpsertWithoutRolesInput {
+  update: UserUpdateWithoutRolesDataInput;
+  create: UserCreateWithoutRolesInput;
 }
 
-export interface RoleUpsertWithoutOwnerInput {
-  update: RoleUpdateWithoutOwnerDataInput;
-  create: RoleCreateWithoutOwnerInput;
-}
-
-export interface UserSubscriptionWhereInput {
+export interface RoleSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: UserWhereInput;
-  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-}
-
-export interface RoleCreateWithoutOwnerInput {
-  admin?: Boolean;
-  employee?: Boolean;
-  user?: Boolean;
+  node?: RoleWhereInput;
+  AND?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
+  OR?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
+  NOT?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
 }
 
 export interface NodeNode {
@@ -376,127 +613,20 @@ export interface UserPreviousValuesSubscription
   password: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateRoleNode {
-  count: Int;
-}
+export interface EmployeeToServiceNode {}
 
-export interface AggregateRole
-  extends Promise<AggregateRoleNode>,
+export interface EmployeeToService
+  extends Promise<EmployeeToServiceNode>,
     Fragmentable {
-  count: () => Promise<Int>;
+  employee: <T = User>() => T;
+  service: <T = Service>() => T;
 }
 
-export interface AggregateRoleSubscription
-  extends Promise<AsyncIterator<AggregateRoleNode>>,
+export interface EmployeeToServiceSubscription
+  extends Promise<AsyncIterator<EmployeeToServiceNode>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface RoleSubscriptionPayloadNode {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface RoleSubscriptionPayload
-  extends Promise<RoleSubscriptionPayloadNode>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = Role>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = RolePreviousValues>() => T;
-}
-
-export interface RoleSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<RoleSubscriptionPayloadNode>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = RoleSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = RolePreviousValuesSubscription>() => T;
-}
-
-export interface RoleEdgeNode {
-  cursor: String;
-}
-
-export interface RoleEdge extends Promise<RoleEdgeNode>, Fragmentable {
-  node: <T = Role>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface RoleEdgeSubscription
-  extends Promise<AsyncIterator<RoleEdgeNode>>,
-    Fragmentable {
-  node: <T = RoleSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface PageInfoNode {
-  hasNextPage: Boolean;
-  hasPreviousPage: Boolean;
-  startCursor?: String;
-  endCursor?: String;
-}
-
-export interface PageInfo extends Promise<PageInfoNode>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>;
-  hasPreviousPage: () => Promise<Boolean>;
-  startCursor: () => Promise<String>;
-  endCursor: () => Promise<String>;
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfoNode>>,
-    Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
-  startCursor: () => Promise<AsyncIterator<String>>;
-  endCursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface UserSubscriptionPayloadNode {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface UserSubscriptionPayload
-  extends Promise<UserSubscriptionPayloadNode>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = User>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = UserPreviousValues>() => T;
-}
-
-export interface UserSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<UserSubscriptionPayloadNode>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = UserSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = UserPreviousValuesSubscription>() => T;
-}
-
-export interface RolePreviousValuesNode {
-  admin: Boolean;
-  employee: Boolean;
-  user: Boolean;
-}
-
-export interface RolePreviousValues
-  extends Promise<RolePreviousValuesNode>,
-    Fragmentable {
-  admin: () => Promise<Boolean>;
-  employee: () => Promise<Boolean>;
-  user: () => Promise<Boolean>;
-}
-
-export interface RolePreviousValuesSubscription
-  extends Promise<AsyncIterator<RolePreviousValuesNode>>,
-    Fragmentable {
-  admin: () => Promise<AsyncIterator<Boolean>>;
-  employee: () => Promise<AsyncIterator<Boolean>>;
-  user: () => Promise<AsyncIterator<Boolean>>;
+  employee: <T = UserSubscription>() => T;
+  service: <T = ServiceSubscription>() => T;
 }
 
 export interface UserNode {
@@ -524,22 +654,20 @@ export interface UserSubscription
   roles: <T = RoleSubscription>() => T;
 }
 
-export interface RoleConnectionNode {}
-
-export interface RoleConnection
-  extends Promise<RoleConnectionNode>,
-    Fragmentable {
-  pageInfo: <T = PageInfo>() => T;
-  edges: <T = Promise<Array<RoleEdgeNode>>>() => T;
-  aggregate: <T = AggregateRole>() => T;
+export interface AggregateEmployeeToServiceNode {
+  count: Int;
 }
 
-export interface RoleConnectionSubscription
-  extends Promise<AsyncIterator<RoleConnectionNode>>,
+export interface AggregateEmployeeToService
+  extends Promise<AggregateEmployeeToServiceNode>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<Array<RoleEdgeSubscription>>>>() => T;
-  aggregate: <T = AggregateRoleSubscription>() => T;
+  count: () => Promise<Int>;
+}
+
+export interface AggregateEmployeeToServiceSubscription
+  extends Promise<AsyncIterator<AggregateEmployeeToServiceNode>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface AggregateUserNode {
@@ -558,20 +686,63 @@ export interface AggregateUserSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface UserEdgeNode {
+export interface EmployeeToServiceEdgeNode {
   cursor: String;
 }
 
-export interface UserEdge extends Promise<UserEdgeNode>, Fragmentable {
-  node: <T = User>() => T;
+export interface EmployeeToServiceEdge
+  extends Promise<EmployeeToServiceEdgeNode>,
+    Fragmentable {
+  node: <T = EmployeeToService>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface UserEdgeSubscription
-  extends Promise<AsyncIterator<UserEdgeNode>>,
+export interface EmployeeToServiceEdgeSubscription
+  extends Promise<AsyncIterator<EmployeeToServiceEdgeNode>>,
     Fragmentable {
-  node: <T = UserSubscription>() => T;
+  node: <T = EmployeeToServiceSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface UserConnectionNode {}
+
+export interface UserConnection
+  extends Promise<UserConnectionNode>,
+    Fragmentable {
+  pageInfo: <T = PageInfo>() => T;
+  edges: <T = Promise<Array<UserEdgeNode>>>() => T;
+  aggregate: <T = AggregateUser>() => T;
+}
+
+export interface UserConnectionSubscription
+  extends Promise<AsyncIterator<UserConnectionNode>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<Array<UserEdgeSubscription>>>>() => T;
+  aggregate: <T = AggregateUserSubscription>() => T;
+}
+
+export interface PageInfoNode {
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String;
+  endCursor?: String;
+}
+
+export interface PageInfo extends Promise<PageInfoNode>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>;
+  hasPreviousPage: () => Promise<Boolean>;
+  startCursor: () => Promise<String>;
+  endCursor: () => Promise<String>;
+}
+
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfoNode>>,
+    Fragmentable {
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
+  startCursor: () => Promise<AsyncIterator<String>>;
+  endCursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface BatchPayloadNode {
@@ -586,6 +757,274 @@ export interface BatchPayloadSubscription
   extends Promise<AsyncIterator<BatchPayloadNode>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Long>>;
+}
+
+export interface ServicePreviousValuesNode {
+  id: ID_Output;
+  name: String;
+}
+
+export interface ServicePreviousValues
+  extends Promise<ServicePreviousValuesNode>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+}
+
+export interface ServicePreviousValuesSubscription
+  extends Promise<AsyncIterator<ServicePreviousValuesNode>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ServiceSubscriptionPayloadNode {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface ServiceSubscriptionPayload
+  extends Promise<ServiceSubscriptionPayloadNode>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = Service>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ServicePreviousValues>() => T;
+}
+
+export interface ServiceSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ServiceSubscriptionPayloadNode>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ServiceSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ServicePreviousValuesSubscription>() => T;
+}
+
+export interface ServiceEdgeNode {
+  cursor: String;
+}
+
+export interface ServiceEdge extends Promise<ServiceEdgeNode>, Fragmentable {
+  node: <T = Service>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ServiceEdgeSubscription
+  extends Promise<AsyncIterator<ServiceEdgeNode>>,
+    Fragmentable {
+  node: <T = ServiceSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateServiceNode {
+  count: Int;
+}
+
+export interface AggregateService
+  extends Promise<AggregateServiceNode>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateServiceSubscription
+  extends Promise<AsyncIterator<AggregateServiceNode>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface EmployeeToServiceSubscriptionPayloadNode {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface EmployeeToServiceSubscriptionPayload
+  extends Promise<EmployeeToServiceSubscriptionPayloadNode>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = EmployeeToService>() => T;
+  updatedFields: () => Promise<String[]>;
+}
+
+export interface EmployeeToServiceSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<EmployeeToServiceSubscriptionPayloadNode>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = EmployeeToServiceSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+}
+
+export interface AggregateRoleNode {
+  count: Int;
+}
+
+export interface AggregateRole
+  extends Promise<AggregateRoleNode>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateRoleSubscription
+  extends Promise<AsyncIterator<AggregateRoleNode>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface RoleConnectionNode {}
+
+export interface RoleConnection
+  extends Promise<RoleConnectionNode>,
+    Fragmentable {
+  pageInfo: <T = PageInfo>() => T;
+  edges: <T = Promise<Array<RoleEdgeNode>>>() => T;
+  aggregate: <T = AggregateRole>() => T;
+}
+
+export interface RoleConnectionSubscription
+  extends Promise<AsyncIterator<RoleConnectionNode>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<Array<RoleEdgeSubscription>>>>() => T;
+  aggregate: <T = AggregateRoleSubscription>() => T;
+}
+
+export interface ServiceNode {
+  id: ID_Output;
+  name: String;
+}
+
+export interface Service extends Promise<ServiceNode>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+}
+
+export interface ServiceSubscription
+  extends Promise<AsyncIterator<ServiceNode>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+}
+
+export interface RolePreviousValuesNode {
+  admin: Boolean;
+  employee: Boolean;
+  user: Boolean;
+}
+
+export interface RolePreviousValues
+  extends Promise<RolePreviousValuesNode>,
+    Fragmentable {
+  admin: () => Promise<Boolean>;
+  employee: () => Promise<Boolean>;
+  user: () => Promise<Boolean>;
+}
+
+export interface RolePreviousValuesSubscription
+  extends Promise<AsyncIterator<RolePreviousValuesNode>>,
+    Fragmentable {
+  admin: () => Promise<AsyncIterator<Boolean>>;
+  employee: () => Promise<AsyncIterator<Boolean>>;
+  user: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface RoleSubscriptionPayloadNode {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface RoleSubscriptionPayload
+  extends Promise<RoleSubscriptionPayloadNode>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = Role>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = RolePreviousValues>() => T;
+}
+
+export interface RoleSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<RoleSubscriptionPayloadNode>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = RoleSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = RolePreviousValuesSubscription>() => T;
+}
+
+export interface EmployeeToServiceConnectionNode {}
+
+export interface EmployeeToServiceConnection
+  extends Promise<EmployeeToServiceConnectionNode>,
+    Fragmentable {
+  pageInfo: <T = PageInfo>() => T;
+  edges: <T = Promise<Array<EmployeeToServiceEdgeNode>>>() => T;
+  aggregate: <T = AggregateEmployeeToService>() => T;
+}
+
+export interface EmployeeToServiceConnectionSubscription
+  extends Promise<AsyncIterator<EmployeeToServiceConnectionNode>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<Array<EmployeeToServiceEdgeSubscription>>>
+  >() => T;
+  aggregate: <T = AggregateEmployeeToServiceSubscription>() => T;
+}
+
+export interface UserSubscriptionPayloadNode {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface UserSubscriptionPayload
+  extends Promise<UserSubscriptionPayloadNode>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = User>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = UserPreviousValues>() => T;
+}
+
+export interface UserSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<UserSubscriptionPayloadNode>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = UserSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = UserPreviousValuesSubscription>() => T;
+}
+
+export interface RoleEdgeNode {
+  cursor: String;
+}
+
+export interface RoleEdge extends Promise<RoleEdgeNode>, Fragmentable {
+  node: <T = Role>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface RoleEdgeSubscription
+  extends Promise<AsyncIterator<RoleEdgeNode>>,
+    Fragmentable {
+  node: <T = RoleSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ServiceConnectionNode {}
+
+export interface ServiceConnection
+  extends Promise<ServiceConnectionNode>,
+    Fragmentable {
+  pageInfo: <T = PageInfo>() => T;
+  edges: <T = Promise<Array<ServiceEdgeNode>>>() => T;
+  aggregate: <T = AggregateService>() => T;
+}
+
+export interface ServiceConnectionSubscription
+  extends Promise<AsyncIterator<ServiceConnectionNode>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<Array<ServiceEdgeSubscription>>>>() => T;
+  aggregate: <T = AggregateServiceSubscription>() => T;
 }
 
 export interface RoleNode {
@@ -610,23 +1049,27 @@ export interface RoleSubscription
   user: () => Promise<AsyncIterator<Boolean>>;
 }
 
-export interface UserConnectionNode {}
-
-export interface UserConnection
-  extends Promise<UserConnectionNode>,
-    Fragmentable {
-  pageInfo: <T = PageInfo>() => T;
-  edges: <T = Promise<Array<UserEdgeNode>>>() => T;
-  aggregate: <T = AggregateUser>() => T;
+export interface UserEdgeNode {
+  cursor: String;
 }
 
-export interface UserConnectionSubscription
-  extends Promise<AsyncIterator<UserConnectionNode>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<Array<UserEdgeSubscription>>>>() => T;
-  aggregate: <T = AggregateUserSubscription>() => T;
+export interface UserEdge extends Promise<UserEdgeNode>, Fragmentable {
+  node: <T = User>() => T;
+  cursor: () => Promise<String>;
 }
+
+export interface UserEdgeSubscription
+  extends Promise<AsyncIterator<UserEdgeNode>>,
+    Fragmentable {
+  node: <T = UserSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+/*
+The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+*/
+export type ID_Input = string | number;
+export type ID_Output = string;
 
 /*
 The `Boolean` scalar type represents `true` or `false`.
@@ -638,18 +1081,12 @@ The `Int` scalar type represents non-fractional signed whole numeric values. Int
 */
 export type Int = number;
 
-export type Long = string;
-
 /*
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
 export type String = string;
 
-/*
-The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
-*/
-export type ID_Input = string | number;
-export type ID_Output = string;
+export type Long = string;
 
 /**
  * Type Defs

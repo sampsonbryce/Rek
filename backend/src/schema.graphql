@@ -3,7 +3,9 @@ type Query {
     info: String!
     user(id: String!): User!
     users: [User!]!
-    userSearch(name: String!): [User!]!
+    service(id: String!): Service!
+    services: [Service!]!
+
 }
 
 type Mutation {

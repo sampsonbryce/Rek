@@ -12,9 +12,12 @@ async function users(root, args, ctx, info){
     return users;
 }
 
-async function userSearch(root, args, ctx, info){
+async function service(root, args, ctx, info){
+    return ctx.db.service({id: args.id}, info);
+}
 
-    return ctx.db.users({where: {name_contains: args.name}});
+async function services(root, args, ctx, info){
+    return ctx.db.services();
 }
 
 
@@ -22,5 +25,6 @@ module.exports = {
     info,
     user,
     users,
-    userSearch
+    service,
+    services,
 }

@@ -1,4 +1,3 @@
-import React from 'react';
 import Signup from 'src/screens/Signup';
 import Login from 'src/screens/Login';
 import FindServices from 'src/screens/FindServices';
@@ -60,9 +59,5 @@ const AppNavigator = createSwitchNavigator(
     }
 );
 
-// Navigator component
-function Main() {
-    return <AppNavigator />;
-}
-
-export default Main;
+// export
+export default AppNavigator;

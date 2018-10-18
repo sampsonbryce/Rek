@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import Button from 'src/components/Button';
 import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation';
-import { BERRY_BLUE } from '../../../../constants';
+import { BERRY_BLUE } from 'src/constants';
 
 const UserListItem = props => {
     const item_styles = [styles.item];
