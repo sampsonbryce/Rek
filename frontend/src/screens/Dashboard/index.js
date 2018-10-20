@@ -13,7 +13,7 @@ const Dashboard = props => {
             {/* Button to Schedule Appointments */}
             <Button
                 onPress={() => {
-                    navigation.navigate('FindServices');
+                    navigation.navigate('CreateAppointment');
                 }}
                 title="Schedule Appointment"
             />

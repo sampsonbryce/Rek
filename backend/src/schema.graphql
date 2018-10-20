@@ -12,6 +12,8 @@ type Mutation {
     signup(email: String!, password: String!, name: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
     updateUserWithRoles(id: String!, email: String!, name: String!, roles: UpdateRoleInput!): User
+    addService(name: String!, male_title: String!, female_title: String!): Service
+    updateService(id: String!, name: String!, male_title: String!, female_title: String!): Service
 }
 
 type AuthPayload {

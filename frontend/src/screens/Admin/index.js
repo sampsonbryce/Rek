@@ -6,7 +6,7 @@ import { BERRY_LIGHT_BLUE, BERRY_MAROON } from '../../constants';
 
 const renderListItem = item => (
     <TouchableHighlight key={item.title} onPress={item.onPress}>
-        <Text>item.title</Text>
+        <Text>{item.title}</Text>
     </TouchableHighlight>
 );
 
@@ -19,7 +19,7 @@ export default class Admin extends Component {
         title: 'Admin',
     };
 
-    propTypes = {
+    static propTypes = {
         navigation: PropTypes.instanceOf(Navigation).isRequired,
     };
 
@@ -30,13 +30,13 @@ export default class Admin extends Component {
             {
                 title: 'Users',
                 onPress: () => {
-                    navigation.navigate('UsersList');
+                    navigation.navigate('UserList');
                 },
             },
             {
                 title: 'Services',
                 onPress: () => {
-                    navigation.navigate('UsersList');
+                    navigation.navigate('ServiceList');
                 },
             },
         ];

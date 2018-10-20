@@ -6,7 +6,9 @@ const { ServerError,
         InvalidCredentialsError, 
         UniqueFieldAlreadyExists } = require('../errors.js');
 
-// User Signup functionality
+/*
+ * Signup: Creates a new user and logs them in
+ */
 async function signup(parent, args, context, info){
     // hash the password
     const password = await bcrypt.hash(args.password, 10);
@@ -49,7 +51,9 @@ async function signup(parent, args, context, info){
     }
 }
 
-// User login functionality
+/*
+ * Login: Logs in the user
+ */
 async function login(parent, args, context, info){
     // check if email exists
     const user = await context.db.user({ email: args.email },`{ id password }`);
@@ -75,6 +79,10 @@ async function login(parent, args, context, info){
     }
 }
 
+
+/*
+ * Updates the user and the roles for the user
+ */
 async function updateUserWithRoles(parent, args, context, info){
    const user = await context.db.updateUser({
         data: {
@@ -91,8 +99,28 @@ async function updateUserWithRoles(parent, args, context, info){
     return user;
 }
 
+/*
+ * Adds a new service
+ */
+async function addService(parent, args, context, info){
+    const service = await context.db.createService({...args});
+    return service;
+}
+
+/*
+ * Updates a service
+ */
+async function updateService(parent, args, context, info){
+    const id = args.id;
+    delete args.id;
+    const service = await context.db.updateService({data: {...args}, where: { id }});
+    return service;
+}
+
 module.exports = {
     signup,
     login,
     updateUserWithRoles,
+    addService,
+    updateService,
 }

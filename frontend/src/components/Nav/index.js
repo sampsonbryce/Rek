@@ -3,6 +3,7 @@ import Login from 'src/screens/Login';
 import FindServices from 'src/screens/FindServices';
 import Dashboard from 'src/screens/Dashboard';
 import adminNav from 'src/screens/Admin/nav';
+import appointmentWizardNav from 'src/screens/CreateAppointment/nav';
 
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 
@@ -11,6 +12,7 @@ const dashboardNav = createStackNavigator(
         FindServices,
         Dashboard,
         Admin: adminNav,
+        CreateAppointment: appointmentWizardNav,
         // Additional routes go here
     },
     {
@@ -47,8 +49,8 @@ const AppNavigator = createSwitchNavigator(
         Dashboard: dashboardNav,
     },
     {
-        initialRouteName: 'Auth',
-        // initialRouteName: 'Dashboard',
+        // initialRouteName: 'Auth',
+        initialRouteName: 'Dashboard',
     },
     {
         headerMode: 'none',

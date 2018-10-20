@@ -3,30 +3,40 @@ import { View, StyleSheet, Text, FlatList } from 'react-native';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
+import Button from 'src/components/Button';
 import { Navigation } from 'react-native-navigation';
 import { BERRY_LIGHT_BLUE, BERRY_MAROON } from 'src/constants';
 import ServiceListItem from './components/ServiceListItem';
 
 // define graphql queries
 const GET_SERVICES = gql`
-    {
+    query getServices {
         services {
             id
-            title
+            name
         }
     }
 `;
 
 /*
- * Admin Page to show list of users to edit them
+ * Admin Page to show list of services to add/edit them
  */
 export default class ServiceList extends Component {
-    static navigationOptions = {
+    static navigationOptions = ({ navigation }) => ({
         // header: null,
-        title: 'Users',
-    };
+        title: 'Services',
+        headerRight: (
+            <Button
+                onPress={() => {
+                    // console.log('pressed:');
+                    navigation.navigate('AddService');
+                }}
+                title="Add"
+            />
+        ),
+    });
 
-    propTypes = {
+    static propTypes = {
         navigation: PropTypes.instanceOf(Navigation).isRequired,
     };
 
@@ -46,9 +56,6 @@ export default class ServiceList extends Component {
     render() {
         return (
             <View style={styles.admin}>
-                <View style={styles.titleContainer}>
-                    <Text style={styles.title}>Admin</Text>
-                </View>
                 <Query query={GET_SERVICES}>
                     {({ loading, error, data }) => {
                         if (loading) return <Text>Loading...</Text>;
@@ -56,7 +63,7 @@ export default class ServiceList extends Component {
 
                         return (
                             <FlatList
-                                data={data.users}
+                                data={data.services}
                                 renderItem={({ item, index }) => this.renderListItem(item, index)}
                                 keyExtractor={item => item.id}
                             />

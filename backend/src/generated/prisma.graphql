@@ -1,7 +1,15 @@
 # source: http://localhost:4466
-# timestamp: Mon Oct 01 2018 23:36:13 GMT-0700 (Pacific Daylight Time)
+# timestamp: Fri Oct 19 2018 10:52:35 GMT-0700 (Pacific Daylight Time)
+
+type AggregateEmployeeToService {
+  count: Int!
+}
 
 type AggregateRole {
+  count: Int!
+}
+
+type AggregateService {
   count: Int!
 }
 
@@ -14,6 +22,100 @@ type BatchPayload {
   count: Long!
 }
 
+type EmployeeToService {
+  employee(where: UserWhereInput): User!
+  service(where: ServiceWhereInput): Service!
+}
+
+"""A connection to a list of items."""
+type EmployeeToServiceConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [EmployeeToServiceEdge]!
+  aggregate: AggregateEmployeeToService!
+}
+
+input EmployeeToServiceCreateInput {
+  employee: UserCreateOneInput!
+  service: ServiceCreateOneInput!
+}
+
+"""An edge in a connection."""
+type EmployeeToServiceEdge {
+  """The item at the end of the edge."""
+  node: EmployeeToService!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum EmployeeToServiceOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type EmployeeToServiceSubscriptionPayload {
+  mutation: MutationType!
+  node: EmployeeToService
+  updatedFields: [String!]
+}
+
+input EmployeeToServiceSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [EmployeeToServiceSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [EmployeeToServiceSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [EmployeeToServiceSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: EmployeeToServiceWhereInput
+}
+
+input EmployeeToServiceUpdateInput {
+  employee: UserUpdateOneRequiredInput
+  service: ServiceUpdateOneRequiredInput
+}
+
+input EmployeeToServiceWhereInput {
+  """Logical AND on all given filters."""
+  AND: [EmployeeToServiceWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [EmployeeToServiceWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [EmployeeToServiceWhereInput!]
+  employee: UserWhereInput
+  service: ServiceWhereInput
+}
+
 """
 The `Long` scalar type represents non-fractional signed whole numeric values.
 Long can represent values between -(2^63) and 2^63 - 1.
@@ -21,15 +123,24 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
-  createUser(data: UserCreateInput!): User!
   createRole(data: RoleCreateInput!): Role!
+  createEmployeeToService(data: EmployeeToServiceCreateInput!): EmployeeToService!
+  createService(data: ServiceCreateInput!): Service!
+  createUser(data: UserCreateInput!): User!
+  updateService(data: ServiceUpdateInput!, where: ServiceWhereUniqueInput!): Service
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  deleteService(where: ServiceWhereUniqueInput!): Service
   deleteUser(where: UserWhereUniqueInput!): User
+  upsertService(where: ServiceWhereUniqueInput!, create: ServiceCreateInput!, update: ServiceUpdateInput!): Service!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
-  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
   updateManyRoles(data: RoleUpdateInput!, where: RoleWhereInput): BatchPayload!
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  updateManyEmployeeToServices(data: EmployeeToServiceUpdateInput!, where: EmployeeToServiceWhereInput): BatchPayload!
+  updateManyServices(data: ServiceUpdateInput!, where: ServiceWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
   deleteManyRoles(where: RoleWhereInput): BatchPayload!
+  deleteManyEmployeeToServices(where: EmployeeToServiceWhereInput): BatchPayload!
+  deleteManyServices(where: ServiceWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -60,11 +171,16 @@ type PageInfo {
 }
 
 type Query {
-  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   roles(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Role]!
+  employeeToServices(where: EmployeeToServiceWhereInput, orderBy: EmployeeToServiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmployeeToService]!
+  services(where: ServiceWhereInput, orderBy: ServiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Service]!
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  service(where: ServiceWhereUniqueInput!): Service
   user(where: UserWhereUniqueInput!): User
-  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   rolesConnection(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RoleConnection!
+  employeeToServicesConnection(where: EmployeeToServiceWhereInput, orderBy: EmployeeToServiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeToServiceConnection!
+  servicesConnection(where: ServiceWhereInput, orderBy: ServiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ServiceConnection!
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -224,9 +340,309 @@ input RoleWhereInput {
   owner: UserWhereInput
 }
 
+type Service implements Node {
+  id: ID!
+  name: String!
+  female_title: String!
+  male_title: String!
+}
+
+"""A connection to a list of items."""
+type ServiceConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ServiceEdge]!
+  aggregate: AggregateService!
+}
+
+input ServiceCreateInput {
+  name: String!
+  female_title: String!
+  male_title: String!
+}
+
+input ServiceCreateOneInput {
+  create: ServiceCreateInput
+  connect: ServiceWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type ServiceEdge {
+  """The item at the end of the edge."""
+  node: Service!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ServiceOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  female_title_ASC
+  female_title_DESC
+  male_title_ASC
+  male_title_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ServicePreviousValues {
+  id: ID!
+  name: String!
+  female_title: String!
+  male_title: String!
+}
+
+type ServiceSubscriptionPayload {
+  mutation: MutationType!
+  node: Service
+  updatedFields: [String!]
+  previousValues: ServicePreviousValues
+}
+
+input ServiceSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ServiceSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ServiceSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ServiceSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ServiceWhereInput
+}
+
+input ServiceUpdateDataInput {
+  name: String
+  female_title: String
+  male_title: String
+}
+
+input ServiceUpdateInput {
+  name: String
+  female_title: String
+  male_title: String
+}
+
+input ServiceUpdateOneRequiredInput {
+  create: ServiceCreateInput
+  connect: ServiceWhereUniqueInput
+  update: ServiceUpdateDataInput
+  upsert: ServiceUpsertNestedInput
+}
+
+input ServiceUpsertNestedInput {
+  update: ServiceUpdateDataInput!
+  create: ServiceCreateInput!
+}
+
+input ServiceWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ServiceWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ServiceWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ServiceWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  female_title: String
+
+  """All values that are not equal to given value."""
+  female_title_not: String
+
+  """All values that are contained in given list."""
+  female_title_in: [String!]
+
+  """All values that are not contained in given list."""
+  female_title_not_in: [String!]
+
+  """All values less than the given value."""
+  female_title_lt: String
+
+  """All values less than or equal the given value."""
+  female_title_lte: String
+
+  """All values greater than the given value."""
+  female_title_gt: String
+
+  """All values greater than or equal the given value."""
+  female_title_gte: String
+
+  """All values containing the given string."""
+  female_title_contains: String
+
+  """All values not containing the given string."""
+  female_title_not_contains: String
+
+  """All values starting with the given string."""
+  female_title_starts_with: String
+
+  """All values not starting with the given string."""
+  female_title_not_starts_with: String
+
+  """All values ending with the given string."""
+  female_title_ends_with: String
+
+  """All values not ending with the given string."""
+  female_title_not_ends_with: String
+  male_title: String
+
+  """All values that are not equal to given value."""
+  male_title_not: String
+
+  """All values that are contained in given list."""
+  male_title_in: [String!]
+
+  """All values that are not contained in given list."""
+  male_title_not_in: [String!]
+
+  """All values less than the given value."""
+  male_title_lt: String
+
+  """All values less than or equal the given value."""
+  male_title_lte: String
+
+  """All values greater than the given value."""
+  male_title_gt: String
+
+  """All values greater than or equal the given value."""
+  male_title_gte: String
+
+  """All values containing the given string."""
+  male_title_contains: String
+
+  """All values not containing the given string."""
+  male_title_not_contains: String
+
+  """All values starting with the given string."""
+  male_title_starts_with: String
+
+  """All values not starting with the given string."""
+  male_title_not_starts_with: String
+
+  """All values ending with the given string."""
+  male_title_ends_with: String
+
+  """All values not ending with the given string."""
+  male_title_not_ends_with: String
+}
+
+input ServiceWhereUniqueInput {
+  id: ID
+  name: String
+}
+
 type Subscription {
-  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   role(where: RoleSubscriptionWhereInput): RoleSubscriptionPayload
+  employeeToService(where: EmployeeToServiceSubscriptionWhereInput): EmployeeToServiceSubscriptionPayload
+  service(where: ServiceSubscriptionWhereInput): ServiceSubscriptionPayload
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
 type User implements Node {
@@ -252,6 +668,11 @@ input UserCreateInput {
   email: String!
   password: String!
   roles: RoleCreateOneWithoutOwnerInput!
+}
+
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutRolesInput {
@@ -335,11 +756,25 @@ input UserSubscriptionWhereInput {
   node: UserWhereInput
 }
 
+input UserUpdateDataInput {
+  name: String
+  email: String
+  password: String
+  roles: RoleUpdateOneRequiredWithoutOwnerInput
+}
+
 input UserUpdateInput {
   name: String
   email: String
   password: String
   roles: RoleUpdateOneRequiredWithoutOwnerInput
+}
+
+input UserUpdateOneRequiredInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
 }
 
 input UserUpdateOneRequiredWithoutRolesInput {
@@ -353,6 +788,11 @@ input UserUpdateWithoutRolesDataInput {
   name: String
   email: String
   password: String
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
 }
 
 input UserUpsertWithoutRolesInput {

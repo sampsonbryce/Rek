@@ -247,6 +247,8 @@ input RoleWhereInput {
 type Service {
   id: ID!
   name: String!
+  female_title: String!
+  male_title: String!
 }
 
 type ServiceConnection {
@@ -257,6 +259,8 @@ type ServiceConnection {
 
 input ServiceCreateInput {
   name: String!
+  female_title: String!
+  male_title: String!
 }
 
 input ServiceCreateOneInput {
@@ -274,6 +278,10 @@ enum ServiceOrderByInput {
   id_DESC
   name_ASC
   name_DESC
+  female_title_ASC
+  female_title_DESC
+  male_title_ASC
+  male_title_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -283,6 +291,8 @@ enum ServiceOrderByInput {
 type ServicePreviousValues {
   id: ID!
   name: String!
+  female_title: String!
+  male_title: String!
 }
 
 type ServiceSubscriptionPayload {
@@ -305,10 +315,14 @@ input ServiceSubscriptionWhereInput {
 
 input ServiceUpdateDataInput {
   name: String
+  female_title: String
+  male_title: String
 }
 
 input ServiceUpdateInput {
   name: String
+  female_title: String
+  male_title: String
 }
 
 input ServiceUpdateOneRequiredInput {
@@ -352,6 +366,34 @@ input ServiceWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  female_title: String
+  female_title_not: String
+  female_title_in: [String!]
+  female_title_not_in: [String!]
+  female_title_lt: String
+  female_title_lte: String
+  female_title_gt: String
+  female_title_gte: String
+  female_title_contains: String
+  female_title_not_contains: String
+  female_title_starts_with: String
+  female_title_not_starts_with: String
+  female_title_ends_with: String
+  female_title_not_ends_with: String
+  male_title: String
+  male_title_not: String
+  male_title_in: [String!]
+  male_title_not_in: [String!]
+  male_title_lt: String
+  male_title_lte: String
+  male_title_gt: String
+  male_title_gte: String
+  male_title_contains: String
+  male_title_not_contains: String
+  male_title_starts_with: String
+  male_title_not_starts_with: String
+  male_title_ends_with: String
+  male_title_not_ends_with: String
   AND: [ServiceWhereInput!]
   OR: [ServiceWhereInput!]
   NOT: [ServiceWhereInput!]
