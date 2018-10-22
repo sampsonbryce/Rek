@@ -1,4 +1,6 @@
-let GQLUtils = {
+import _ from 'lodash';
+
+const GQLUtils = {
     /*
      * Graphql returns your data with the __typename and 
      * Symbol keys with their respective values. This function 
@@ -9,24 +11,24 @@ let GQLUtils = {
      * Return:
      *  object | the modified data object without the extra fields
      */
-    getRawData: function(data){
+    getRawData(data) {
+        const gql_object = _.cloneDeep(data);
 
         // For every key in object
-        Object.keys(data).forEach((key) => {
+        Object.keys(data).forEach(key => {
             // Symbol regex
-            let regex = /^Symbol\(*\)/;
+            const regex = /^Symbol\(*\)/;
 
             // remove the __typname field
-            if (key == '__typename'){
-                delete data[key];
-            }
-            else if(key.match(regex)){
-                delete data[key];
+            if (key === '__typename') {
+                delete gql_object[key];
+            } else if (key.match(regex)) {
+                delete gql_object[key];
             }
         });
 
-        return data;
-    }
-}
+        return gql_object;
+    },
+};
 
 export default GQLUtils;

@@ -1,16 +1,41 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text, TextInput, CheckBox } from 'react-native';
+import { View, Text } from 'react-native';
 import { Query, Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import t from 'tcomb-form-native';
 import Button from 'src/components/Button';
 import StatusBar from 'src/components/StatusBar';
-// import { BERRY_LIGHT_BLUE, BERRY_MAROON } from '../../constants';
+import { PropTypes } from 'prop-types';
+import { Navigation } from 'react-native-navigation';
 
-var Form = t.form.Form;
+// create form structure
+const { Form } = t.form;
 
+const Roles = t.struct({
+    user: t.Boolean,
+    employee: t.Boolean,
+    admin: t.Boolean,
+});
+
+const User = t.struct({
+    id: t.String,
+    name: t.String,
+    email: t.String,
+    roles: Roles,
+});
+
+const options = {
+    fields: {
+        id: {
+            hidden: true,
+        },
+    },
+    auto: 'placeholders',
+};
+
+// Create graphql queries
 const GET_USER = gql`
-    query($id: String!){
+    query($id: String!) {
         user(id: $id) {
             id
             name
@@ -22,39 +47,20 @@ const GET_USER = gql`
             }
         }
     }
-`
+`;
 
 const UPDATE_USER = gql`
-
-    mutation UpdateUserMutation($id: String!, $name: String!, $email: String!, $roles: UpdateRoleInput!){
-        updateUserWithRoles(id: $id, name: $name, email: $email, roles: $roles){
+    mutation UpdateUserMutation(
+        $id: String!
+        $name: String!
+        $email: String!
+        $roles: UpdateRoleInput!
+    ) {
+        updateUserWithRoles(id: $id, name: $name, email: $email, roles: $roles) {
             id
         }
     }
-`
-
-var Roles = t.struct({
-    user: t.Boolean,
-    employee: t.Boolean,
-    admin: t.Boolean,
-});
-
-var User = t.struct({
-    id: t.String,
-    name: t.String,
-    email: t.String,
-    roles: Roles
- });
-
- const options = {
-     fields: {
-         id: {
-             hidden: true
-         }
-     },
-     auto: 'placeholders'
- }
-
+`;
 
 /*
  * Admin service for store admins
@@ -63,86 +69,100 @@ export default class EditUser extends Component {
     static navigationOptions = {
         header: null,
         title: 'EditUser',
-    }
-    constructor(props){
+    };
+
+    static propTypes = {
+        navigation: PropTypes.instanceOf(Navigation).isRequired,
+    };
+
+    constructor(props) {
         super(props);
-        this.state = {
-            value: null,
-            status: {
-                message: "",
-                type: ""
+        // create form ref
+        this.form = React.createRef();
 
+        // init state
+        this.state = {
+            status: {
+                message: '',
+                type: '',
             },
-        }
+        };
     }
 
-    async _submit(updateUser, refetch){
+    async submit(updateUser, refetch) {
         // get form data
-        let value = this.form.getValue();
+        const value = this.form.current.getValue();
 
         // update user
-        let response = await updateUser({ variables : value }); 
-        //TODO: handle error
-        let id = response.data.updateUserWithRoles.id;
+        try {
+            await updateUser({ variables: value });
+        } catch (err) {
+            // handle error
+            const error = new Error(err);
+            let message = '';
+            if (error.isNetworkError) {
+                message = 'Something went wrong with our server';
+            } else if (error.isGqlError) {
+                message = 'Data is incorrect';
+            }
+            this.setState({ status: { message, type: 'error' } });
+        }
+
+        // TODO: handle error
 
         // refetch user query
         refetch();
-        this.setState({ id, status: { message: "Updated User!", type: "success"}});
+        this.setState({ status: { message: 'Updated User!', type: 'success' } });
     }
 
-    render(){
+    render() {
+        const { status } = this.state;
         const { navigation } = this.props;
 
         // get user id sent during navivation
         const id = navigation.getParam('id');
+
         return (
             <View>
-                <StatusBar message={this.state.status.message} type={this.state.status.type} />
+                <StatusBar message={status.message} type={status.type} />
                 {/* Get User */}
                 <Query variables={{ id }} query={GET_USER}>
-                {({loading, error, data, refetch}) => {
-                    if(loading) return (<Text>Loading...</Text>);
-                    if(error) return (<Text>`Error! ${error.message}`</Text>);
-                    
-                    let user = data.user;
-                    
-                    return (
-                    
+                    {({ loading, error, data, refetch }) => {
+                        if (loading) return <Text>Loading...</Text>;
+                        if (error) return <Text>`Error! ${error.message}`</Text>;
+
+                        const { user } = data;
+
+                        return (
                             <View>
                                 {/* User info form */}
-                                <Form
-                                    ref={(form) => this.form = form }
-                                    type={User}
-                                    options={options}
-                                    value={user}
-                                />
+                                <Form ref={this.form} type={User} options={options} value={user} />
 
                                 {/* Update user mutation button */}
                                 <Mutation mutation={UPDATE_USER}>
-                                {(updateUser, {loading, error}) => {
-                                    if(error) {
-                                        this.setState({
-                                            status: {
-                                                message: "Could not update",
-                                                type: "error"
-                                            }
-                                        });
-                                    }
+                                    {(updateUser, { update_loading, update_error }) => {
+                                        if (update_error) {
+                                            this.setState({
+                                                status: {
+                                                    message: 'Could not update',
+                                                    type: 'error',
+                                                },
+                                            });
+                                        }
 
-                                    return (
-                                        <Button
-                                            title={loading ? "Submitting..." : "Update"}
-                                            onPress={this._submit.bind(this, updateUser, refetch)}
-                                        />
-
-                                    )
-                                }}
+                                        return (
+                                            <Button
+                                                title={update_loading ? 'Submitting...' : 'Update'}
+                                                onPress={() => this.submit(updateUser, refetch)}
+                                            />
+                                        );
+                                    }}
                                 </Mutation>
                             </View>
-                   );
-                }}
+                        );
+                    }}
                 </Query>
             </View>
-        )
+        );
     }
 }

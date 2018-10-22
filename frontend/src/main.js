@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
-import { View, Text} from 'react-native';
+import React from 'react';
+import { View } from 'react-native';
 
-//For navigation
+// For navigation
 import AppNavigator from 'src/components/nav';
 
-export default class Main extends Component{
-    render(){
-        return (
-            <View style={{flex:1}}>
-                <AppNavigator />
-            </View>
-        )
-    }
+function Main() {
+    return (
+        <View style={{ flex: 1 }}>
+            <AppNavigator />
+        </View>
+    );
 }
+
+export default Main;
