@@ -6,6 +6,7 @@ import t from 'tcomb-form-native';
 import Button from 'src/components/Button';
 
 let Form = t.form.Form;
+let Validate = t.validate;
 
 let SignupType = t.struct({
     name: t.String,
@@ -60,6 +61,8 @@ export default class SignupForm extends Component{
             return;
         }
 
+        //let result = 
+
         // signup
         let response = null;
         try{
@@ -95,7 +98,7 @@ export default class SignupForm extends Component{
             <View style={styles.container}>
                 {/* Page Status */}
                 <Text>{this.state.status.msg}</Text>
-                
+
                 {/* Signup Form */}
                 <Form
                     ref={(form) => this.form = form }
