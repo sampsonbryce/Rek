@@ -13,15 +13,37 @@ import { userLogin } from '../../actions';
 // Define Login form structure and options
 const { Form } = t.form;
 
+const emailValidation = email_dirty => {
+    const email = email_dirty.trim().toLowerCase();
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+};
+
+const passLength = pass => {
+    const password = pass.trim();
+    let ret = true;
+    if (password.length < 6) {
+        ret = false;
+    }
+    return ret;
+};
+
+const Email = t.refinement(t.String, emailValidation);
+const Password = t.refinement(t.String, passLength);
+
 const LoginType = t.struct({
-    email: t.String,
-    password: t.String,
+    email: Email,
+    password: Password,
 });
 
 const LoginOptions = {
     fields: {
+        email: {
+            error: 'Invalid email. Must be in form "example@example.com"',
+        },
         password: {
             secureTextEntry: true,
+            error: 'Passwords be at least 6 characters in length.',
         },
     },
     auto: 'placeholders',
@@ -75,7 +97,7 @@ class LoginComponent extends Component {
         const value = this.form.current.getValue();
         if (!value) {
             // Validation failed
-            this.setState({ status: { message: 'Login or Password is incorrect', type: 'error' } });
+            this.setState({ status: { message: 'Email or Password is incorrect', type: 'error' } });
             return;
         }
 

@@ -23,7 +23,8 @@
     "react-navigation": "^2.17.0",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
-    "tcomb-form-native": "^0.6.19"
+    "tcomb-form-native": "^0.6.19",
+    "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

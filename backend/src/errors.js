@@ -12,6 +12,10 @@ const UniqueFieldAlreadyExists = createError("UniqueFieldAlreadyExists", {
     message: "A field already exists"
 });
 
+const InvalidEmailFormat = createError("InvalidEmailFormat", {
+    message: "not a valid email format"
+});
+
 
 
 module.exports = {

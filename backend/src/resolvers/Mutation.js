@@ -1,15 +1,24 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { APP_SECRET, getUserId } = require('../utils');
+const validator = require('validator');
 
 const { ServerError, 
         InvalidCredentialsError, 
-        UniqueFieldAlreadyExists } = require('../errors.js');
+        UniqueFieldAlreadyExists,
+        InvalidEmailFormat } = require('../errors.js');
 
 // User Signup functionality
 async function signup(parent, args, context, info){
     // hash the password
     const password = await bcrypt.hash(args.password, 10);
+
+    // begin validation
+    if (!validator.isEmail(args.email)) {
+        throw new InvalidEmailFormat();
+    }
+
+    
 
     // Create user
     let user = null;

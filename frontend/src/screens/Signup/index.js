@@ -13,20 +13,49 @@ import { userLogin } from '../../actions';
 // create form structure
 const { Form } = t.form;
 
+// create validator for tcomb form
+// https://github.com/gcanti/tcomb-validation#form-validation   GoTo Refinements
+const emailValidation = email_dirty => {
+    const email = email_dirty.trim().toLowerCase();
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+};
+
+const passLength = pass => {
+    const password = pass.trim();
+    let ret = true;
+    if (password.length < 6) {
+        ret = false;
+    }
+    return ret;
+};
+
+const Email = t.refinement(t.String, emailValidation);
+const Password = t.refinement(t.String, passLength);
+
 const SignupType = t.struct({
     name: t.String,
-    email: t.String,
-    password: t.String,
-    confirm_password: t.String,
+    // email: t.String,
+    email: Email,
+    // password: t.String,
+    password: Password,
+    // confirm_password: t.String,
+    confirm_password: Password,
+    // confirm_password: SamePassword,
 });
 
 const SignupOptions = {
     fields: {
+        email: {
+            error: 'Invalid email. Must be in form "example@example.com"',
+        },
         password: {
             secureTextEntry: true,
+            error: 'Passwords be at least characters 6 in length.',
         },
         confirm_password: {
             secureTextEntry: true,
+            error: 'Passwords be at least 6 characters in length.',
         },
     },
     auto: 'placeholders',
@@ -77,9 +106,16 @@ class SignupComponent extends Component {
         const { onUserSignup, navigation } = this.props;
         // get form data
         const value = this.form.current.getValue();
+        this.setState({ status: { msg: '', type: 'error' } });
         if (!value) {
             // Validation failed
-            this.setState({ status: { msg: 'Login or Password is incorrect', type: 'error' } });
+            this.setState({ status: { msg: 'Create account failed.', type: 'error' } });
+            return;
+        }
+
+        if (value.password !== value.confirm_password) {
+            // Validation failed
+            this.setState({ status: { msg: "Passwords don't match.", type: 'error' } });
             return;
         }
 
@@ -90,7 +126,7 @@ class SignupComponent extends Component {
 
             // Error Handling
         } catch (err) {
-            console.log(err);
+            // console.log(err);
             // parse error
             const e = err.graphQLErrors[0];
 
