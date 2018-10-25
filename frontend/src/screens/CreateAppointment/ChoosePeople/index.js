@@ -8,13 +8,14 @@ import { PropTypes } from 'prop-types';
 import { Navigation } from 'react-native-navigation';
 import _ from 'lodash';
 import { setSelectedServicesAction } from 'src/actions';
-import ServiceListItem from './components/ServiceListItem';
+import PeopleListItem from './components/PeopleListItem';
 
 const GET_SERVICES = gql`
-    {
-        services {
-            id
-            name
+    query getEmployeesByServicesAndTimes(){
+         services{
+             employees {
+                 name
+             }
         }
     }
 `;
@@ -22,10 +23,10 @@ const GET_SERVICES = gql`
 /*
  * Appointment creation page for choosing services
  */
-class ChooseServices extends Component {
+class ChoosePeople extends Component {
     static navigationOptions = {
         header: null,
-        title: 'Choose Services',
+        title: 'Choose People',
     };
 
     static propTypes = {
@@ -74,7 +75,7 @@ class ChooseServices extends Component {
         const active = selected.includes(item.id);
 
         return (
-            <ServiceListItem
+            <PeopleListItem
                 active={active}
                 key={index}
                 service={item}
@@ -142,11 +143,11 @@ const mapDispatchToProps = dispatch => ({
     },
 });
 
-const ChooseServicesRedux = connect(
+const ChoosePeopleRedux = connect(
     mapStateToProps,
     mapDispatchToProps
-)(ChooseServices);
+)(ChoosePeople);
 
 export default graphql(GET_SERVICES, {
     name: 'getServices',
-})(ChooseServicesRedux);
+})(ChoosePeopleRedux);

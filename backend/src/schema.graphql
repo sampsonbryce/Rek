@@ -5,7 +5,7 @@ type Query {
     users: [User!]!
     service(id: String!): Service!
     services: [Service!]!
-
+    getEmployeeSchedulesServices(filterData: GetEmployeeSchedulesServicesInput): [EmployeeToScheduleToServices]
 }
 
 type Mutation {
@@ -14,6 +14,12 @@ type Mutation {
     updateUserWithRoles(id: String!, email: String!, name: String!, roles: UpdateRoleInput!): User
     addService(name: String!, male_title: String!, female_title: String!): Service
     updateService(id: String!, name: String!, male_title: String!, female_title: String!): Service
+}
+
+input GetEmployeeSchedulesServicesInput{
+    employeeFilterIds: [ID!]
+    serviceFilterIds:[ID!]
+    desiredStartTime: DateTime 
 }
 
 type AuthPayload {
@@ -32,4 +38,9 @@ input UpdateRoleInput{
     user: Boolean!
     admin: Boolean!
     employee: Boolean!
+}
+
+type ServiceEmployees{
+    service: Service
+    employees: [User]!
 }

@@ -3,4 +3,6 @@ async function roles(root, args, ctx, info){
     return roles;
 }
 
-module.exports = { roles };
+module.exports = { 
+    roles,
+};

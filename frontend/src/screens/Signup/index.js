@@ -79,7 +79,6 @@ class SignupComponent extends Component {
         const value = this.form.current.getValue();
         if (!value) {
             // Validation failed
-            this.setState({ status: { msg: 'Login or Password is incorrect', type: 'error' } });
             return;
         }
 

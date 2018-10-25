@@ -1,9 +1,31 @@
+# interface CreatedUpdatedDate {
+#   createdDate: DateTime!
+#   updatedDate: DateTime!
+# }
+
+# interface CreatedUpdatedBy {
+#   createdBy: User!
+#   updatedBy: User!
+# }
+
 type User {
   id: ID! @unique
   name: String!
   email: String! @unique
   password: String!
   roles: Role!
+}
+
+type UserToSchedule{
+  user: User!
+  schedule: UserSchedule!
+}
+
+type EmployeeToScheduleToServices{
+  id: ID! @unique
+  employee: User!
+  schedule: EmployeeSchedule!
+  services: [Service!]!
 }
 
 type Role {
@@ -13,14 +35,36 @@ type Role {
   user: Boolean! @default(value: "true")
 }
 
-type EmployeeToService {
-  employee: User!
-  service: Service!
-}
-
 type Service {
   id: ID! @unique
   name: String! @unique
   female_title: String!
   male_title: String!
+  time_blocks: Int! @default(value: 2)
 }
+
+interface Schedule {
+  appointments: [Appointment!]!
+}
+
+type EmployeeSchedule implements Schedule{
+  employee: User!
+  workingTimes: [WorkingTime!]!
+  appointments: [Appointment!]!
+}
+
+
+type WorkingTime {
+  start: DateTime!
+  end: DateTime!
+}
+
+type UserSchedule implements Schedule{
+  appointments: [Appointment!]!
+}
+
+type Appointment {
+  start: DateTime!
+  end: DateTime!
+}
+
