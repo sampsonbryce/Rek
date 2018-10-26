@@ -10,7 +10,7 @@ const ServiceListItem = props => {
     const { name, title, services, image } = props;
     return (
         <View style={styles.item}>
-            <Image source={image} style={styles.image}/>
+            <Image source={image} style={styles.image} />
             <Text style={styles.text}>{name}</Text>
             <Text style={styles.text}>{title}</Text>
 
@@ -35,21 +35,25 @@ const styles = StyleSheet.create({
     text: {
         textAlign: 'center',
     },
-    image:{
+    image: {
         borderRadius: 10,
         margin: 10,
         position: 'relative',
         left: 40,
         height: 50,
-        width: 50
-    }
+        width: 50,
+    },
 });
 
 ServiceListItem.propTypes = {
     name: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     services: PropTypes.arrayOf(PropTypes.string).isRequired,
-    image : PropTypes.string
+    image: PropTypes.string,
+};
+
+ServiceListItem.defaultProps = {
+    image: 'Profile Image',
 };
 
 export default ServiceListItem;

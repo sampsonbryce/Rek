@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation/lib/dist/Navigation';
-import ServiceListItem from '../ServiceListItem';
 import Images from '@assets/images';
+import ServiceListItem from '../ServiceListItem';
 
 /*
  * FlatList of people available to provide a searched service
@@ -23,22 +23,26 @@ export default class ServiceList extends Component {
                     name: 'Bob',
                     title: 'Barber',
                     services: ['Cutting', 'Grooming', 'Styling', 'Shaving'],
-                    image: Images.profilePic3
+                    image: Images.profilePic3,
                 },
-                {   name: 'Dave', 
-                    title: 'Pedicurist', services: ['Pedicure'],
-                    image: Images.profilePic2 
+                {
+                    name: 'Dave',
+                    title: 'Pedicurist',
+                    services: ['Pedicure'],
+                    image: Images.profilePic2,
                 },
-                {   name: 'Brian', 
-                    title: 'Masseur', 
+                {
+                    name: 'Brian',
+                    title: 'Masseur',
                     services: ['Head', 'Back', 'Full body'],
-                    image: Images.profilePic1 
+                    image: Images.profilePic1,
                 },
-                {   name: 'Janice', 
-                    title: 'Manicurist', 
+                {
+                    name: 'Janice',
+                    title: 'Manicurist',
                     services: ['Manicure'],
-                    image: Images.profilePic4 
-                }
+                    image: Images.profilePic4,
+                },
             ],
         };
     }
@@ -60,7 +64,6 @@ export default class ServiceList extends Component {
                             services={item.services}
                             navigation={navigation}
                             image={item.image}
-
                         />
                     )}
                 />
