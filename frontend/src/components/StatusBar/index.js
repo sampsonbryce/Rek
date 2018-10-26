@@ -1,37 +1,49 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 
-export default class StatusBar extends Component{
-    _bar(){
-        if(this.props.message){
-            return (
-                <View style={[styles[this.props.type], styles.bar]}>
-                    <Text style={styles.text}>{this.props.message}</Text>
-                </View>
-            )
-        }
-        else{
-            return (<View></View>);
-        }
+/*
+ * Status bar for rendering ui messages to the user
+ */
+const StatusBar = props => {
+    const { message, type } = props;
+
+    // render a status if one exists
+    if (message) {
+        return (
+            <View style={[styles[type], styles.bar]}>
+                <Text style={styles.text}>{message}</Text>
+            </View>
+        );
     }
 
-    render(){
-        let status_bar = this._bar();
-        return status_bar;
-    }
-}
+    // otherwise render an empty view
+    return <View />;
+};
 
 const styles = StyleSheet.create({
     text: {
         color: 'white',
     },
     error: {
-        backgroundColor: 'red'
+        backgroundColor: 'red',
     },
     success: {
-        backgroundColor: 'green'
+        backgroundColor: 'green',
     },
     bar: {
         padding: 15,
-    }
-})
+    },
+});
+
+StatusBar.propTypes = {
+    message: PropTypes.string,
+    type: PropTypes.string,
+};
+
+StatusBar.defaultProps = {
+    message: '',
+    type: null,
+};
+
+export default StatusBar;

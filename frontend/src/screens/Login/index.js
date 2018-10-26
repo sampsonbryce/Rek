@@ -1,151 +1,151 @@
-import { userLogin } from '../../actions';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { View, Text, TextInput } from 'react-native';
+import { View } from 'react-native';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import Button from 'src/components/Button';
 import t from 'tcomb-form-native';
 import StatusBar from 'src/components/StatusBar';
+import PropTypes from 'prop-types';
+import { Navigation } from 'react-native-navigation';
+import { userLogin } from '../../actions';
 
-let Form = t.form.Form;
+// Define Login form structure and options
+const { Form } = t.form;
 
-let LoginType = t.struct({
+const LoginType = t.struct({
     email: t.String,
     password: t.String,
-})
+});
 
-let LoginOptions = {
+const LoginOptions = {
     fields: {
         password: {
-            secureTextEntry: true
-        }
+            secureTextEntry: true,
+        },
     },
-    auto: 'placeholders'
-}
+    auto: 'placeholders',
+};
 
+// define login graphql mutation
 const LOGIN_MUTATION = gql`
-    mutation LoginMutation($email: String!, $password: String!){
-        login(email: $email, password: $password){
+    mutation LoginMutation($email: String!, $password: String!) {
+        login(email: $email, password: $password) {
             token
-            user{
+            user {
                 id
                 name
                 email
             }
         }
     }
-`
+`;
 
-class LoginComponent extends Component{
-
+class LoginComponent extends Component {
     static navigationOptions = {
         header: null,
         title: 'Login',
-    }
-    constructor(props){
+    };
+
+    static propTypes = {
+        onUserLogin: PropTypes.func.isRequired,
+        navigation: PropTypes.instanceOf(Navigation).isRequired,
+    };
+
+    constructor(props) {
         super(props);
+
+        // create form ref
+        this.form = React.createRef();
+
+        // init state
         this.state = {
             status: {
-                message: "",
-                type: null
-
-            }
-        }
+                message: '',
+                type: null,
+            },
+        };
     }
 
     // Handle form submition
-    async _submit(login){
+    async submit(login) {
+        const { onUserLogin, navigation } = this.props;
+
         // get form data
-        let value = this.form.getValue();
-        if(!value){
+        const value = this.form.current.getValue();
+        if (!value) {
             // Validation failed
-            this.setState({ status: { message: "Login or Password is incorrect", type: "error" }})
+            this.setState({ status: { message: 'Login or Password is incorrect', type: 'error' } });
             return;
         }
 
         // login
         let response = null;
-        try{
-            response = await login({ variables : value });
-        }catch(err){
-            let e = err.graphQLErrors[0];
-            this.setState({ status: { message: e.message, type: "error" }})
+        try {
+            response = await login({ variables: value });
+        } catch (err) {
+            const e = err.graphQLErrors[0];
+            this.setState({ status: { message: e.message, type: 'error' } });
             return;
         }
 
         // get response data
-        let { user, token } = response.data.login;
+        const { user, token } = response.data.login;
 
         // update redux
-        this.props.onUserLogin(user, token);
+        onUserLogin(user, token);
 
         // update gui
-        this.setState({ status: { message: "User Logged in!" }});
+        this.setState({ status: { message: 'User Logged in!' } });
 
-        // Success! Navigate 
-        this.props.navigation.navigate("Dashboard");
+        // Success! Navigate
+        navigation.navigate('Dashboard');
     }
 
-    render(){
+    render() {
+        const { status } = this.state;
+        const { navigation } = this.props;
+
         return (
             <View>
-                <StatusBar message={this.state.status.message} type={this.state.status.type} />
-            
+                <StatusBar message={status.message} type={status.type} />
+
                 {/* Render Form */}
-                <Form 
-                    ref={(form) => this.form = form }
-                    type={LoginType}
-                    options={LoginOptions}
-                />
+                <Form ref={this.form} type={LoginType} options={LoginOptions} />
 
                 {/* Login submit mutation */}
-                <Mutation
-                    mutation={LOGIN_MUTATION}
-                    onCompleted={(data) => {
-                        let { login: {user, token}} = data;
-                        this.props.onUserLogin(user, token);
-                    }}
-                >{(login, { loading, error }) => {
-                    return (<Button
-                        onPress={this._submit.bind(this, login)}
-                        title={loading ? "Loading..." : "Login"}
-                    />)
-                }}
+                <Mutation mutation={LOGIN_MUTATION}>
+                    {(login, { loading }) => (
+                        <Button
+                            onPress={() => this.submit(login)}
+                            title={loading ? 'Loading...' : 'Login'}
+                        />
+                    )}
                 </Mutation>
 
                 {/* Signup link */}
                 <Button
-                  title="Signup"
-                  onPress={()=> {
-                      this.props.navigation.navigate("Signup")
-                    }
-                  }
+                    title="Signup"
+                    onPress={() => {
+                        navigation.navigate('Signup');
+                    }}
                 />
             </View>
-        )
+        );
     }
 }
 
-
-
-const mapStateToProps = state => {
-    return {
-        user: state.user,
-        token: state.token
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        onUserLogin: (user, token) => {
-            dispatch(userLogin(user, token));
-        }
-    }
-}
+/*
+ * Add redux dispatch functions to props
+ */
+const mapDispatchToProps = dispatch => ({
+    onUserLogin: (user, token) => {
+        dispatch(userLogin(user, token));
+    },
+});
 
 const Login = connect(
-    mapStateToProps,
+    null,
     mapDispatchToProps
 )(LoginComponent);
 
