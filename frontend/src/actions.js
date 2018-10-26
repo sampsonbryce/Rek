@@ -1,9 +1,7 @@
 import { USER_LOGIN } from './constants';
 
-function userLogin(user, token){
+function userLogin(user, token) {
     return { type: USER_LOGIN, user, token };
 }
 
-export {
-    userLogin
-}
+export { userLogin }; // eslint-disable-line
