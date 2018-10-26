@@ -12,6 +12,13 @@ async function users(root, args, ctx, info){
     return users;
 }
 
+// async function usersByServicesAndAvailability(root, args, ctx, info){
+//     let users = await ctx.db.users();
+//     return users;
+// }
+
+
+
 module.exports = {
     user,
     users,

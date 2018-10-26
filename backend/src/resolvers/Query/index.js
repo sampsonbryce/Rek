@@ -5,20 +5,20 @@ function info(){
     return "Backend for The Rek application";
 }
 
-async function getEmployeeSchedulesServices(parent, args, ctx, info){
+async function usersByServicesAndAvailability(parent, args, ctx, info){
     console.log('in get: ', args);
 
-    let EmployeeToScheduleToServices = null;
+    let where_query = {};
+
     // console.log('info: ', info);
     if(args.filterData){
         const { employeeFilterIds, serviceFilterIds, desiredStartTime } = args.filterData;
         
         // build where query
-        let where_query = {};
 
         // add employee filter
         if(employeeFilterIds){
-            where_query.employee = { id_in: employeeFilterIds };
+            where_query.id_in = employeeFilterIds;
         }
 
         // add service filter
@@ -31,7 +31,7 @@ async function getEmployeeSchedulesServices(parent, args, ctx, info){
             let dst = desiredStartTime; // for ease of use
 
             // update where query to filter by removing people who can't be booked at their desired time
-            where_query.schedule = {
+            where_query.employeeSchedule = {
 
                 // if they work during desired time
                 workingTimes_some: {
@@ -48,25 +48,25 @@ async function getEmployeeSchedulesServices(parent, args, ctx, info){
         }
 
         console.log("where: ", where_query);
-        EmployeeToScheduleToServices = await ctx.db.employeeToScheduleToServiceses({where: where_query}, '{ id }');
     }
 
-    // get all results
-    else{
-        EmployeeToScheduleToServices = await ctx.db.employeeToScheduleToServiceses(null, '{ id }');
-    }
+    const users = await ctx.db.users({where: where_query}, '{ id }');
+    // const users = await ctx.db.users({where: where_query}, info);
+    
 
-    console.log("ETSTS RESULT:", EmployeeToScheduleToServices);
-    console.log("MAP:", EmployeeToScheduleToServices.map(item => item.id));
+    console.log("users RESULT:", users);
+    // console.log("MAP:", EmployeeToScheduleToServices.map(item => item.id));
 
-    return [{
-        EmployeeToScheduleToServices
-    }];
+    return users;
 
-    return EmployeeToScheduleToServices.map(item => item.id);
-    return {
-        EmployeeToScheduleToServicesIds: EmployeeToScheduleToServices.map(item => item.id)
-    };
+    // return [{
+    //     EmployeeToScheduleToServices
+    // }];
+
+    // return EmployeeToScheduleToServices.map(item => item.id);
+    // return {
+    //     EmployeeToScheduleToServicesIds: EmployeeToScheduleToServices.map(item => item.id)
+    // };
 }
 
 const Query = {
@@ -75,7 +75,8 @@ const Query = {
     users,
     service,
     services,
-    getEmployeeSchedulesServices
+    usersByServicesAndAvailability
+    // getEmployeeSchedulesServices
 }
 
 module.exports = Query;

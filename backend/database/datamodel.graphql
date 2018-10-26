@@ -14,19 +14,22 @@ type User {
   email: String! @unique
   password: String!
   roles: Role!
-}
-
-type UserToSchedule{
-  user: User!
-  schedule: UserSchedule!
-}
-
-type EmployeeToScheduleToServices{
-  id: ID! @unique
-  employee: User!
-  schedule: EmployeeSchedule!
+  userSchedule: UserSchedule 
+  employeeSchedule: EmployeeSchedule
   services: [Service!]!
 }
+
+# type UserToSchedule{
+#   user: User!
+#   schedule: UserSchedule!
+# }
+
+# type EmployeeToScheduleToServices{
+#   id: ID! @unique
+#   employee: User!
+#   schedule: EmployeeSchedule!
+#   services: [Service!]!
+# }
 
 type Role {
   owner: User!
@@ -44,26 +47,30 @@ type Service {
 }
 
 interface Schedule {
+  id: ID! @unique
   appointments: [Appointment!]!
 }
 
 type EmployeeSchedule implements Schedule{
-  employee: User!
+  # employee: User!
+  id: ID! @unique
   workingTimes: [WorkingTime!]!
   appointments: [Appointment!]!
 }
 
-
 type WorkingTime {
+  id: ID! @unique
   start: DateTime!
   end: DateTime!
 }
 
 type UserSchedule implements Schedule{
+  id: ID! @unique
   appointments: [Appointment!]!
 }
 
 type Appointment {
+  id: ID! @unique
   start: DateTime!
   end: DateTime!
 }

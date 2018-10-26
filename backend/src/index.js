@@ -4,7 +4,9 @@ const Query = require('./resolvers/Query');
 const Mutation = require('./resolvers/Mutation');
 const AuthPayload = require('./resolvers/AuthPayload');
 const User = require('./resolvers/User');
-const EmployeeToScheduleToServices = require('./resolvers/EmployeeToScheduleToServices');
+const EmployeeSchedule = require('./resolvers/EmployeeSchedule');
+const UserSchedule = require('./resolvers/UserSchedule');
+// const EmployeeToScheduleToServices = require('./resolvers/EmployeeToScheduleToServices');
 const { formatError } = require('apollo-errors');
 
 const resolvers = {
@@ -12,7 +14,9 @@ const resolvers = {
     Mutation,
     AuthPayload,
     User,
-    EmployeeToScheduleToServices,
+    UserSchedule,
+    EmployeeSchedule,
+    // EmployeeToScheduleToServices,
 }
 
 /*

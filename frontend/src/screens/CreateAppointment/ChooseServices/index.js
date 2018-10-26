@@ -12,10 +12,6 @@ import ServiceListItem from './components/ServiceListItem';
 
 const GET_SERVICES = gql`
     {
-        services {
-            id
-            name
-        }
     }
 `;
 
@@ -42,12 +38,12 @@ class ChooseServices extends Component {
         }).isRequired,
     };
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            selected: 0,
-        };
-    }
+    // constructor(props) {
+    //     super(props);
+    //     this.state = {
+    //         selected: 0,
+    //     };
+    // }
 
     select(id) {
         const { selected, setSelectedServices } = this.props;
@@ -57,11 +53,11 @@ class ChooseServices extends Component {
         if (selected.includes(id)) {
             // deselect
             _.remove(selected, n => n === id);
-            this.setState({ selected: selected.length - 1 });
+            // this.setState({ selected: selected.length - 1 });
         } else {
             // select
             selected.push(id);
-            this.setState({ selected: selected.length + 1 });
+            // this.setState({ selected: selected.length + 1 });
         }
         console.log('selected after: ', selected);
 

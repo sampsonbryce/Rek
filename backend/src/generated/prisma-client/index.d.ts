@@ -13,14 +13,10 @@ type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
 export interface Exists {
   appointment: (where?: AppointmentWhereInput) => Promise<boolean>;
   employeeSchedule: (where?: EmployeeScheduleWhereInput) => Promise<boolean>;
-  employeeToScheduleToServices: (
-    where?: EmployeeToScheduleToServicesWhereInput
-  ) => Promise<boolean>;
   role: (where?: RoleWhereInput) => Promise<boolean>;
   service: (where?: ServiceWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
   userSchedule: (where?: UserScheduleWhereInput) => Promise<boolean>;
-  userToSchedule: (where?: UserToScheduleWhereInput) => Promise<boolean>;
   workingTime: (where?: WorkingTimeWhereInput) => Promise<boolean>;
 }
 
@@ -44,6 +40,7 @@ export interface Prisma {
    * Queries
    */
 
+  appointment: (where: AppointmentWhereUniqueInput) => Appointment;
   appointments: (
     args?: {
       where?: AppointmentWhereInput;
@@ -66,6 +63,9 @@ export interface Prisma {
       last?: Int;
     }
   ) => AppointmentConnection;
+  employeeSchedule: (
+    where: EmployeeScheduleWhereUniqueInput
+  ) => EmployeeSchedule;
   employeeSchedules: (
     args?: {
       where?: EmployeeScheduleWhereInput;
@@ -88,31 +88,6 @@ export interface Prisma {
       last?: Int;
     }
   ) => EmployeeScheduleConnection;
-  employeeToScheduleToServices: (
-    where: EmployeeToScheduleToServicesWhereUniqueInput
-  ) => EmployeeToScheduleToServices;
-  employeeToScheduleToServiceses: (
-    args?: {
-      where?: EmployeeToScheduleToServicesWhereInput;
-      orderBy?: EmployeeToScheduleToServicesOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => FragmentableArray<EmployeeToScheduleToServicesNode>;
-  employeeToScheduleToServicesesConnection: (
-    args?: {
-      where?: EmployeeToScheduleToServicesWhereInput;
-      orderBy?: EmployeeToScheduleToServicesOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => EmployeeToScheduleToServicesConnection;
   roles: (
     args?: {
       where?: RoleWhereInput;
@@ -181,6 +156,7 @@ export interface Prisma {
       last?: Int;
     }
   ) => UserConnection;
+  userSchedule: (where: UserScheduleWhereUniqueInput) => UserSchedule;
   userSchedules: (
     args?: {
       where?: UserScheduleWhereInput;
@@ -203,28 +179,7 @@ export interface Prisma {
       last?: Int;
     }
   ) => UserScheduleConnection;
-  userToSchedules: (
-    args?: {
-      where?: UserToScheduleWhereInput;
-      orderBy?: UserToScheduleOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => FragmentableArray<UserToScheduleNode>;
-  userToSchedulesConnection: (
-    args?: {
-      where?: UserToScheduleWhereInput;
-      orderBy?: UserToScheduleOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => UserToScheduleConnection;
+  workingTime: (where: WorkingTimeWhereUniqueInput) => WorkingTime;
   workingTimes: (
     args?: {
       where?: WorkingTimeWhereInput;
@@ -254,12 +209,29 @@ export interface Prisma {
    */
 
   createAppointment: (data: AppointmentCreateInput) => Appointment;
+  updateAppointment: (
+    args: { data: AppointmentUpdateInput; where: AppointmentWhereUniqueInput }
+  ) => Appointment;
   updateManyAppointments: (
     args: { data: AppointmentUpdateInput; where?: AppointmentWhereInput }
   ) => BatchPayload;
+  upsertAppointment: (
+    args: {
+      where: AppointmentWhereUniqueInput;
+      create: AppointmentCreateInput;
+      update: AppointmentUpdateInput;
+    }
+  ) => Appointment;
+  deleteAppointment: (where: AppointmentWhereUniqueInput) => Appointment;
   deleteManyAppointments: (where?: AppointmentWhereInput) => BatchPayload;
   createEmployeeSchedule: (
     data: EmployeeScheduleCreateInput
+  ) => EmployeeSchedule;
+  updateEmployeeSchedule: (
+    args: {
+      data: EmployeeScheduleUpdateInput;
+      where: EmployeeScheduleWhereUniqueInput;
+    }
   ) => EmployeeSchedule;
   updateManyEmployeeSchedules: (
     args: {
@@ -267,36 +239,18 @@ export interface Prisma {
       where?: EmployeeScheduleWhereInput;
     }
   ) => BatchPayload;
+  upsertEmployeeSchedule: (
+    args: {
+      where: EmployeeScheduleWhereUniqueInput;
+      create: EmployeeScheduleCreateInput;
+      update: EmployeeScheduleUpdateInput;
+    }
+  ) => EmployeeSchedule;
+  deleteEmployeeSchedule: (
+    where: EmployeeScheduleWhereUniqueInput
+  ) => EmployeeSchedule;
   deleteManyEmployeeSchedules: (
     where?: EmployeeScheduleWhereInput
-  ) => BatchPayload;
-  createEmployeeToScheduleToServices: (
-    data: EmployeeToScheduleToServicesCreateInput
-  ) => EmployeeToScheduleToServices;
-  updateEmployeeToScheduleToServices: (
-    args: {
-      data: EmployeeToScheduleToServicesUpdateInput;
-      where: EmployeeToScheduleToServicesWhereUniqueInput;
-    }
-  ) => EmployeeToScheduleToServices;
-  updateManyEmployeeToScheduleToServiceses: (
-    args: {
-      data: EmployeeToScheduleToServicesUpdateInput;
-      where?: EmployeeToScheduleToServicesWhereInput;
-    }
-  ) => BatchPayload;
-  upsertEmployeeToScheduleToServices: (
-    args: {
-      where: EmployeeToScheduleToServicesWhereUniqueInput;
-      create: EmployeeToScheduleToServicesCreateInput;
-      update: EmployeeToScheduleToServicesUpdateInput;
-    }
-  ) => EmployeeToScheduleToServices;
-  deleteEmployeeToScheduleToServices: (
-    where: EmployeeToScheduleToServicesWhereUniqueInput
-  ) => EmployeeToScheduleToServices;
-  deleteManyEmployeeToScheduleToServiceses: (
-    where?: EmployeeToScheduleToServicesWhereInput
   ) => BatchPayload;
   createRole: (data: RoleCreateInput) => Role;
   updateManyRoles: (
@@ -336,19 +290,36 @@ export interface Prisma {
   deleteUser: (where: UserWhereUniqueInput) => User;
   deleteManyUsers: (where?: UserWhereInput) => BatchPayload;
   createUserSchedule: (data: UserScheduleCreateInput) => UserSchedule;
+  updateUserSchedule: (
+    args: { data: UserScheduleUpdateInput; where: UserScheduleWhereUniqueInput }
+  ) => UserSchedule;
   updateManyUserSchedules: (
     args: { data: UserScheduleUpdateInput; where?: UserScheduleWhereInput }
   ) => BatchPayload;
+  upsertUserSchedule: (
+    args: {
+      where: UserScheduleWhereUniqueInput;
+      create: UserScheduleCreateInput;
+      update: UserScheduleUpdateInput;
+    }
+  ) => UserSchedule;
+  deleteUserSchedule: (where: UserScheduleWhereUniqueInput) => UserSchedule;
   deleteManyUserSchedules: (where?: UserScheduleWhereInput) => BatchPayload;
-  createUserToSchedule: (data: UserToScheduleCreateInput) => UserToSchedule;
-  updateManyUserToSchedules: (
-    args: { data: UserToScheduleUpdateInput; where?: UserToScheduleWhereInput }
-  ) => BatchPayload;
-  deleteManyUserToSchedules: (where?: UserToScheduleWhereInput) => BatchPayload;
   createWorkingTime: (data: WorkingTimeCreateInput) => WorkingTime;
+  updateWorkingTime: (
+    args: { data: WorkingTimeUpdateInput; where: WorkingTimeWhereUniqueInput }
+  ) => WorkingTime;
   updateManyWorkingTimes: (
     args: { data: WorkingTimeUpdateInput; where?: WorkingTimeWhereInput }
   ) => BatchPayload;
+  upsertWorkingTime: (
+    args: {
+      where: WorkingTimeWhereUniqueInput;
+      create: WorkingTimeCreateInput;
+      update: WorkingTimeUpdateInput;
+    }
+  ) => WorkingTime;
+  deleteWorkingTime: (where: WorkingTimeWhereUniqueInput) => WorkingTime;
   deleteManyWorkingTimes: (where?: WorkingTimeWhereInput) => BatchPayload;
 
   /**
@@ -365,9 +336,6 @@ export interface Subscription {
   employeeSchedule: (
     where?: EmployeeScheduleSubscriptionWhereInput
   ) => EmployeeScheduleSubscriptionPayloadSubscription;
-  employeeToScheduleToServices: (
-    where?: EmployeeToScheduleToServicesSubscriptionWhereInput
-  ) => EmployeeToScheduleToServicesSubscriptionPayloadSubscription;
   role: (
     where?: RoleSubscriptionWhereInput
   ) => RoleSubscriptionPayloadSubscription;
@@ -380,9 +348,6 @@ export interface Subscription {
   userSchedule: (
     where?: UserScheduleSubscriptionWhereInput
   ) => UserScheduleSubscriptionPayloadSubscription;
-  userToSchedule: (
-    where?: UserToScheduleSubscriptionWhereInput
-  ) => UserToScheduleSubscriptionPayloadSubscription;
   workingTime: (
     where?: WorkingTimeSubscriptionWhereInput
   ) => WorkingTimeSubscriptionPayloadSubscription;
@@ -396,15 +361,13 @@ export interface ClientConstructor<T> {
  * Types
  */
 
-export type UserOrderByInput =
+export type WorkingTimeOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "email_ASC"
-  | "email_DESC"
-  | "password_ASC"
-  | "password_DESC"
+  | "start_ASC"
+  | "start_DESC"
+  | "end_ASC"
+  | "end_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -418,11 +381,13 @@ export type EmployeeScheduleOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type WorkingTimeOrderByInput =
-  | "start_ASC"
-  | "start_DESC"
-  | "end_ASC"
-  | "end_DESC"
+export type RoleOrderByInput =
+  | "admin_ASC"
+  | "admin_DESC"
+  | "employee_ASC"
+  | "employee_DESC"
+  | "user_ASC"
+  | "user_DESC"
   | "id_ASC"
   | "id_DESC"
   | "createdAt_ASC"
@@ -446,35 +411,27 @@ export type ServiceOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type EmployeeToScheduleToServicesOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
-export type RoleOrderByInput =
-  | "admin_ASC"
-  | "admin_DESC"
-  | "employee_ASC"
-  | "employee_DESC"
-  | "user_ASC"
-  | "user_DESC"
-  | "id_ASC"
-  | "id_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
 export type AppointmentOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
   | "start_ASC"
   | "start_DESC"
   | "end_ASC"
   | "end_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type UserOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "email_ASC"
+  | "email_DESC"
+  | "password_ASC"
+  | "password_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -488,24 +445,291 @@ export type UserScheduleOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type UserToScheduleOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export interface UserCreateInput {
+export interface EmployeeScheduleUpdateInput {
+  workingTimes?: WorkingTimeUpdateManyInput;
+  appointments?: AppointmentUpdateManyInput;
+}
+
+export type AppointmentWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface EmployeeScheduleUpsertNestedInput {
+  update: EmployeeScheduleUpdateDataInput;
+  create: EmployeeScheduleCreateInput;
+}
+
+export interface UserScheduleCreateInput {
+  appointments?: AppointmentCreateManyInput;
+}
+
+export type UserScheduleWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface AppointmentUpdateManyInput {
+  create?: AppointmentCreateInput[] | AppointmentCreateInput;
+  update?:
+    | AppointmentUpdateWithWhereUniqueNestedInput[]
+    | AppointmentUpdateWithWhereUniqueNestedInput;
+  upsert?:
+    | AppointmentUpsertWithWhereUniqueNestedInput[]
+    | AppointmentUpsertWithWhereUniqueNestedInput;
+  delete?: AppointmentWhereUniqueInput[] | AppointmentWhereUniqueInput;
+  connect?: AppointmentWhereUniqueInput[] | AppointmentWhereUniqueInput;
+  disconnect?: AppointmentWhereUniqueInput[] | AppointmentWhereUniqueInput;
+}
+
+export interface EmployeeScheduleUpdateDataInput {
+  workingTimes?: WorkingTimeUpdateManyInput;
+  appointments?: AppointmentUpdateManyInput;
+}
+
+export type EmployeeScheduleWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface EmployeeScheduleUpdateOneInput {
+  create?: EmployeeScheduleCreateInput;
+  update?: EmployeeScheduleUpdateDataInput;
+  upsert?: EmployeeScheduleUpsertNestedInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: EmployeeScheduleWhereUniqueInput;
+}
+
+export interface WorkingTimeWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  start?: DateTimeInput;
+  start_not?: DateTimeInput;
+  start_in?: DateTimeInput[] | DateTimeInput;
+  start_not_in?: DateTimeInput[] | DateTimeInput;
+  start_lt?: DateTimeInput;
+  start_lte?: DateTimeInput;
+  start_gt?: DateTimeInput;
+  start_gte?: DateTimeInput;
+  end?: DateTimeInput;
+  end_not?: DateTimeInput;
+  end_in?: DateTimeInput[] | DateTimeInput;
+  end_not_in?: DateTimeInput[] | DateTimeInput;
+  end_lt?: DateTimeInput;
+  end_lte?: DateTimeInput;
+  end_gt?: DateTimeInput;
+  end_gte?: DateTimeInput;
+  AND?: WorkingTimeWhereInput[] | WorkingTimeWhereInput;
+  OR?: WorkingTimeWhereInput[] | WorkingTimeWhereInput;
+  NOT?: WorkingTimeWhereInput[] | WorkingTimeWhereInput;
+}
+
+export interface UserScheduleUpsertNestedInput {
+  update: UserScheduleUpdateDataInput;
+  create: UserScheduleCreateInput;
+}
+
+export interface ServiceSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ServiceWhereInput;
+  AND?: ServiceSubscriptionWhereInput[] | ServiceSubscriptionWhereInput;
+  OR?: ServiceSubscriptionWhereInput[] | ServiceSubscriptionWhereInput;
+  NOT?: ServiceSubscriptionWhereInput[] | ServiceSubscriptionWhereInput;
+}
+
+export interface UserScheduleUpdateDataInput {
+  appointments?: AppointmentUpdateManyInput;
+}
+
+export interface RoleSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: RoleWhereInput;
+  AND?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
+  OR?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
+  NOT?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
+}
+
+export type WorkingTimeWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface AppointmentSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: AppointmentWhereInput;
+  AND?: AppointmentSubscriptionWhereInput[] | AppointmentSubscriptionWhereInput;
+  OR?: AppointmentSubscriptionWhereInput[] | AppointmentSubscriptionWhereInput;
+  NOT?: AppointmentSubscriptionWhereInput[] | AppointmentSubscriptionWhereInput;
+}
+
+export interface UserScheduleUpdateOneInput {
+  create?: UserScheduleCreateInput;
+  update?: UserScheduleUpdateDataInput;
+  upsert?: UserScheduleUpsertNestedInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: UserScheduleWhereUniqueInput;
+}
+
+export interface RoleWhereInput {
+  owner?: UserWhereInput;
+  admin?: Boolean;
+  admin_not?: Boolean;
+  employee?: Boolean;
+  employee_not?: Boolean;
+  user?: Boolean;
+  user_not?: Boolean;
+  AND?: RoleWhereInput[] | RoleWhereInput;
+  OR?: RoleWhereInput[] | RoleWhereInput;
+  NOT?: RoleWhereInput[] | RoleWhereInput;
+}
+
+export interface UserUpdateWithoutRolesDataInput {
+  name?: String;
+  email?: String;
+  password?: String;
+  userSchedule?: UserScheduleUpdateOneInput;
+  employeeSchedule?: EmployeeScheduleUpdateOneInput;
+  services?: ServiceUpdateManyInput;
+}
+
+export interface UserScheduleWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  appointments_every?: AppointmentWhereInput;
+  appointments_some?: AppointmentWhereInput;
+  appointments_none?: AppointmentWhereInput;
+  AND?: UserScheduleWhereInput[] | UserScheduleWhereInput;
+  OR?: UserScheduleWhereInput[] | UserScheduleWhereInput;
+  NOT?: UserScheduleWhereInput[] | UserScheduleWhereInput;
+}
+
+export interface UserUpdateOneRequiredWithoutRolesInput {
+  create?: UserCreateWithoutRolesInput;
+  update?: UserUpdateWithoutRolesDataInput;
+  upsert?: UserUpsertWithoutRolesInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface UserScheduleUpdateInput {
+  appointments?: AppointmentUpdateManyInput;
+}
+
+export interface RoleUpdateWithoutOwnerDataInput {
+  admin?: Boolean;
+  employee?: Boolean;
+  user?: Boolean;
+}
+
+export interface UserUpdateInput {
+  name?: String;
+  email?: String;
+  password?: String;
+  roles?: RoleUpdateOneRequiredWithoutOwnerInput;
+  userSchedule?: UserScheduleUpdateOneInput;
+  employeeSchedule?: EmployeeScheduleUpdateOneInput;
+  services?: ServiceUpdateManyInput;
+}
+
+export interface AppointmentCreateInput {
+  start: DateTimeInput;
+  end: DateTimeInput;
+}
+
+export interface RoleCreateOneWithoutOwnerInput {
+  create?: RoleCreateWithoutOwnerInput;
+}
+
+export interface AppointmentUpdateInput {
+  start?: DateTimeInput;
+  end?: DateTimeInput;
+}
+
+export interface ServiceUpdateInput {
+  name?: String;
+  female_title?: String;
+  male_title?: String;
+  time_blocks?: Int;
+}
+
+export interface RoleUpdateInput {
+  owner?: UserUpdateOneRequiredWithoutRolesInput;
+  admin?: Boolean;
+  employee?: Boolean;
+  user?: Boolean;
+}
+
+export interface UserUpsertWithoutRolesInput {
+  update: UserUpdateWithoutRolesDataInput;
+  create: UserCreateWithoutRolesInput;
+}
+
+export interface ServiceCreateInput {
   name: String;
-  email: String;
-  password: String;
-  roles: RoleCreateOneWithoutOwnerInput;
+  female_title: String;
+  male_title: String;
+  time_blocks?: Int;
+}
+
+export interface ServiceUpdateDataInput {
+  name?: String;
+  female_title?: String;
+  male_title?: String;
+  time_blocks?: Int;
+}
+
+export interface EmployeeScheduleCreateInput {
+  workingTimes?: WorkingTimeCreateManyInput;
+  appointments?: AppointmentCreateManyInput;
 }
 
 export interface AppointmentWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
   start?: DateTimeInput;
   start_not?: DateTimeInput;
   start_in?: DateTimeInput[] | DateTimeInput;
@@ -527,13 +751,52 @@ export interface AppointmentWhereInput {
   NOT?: AppointmentWhereInput[] | AppointmentWhereInput;
 }
 
-export interface EmployeeScheduleUpdateInput {
-  employee?: UserUpdateOneRequiredInput;
-  workingTimes?: WorkingTimeUpdateManyInput;
-  appointments?: AppointmentUpdateManyInput;
+export interface WorkingTimeCreateManyInput {
+  create?: WorkingTimeCreateInput[] | WorkingTimeCreateInput;
+  connect?: WorkingTimeWhereUniqueInput[] | WorkingTimeWhereUniqueInput;
 }
 
-export interface UserWhereInput {
+export interface ServiceUpdateManyInput {
+  create?: ServiceCreateInput[] | ServiceCreateInput;
+  update?:
+    | ServiceUpdateWithWhereUniqueNestedInput[]
+    | ServiceUpdateWithWhereUniqueNestedInput;
+  upsert?:
+    | ServiceUpsertWithWhereUniqueNestedInput[]
+    | ServiceUpsertWithWhereUniqueNestedInput;
+  delete?: ServiceWhereUniqueInput[] | ServiceWhereUniqueInput;
+  connect?: ServiceWhereUniqueInput[] | ServiceWhereUniqueInput;
+  disconnect?: ServiceWhereUniqueInput[] | ServiceWhereUniqueInput;
+}
+
+export interface WorkingTimeCreateInput {
+  start: DateTimeInput;
+  end: DateTimeInput;
+}
+
+export interface UserScheduleSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: UserScheduleWhereInput;
+  AND?:
+    | UserScheduleSubscriptionWhereInput[]
+    | UserScheduleSubscriptionWhereInput;
+  OR?:
+    | UserScheduleSubscriptionWhereInput[]
+    | UserScheduleSubscriptionWhereInput;
+  NOT?:
+    | UserScheduleSubscriptionWhereInput[]
+    | UserScheduleSubscriptionWhereInput;
+}
+
+export interface AppointmentCreateManyInput {
+  create?: AppointmentCreateInput[] | AppointmentCreateInput;
+  connect?: AppointmentWhereUniqueInput[] | AppointmentWhereUniqueInput;
+}
+
+export interface EmployeeScheduleWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -548,83 +811,6 @@ export interface UserWhereInput {
   id_not_starts_with?: ID_Input;
   id_ends_with?: ID_Input;
   id_not_ends_with?: ID_Input;
-  name?: String;
-  name_not?: String;
-  name_in?: String[] | String;
-  name_not_in?: String[] | String;
-  name_lt?: String;
-  name_lte?: String;
-  name_gt?: String;
-  name_gte?: String;
-  name_contains?: String;
-  name_not_contains?: String;
-  name_starts_with?: String;
-  name_not_starts_with?: String;
-  name_ends_with?: String;
-  name_not_ends_with?: String;
-  email?: String;
-  email_not?: String;
-  email_in?: String[] | String;
-  email_not_in?: String[] | String;
-  email_lt?: String;
-  email_lte?: String;
-  email_gt?: String;
-  email_gte?: String;
-  email_contains?: String;
-  email_not_contains?: String;
-  email_starts_with?: String;
-  email_not_starts_with?: String;
-  email_ends_with?: String;
-  email_not_ends_with?: String;
-  password?: String;
-  password_not?: String;
-  password_in?: String[] | String;
-  password_not_in?: String[] | String;
-  password_lt?: String;
-  password_lte?: String;
-  password_gt?: String;
-  password_gte?: String;
-  password_contains?: String;
-  password_not_contains?: String;
-  password_starts_with?: String;
-  password_not_starts_with?: String;
-  password_ends_with?: String;
-  password_not_ends_with?: String;
-  roles?: RoleWhereInput;
-  AND?: UserWhereInput[] | UserWhereInput;
-  OR?: UserWhereInput[] | UserWhereInput;
-  NOT?: UserWhereInput[] | UserWhereInput;
-}
-
-export interface UserUpdateOneRequiredInput {
-  create?: UserCreateInput;
-  update?: UserUpdateDataInput;
-  upsert?: UserUpsertNestedInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface RoleWhereInput {
-  owner?: UserWhereInput;
-  admin?: Boolean;
-  admin_not?: Boolean;
-  employee?: Boolean;
-  employee_not?: Boolean;
-  user?: Boolean;
-  user_not?: Boolean;
-  AND?: RoleWhereInput[] | RoleWhereInput;
-  OR?: RoleWhereInput[] | RoleWhereInput;
-  NOT?: RoleWhereInput[] | RoleWhereInput;
-}
-
-export interface UserUpdateDataInput {
-  name?: String;
-  email?: String;
-  password?: String;
-  roles?: RoleUpdateOneRequiredWithoutOwnerInput;
-}
-
-export interface EmployeeScheduleWhereInput {
-  employee?: UserWhereInput;
   workingTimes_every?: WorkingTimeWhereInput;
   workingTimes_some?: WorkingTimeWhereInput;
   workingTimes_none?: WorkingTimeWhereInput;
@@ -636,86 +822,27 @@ export interface EmployeeScheduleWhereInput {
   NOT?: EmployeeScheduleWhereInput[] | EmployeeScheduleWhereInput;
 }
 
-export interface UserCreateWithoutRolesInput {
-  name: String;
-  email: String;
-  password: String;
+export interface ServiceCreateManyInput {
+  create?: ServiceCreateInput[] | ServiceCreateInput;
+  connect?: ServiceWhereUniqueInput[] | ServiceWhereUniqueInput;
 }
 
-export interface RoleUpsertWithoutOwnerInput {
-  update: RoleUpdateWithoutOwnerDataInput;
-  create: RoleCreateWithoutOwnerInput;
+export interface WorkingTimeUpdateInput {
+  start?: DateTimeInput;
+  end?: DateTimeInput;
 }
 
-export interface UserCreateOneWithoutRolesInput {
-  create?: UserCreateWithoutRolesInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface RoleUpdateOneRequiredWithoutOwnerInput {
-  create?: RoleCreateWithoutOwnerInput;
-  update?: RoleUpdateWithoutOwnerDataInput;
-  upsert?: RoleUpsertWithoutOwnerInput;
-}
-
-export interface RoleCreateInput {
-  owner: UserCreateOneWithoutRolesInput;
-  admin?: Boolean;
-  employee?: Boolean;
-  user?: Boolean;
-}
-
-export interface UserToScheduleSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: UserToScheduleWhereInput;
-  AND?:
-    | UserToScheduleSubscriptionWhereInput[]
-    | UserToScheduleSubscriptionWhereInput;
-  OR?:
-    | UserToScheduleSubscriptionWhereInput[]
-    | UserToScheduleSubscriptionWhereInput;
-  NOT?:
-    | UserToScheduleSubscriptionWhereInput[]
-    | UserToScheduleSubscriptionWhereInput;
-}
-
-export interface ServiceUpsertWithWhereUniqueNestedInput {
-  where: ServiceWhereUniqueInput;
-  update: ServiceUpdateDataInput;
-  create: ServiceCreateInput;
-}
-
-export interface UserSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: UserWhereInput;
-  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-}
-
-export interface UserToScheduleWhereInput {
-  user?: UserWhereInput;
-  schedule?: UserScheduleWhereInput;
-  AND?: UserToScheduleWhereInput[] | UserToScheduleWhereInput;
-  OR?: UserToScheduleWhereInput[] | UserToScheduleWhereInput;
-  NOT?: UserToScheduleWhereInput[] | UserToScheduleWhereInput;
-}
-
-export type EmployeeToScheduleToServicesWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface ServiceUpdateDataInput {
-  name?: String;
-  female_title?: String;
-  male_title?: String;
-  time_blocks?: Int;
+export interface WorkingTimeUpdateManyInput {
+  create?: WorkingTimeCreateInput[] | WorkingTimeCreateInput;
+  update?:
+    | WorkingTimeUpdateWithWhereUniqueNestedInput[]
+    | WorkingTimeUpdateWithWhereUniqueNestedInput;
+  upsert?:
+    | WorkingTimeUpsertWithWhereUniqueNestedInput[]
+    | WorkingTimeUpsertWithWhereUniqueNestedInput;
+  delete?: WorkingTimeWhereUniqueInput[] | WorkingTimeWhereUniqueInput;
+  connect?: WorkingTimeWhereUniqueInput[] | WorkingTimeWhereUniqueInput;
+  disconnect?: WorkingTimeWhereUniqueInput[] | WorkingTimeWhereUniqueInput;
 }
 
 export interface ServiceWhereInput {
@@ -788,9 +915,189 @@ export interface ServiceWhereInput {
   NOT?: ServiceWhereInput[] | ServiceWhereInput;
 }
 
+export interface WorkingTimeUpdateWithWhereUniqueNestedInput {
+  where: WorkingTimeWhereUniqueInput;
+  data: WorkingTimeUpdateDataInput;
+}
+
+export interface RoleUpdateOneRequiredWithoutOwnerInput {
+  create?: RoleCreateWithoutOwnerInput;
+  update?: RoleUpdateWithoutOwnerDataInput;
+  upsert?: RoleUpsertWithoutOwnerInput;
+}
+
+export interface WorkingTimeUpdateDataInput {
+  start?: DateTimeInput;
+  end?: DateTimeInput;
+}
+
+export interface UserCreateInput {
+  name: String;
+  email: String;
+  password: String;
+  roles: RoleCreateOneWithoutOwnerInput;
+  userSchedule?: UserScheduleCreateOneInput;
+  employeeSchedule?: EmployeeScheduleCreateOneInput;
+  services?: ServiceCreateManyInput;
+}
+
+export interface WorkingTimeUpsertWithWhereUniqueNestedInput {
+  where: WorkingTimeWhereUniqueInput;
+  update: WorkingTimeUpdateDataInput;
+  create: WorkingTimeCreateInput;
+}
+
+export interface ServiceUpsertWithWhereUniqueNestedInput {
+  where: ServiceWhereUniqueInput;
+  update: ServiceUpdateDataInput;
+  create: ServiceCreateInput;
+}
+
+export interface EmployeeScheduleCreateOneInput {
+  create?: EmployeeScheduleCreateInput;
+  connect?: EmployeeScheduleWhereUniqueInput;
+}
+
 export interface ServiceUpdateWithWhereUniqueNestedInput {
   where: ServiceWhereUniqueInput;
   data: ServiceUpdateDataInput;
+}
+
+export interface AppointmentUpdateWithWhereUniqueNestedInput {
+  where: AppointmentWhereUniqueInput;
+  data: AppointmentUpdateDataInput;
+}
+
+export interface UserSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: UserWhereInput;
+  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+}
+
+export interface AppointmentUpdateDataInput {
+  start?: DateTimeInput;
+  end?: DateTimeInput;
+}
+
+export interface UserWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  email?: String;
+  email_not?: String;
+  email_in?: String[] | String;
+  email_not_in?: String[] | String;
+  email_lt?: String;
+  email_lte?: String;
+  email_gt?: String;
+  email_gte?: String;
+  email_contains?: String;
+  email_not_contains?: String;
+  email_starts_with?: String;
+  email_not_starts_with?: String;
+  email_ends_with?: String;
+  email_not_ends_with?: String;
+  password?: String;
+  password_not?: String;
+  password_in?: String[] | String;
+  password_not_in?: String[] | String;
+  password_lt?: String;
+  password_lte?: String;
+  password_gt?: String;
+  password_gte?: String;
+  password_contains?: String;
+  password_not_contains?: String;
+  password_starts_with?: String;
+  password_not_starts_with?: String;
+  password_ends_with?: String;
+  password_not_ends_with?: String;
+  roles?: RoleWhereInput;
+  userSchedule?: UserScheduleWhereInput;
+  employeeSchedule?: EmployeeScheduleWhereInput;
+  services_every?: ServiceWhereInput;
+  services_some?: ServiceWhereInput;
+  services_none?: ServiceWhereInput;
+  AND?: UserWhereInput[] | UserWhereInput;
+  OR?: UserWhereInput[] | UserWhereInput;
+  NOT?: UserWhereInput[] | UserWhereInput;
+}
+
+export interface AppointmentUpsertWithWhereUniqueNestedInput {
+  where: AppointmentWhereUniqueInput;
+  update: AppointmentUpdateDataInput;
+  create: AppointmentCreateInput;
+}
+
+export interface RoleCreateWithoutOwnerInput {
+  admin?: Boolean;
+  employee?: Boolean;
+  user?: Boolean;
+}
+
+export interface UserScheduleCreateOneInput {
+  create?: UserScheduleCreateInput;
+  connect?: UserScheduleWhereUniqueInput;
+}
+
+export interface UserCreateWithoutRolesInput {
+  name: String;
+  email: String;
+  password: String;
+  userSchedule?: UserScheduleCreateOneInput;
+  employeeSchedule?: EmployeeScheduleCreateOneInput;
+  services?: ServiceCreateManyInput;
+}
+
+export interface UserCreateOneWithoutRolesInput {
+  create?: UserCreateWithoutRolesInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface RoleCreateInput {
+  owner: UserCreateOneWithoutRolesInput;
+  admin?: Boolean;
+  employee?: Boolean;
+  user?: Boolean;
+}
+
+export type ServiceWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  name?: String;
+}>;
+
+export interface RoleUpsertWithoutOwnerInput {
+  update: RoleUpdateWithoutOwnerDataInput;
+  create: RoleCreateWithoutOwnerInput;
 }
 
 export interface EmployeeScheduleSubscriptionWhereInput {
@@ -810,239 +1117,6 @@ export interface EmployeeScheduleSubscriptionWhereInput {
     | EmployeeScheduleSubscriptionWhereInput;
 }
 
-export interface ServiceUpdateManyInput {
-  create?: ServiceCreateInput[] | ServiceCreateInput;
-  update?:
-    | ServiceUpdateWithWhereUniqueNestedInput[]
-    | ServiceUpdateWithWhereUniqueNestedInput;
-  upsert?:
-    | ServiceUpsertWithWhereUniqueNestedInput[]
-    | ServiceUpsertWithWhereUniqueNestedInput;
-  delete?: ServiceWhereUniqueInput[] | ServiceWhereUniqueInput;
-  connect?: ServiceWhereUniqueInput[] | ServiceWhereUniqueInput;
-  disconnect?: ServiceWhereUniqueInput[] | ServiceWhereUniqueInput;
-}
-
-export interface AppointmentSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: AppointmentWhereInput;
-  AND?: AppointmentSubscriptionWhereInput[] | AppointmentSubscriptionWhereInput;
-  OR?: AppointmentSubscriptionWhereInput[] | AppointmentSubscriptionWhereInput;
-  NOT?: AppointmentSubscriptionWhereInput[] | AppointmentSubscriptionWhereInput;
-}
-
-export interface EmployeeScheduleUpsertNestedInput {
-  update: EmployeeScheduleUpdateDataInput;
-  create: EmployeeScheduleCreateInput;
-}
-
-export interface UserScheduleUpsertNestedInput {
-  update: UserScheduleUpdateDataInput;
-  create: UserScheduleCreateInput;
-}
-
-export interface EmployeeScheduleUpdateDataInput {
-  employee?: UserUpdateOneRequiredInput;
-  workingTimes?: WorkingTimeUpdateManyInput;
-  appointments?: AppointmentUpdateManyInput;
-}
-
-export interface UserScheduleUpdateOneRequiredInput {
-  create?: UserScheduleCreateInput;
-  update?: UserScheduleUpdateDataInput;
-  upsert?: UserScheduleUpsertNestedInput;
-}
-
-export interface EmployeeScheduleUpdateOneRequiredInput {
-  create?: EmployeeScheduleCreateInput;
-  update?: EmployeeScheduleUpdateDataInput;
-  upsert?: EmployeeScheduleUpsertNestedInput;
-}
-
-export interface UserScheduleCreateOneInput {
-  create?: UserScheduleCreateInput;
-}
-
-export interface EmployeeToScheduleToServicesUpdateInput {
-  employee?: UserUpdateOneRequiredInput;
-  schedule?: EmployeeScheduleUpdateOneRequiredInput;
-  services?: ServiceUpdateManyInput;
-}
-
-export type ServiceWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  name?: String;
-}>;
-
-export interface ServiceCreateInput {
-  name: String;
-  female_title: String;
-  male_title: String;
-  time_blocks?: Int;
-}
-
-export interface UserScheduleCreateInput {
-  appointments?: AppointmentCreateManyInput;
-}
-
-export type UserWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  email?: String;
-}>;
-
-export interface UserUpsertWithoutRolesInput {
-  update: UserUpdateWithoutRolesDataInput;
-  create: UserCreateWithoutRolesInput;
-}
-
-export interface AppointmentCreateInput {
-  start: DateTimeInput;
-  end: DateTimeInput;
-}
-
-export interface UserUpdateOneRequiredWithoutRolesInput {
-  create?: UserCreateWithoutRolesInput;
-  update?: UserUpdateWithoutRolesDataInput;
-  upsert?: UserUpsertWithoutRolesInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface AppointmentUpdateInput {
-  start?: DateTimeInput;
-  end?: DateTimeInput;
-}
-
-export interface RoleUpdateInput {
-  owner?: UserUpdateOneRequiredWithoutRolesInput;
-  admin?: Boolean;
-  employee?: Boolean;
-  user?: Boolean;
-}
-
-export interface ServiceCreateManyInput {
-  create?: ServiceCreateInput[] | ServiceCreateInput;
-  connect?: ServiceWhereUniqueInput[] | ServiceWhereUniqueInput;
-}
-
-export interface UserScheduleSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: UserScheduleWhereInput;
-  AND?:
-    | UserScheduleSubscriptionWhereInput[]
-    | UserScheduleSubscriptionWhereInput;
-  OR?:
-    | UserScheduleSubscriptionWhereInput[]
-    | UserScheduleSubscriptionWhereInput;
-  NOT?:
-    | UserScheduleSubscriptionWhereInput[]
-    | UserScheduleSubscriptionWhereInput;
-}
-
-export interface EmployeeScheduleCreateOneInput {
-  create?: EmployeeScheduleCreateInput;
-}
-
-export interface RoleSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: RoleWhereInput;
-  AND?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
-  OR?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
-  NOT?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput;
-}
-
-export interface EmployeeScheduleCreateInput {
-  employee: UserCreateOneInput;
-  workingTimes?: WorkingTimeCreateManyInput;
-  appointments?: AppointmentCreateManyInput;
-}
-
-export interface EmployeeToScheduleToServicesWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  employee?: UserWhereInput;
-  schedule?: EmployeeScheduleWhereInput;
-  services_every?: ServiceWhereInput;
-  services_some?: ServiceWhereInput;
-  services_none?: ServiceWhereInput;
-  AND?:
-    | EmployeeToScheduleToServicesWhereInput[]
-    | EmployeeToScheduleToServicesWhereInput;
-  OR?:
-    | EmployeeToScheduleToServicesWhereInput[]
-    | EmployeeToScheduleToServicesWhereInput;
-  NOT?:
-    | EmployeeToScheduleToServicesWhereInput[]
-    | EmployeeToScheduleToServicesWhereInput;
-}
-
-export interface UserCreateOneInput {
-  create?: UserCreateInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface UserScheduleUpdateDataInput {
-  appointments?: AppointmentUpdateManyInput;
-}
-
-export interface EmployeeToScheduleToServicesCreateInput {
-  employee: UserCreateOneInput;
-  schedule: EmployeeScheduleCreateOneInput;
-  services?: ServiceCreateManyInput;
-}
-
-export interface UserToScheduleCreateInput {
-  user: UserCreateOneInput;
-  schedule: UserScheduleCreateOneInput;
-}
-
-export interface RoleCreateOneWithoutOwnerInput {
-  create?: RoleCreateWithoutOwnerInput;
-}
-
-export interface UserUpdateInput {
-  name?: String;
-  email?: String;
-  password?: String;
-  roles?: RoleUpdateOneRequiredWithoutOwnerInput;
-}
-
-export interface RoleCreateWithoutOwnerInput {
-  admin?: Boolean;
-  employee?: Boolean;
-  user?: Boolean;
-}
-
-export interface UserUpdateWithoutRolesDataInput {
-  name?: String;
-  email?: String;
-  password?: String;
-}
-
-export interface WorkingTimeCreateManyInput {
-  create?: WorkingTimeCreateInput[] | WorkingTimeCreateInput;
-}
-
 export interface WorkingTimeSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
@@ -1054,119 +1128,17 @@ export interface WorkingTimeSubscriptionWhereInput {
   NOT?: WorkingTimeSubscriptionWhereInput[] | WorkingTimeSubscriptionWhereInput;
 }
 
-export interface WorkingTimeCreateInput {
-  start: DateTimeInput;
-  end: DateTimeInput;
-}
-
-export interface EmployeeToScheduleToServicesSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: EmployeeToScheduleToServicesWhereInput;
-  AND?:
-    | EmployeeToScheduleToServicesSubscriptionWhereInput[]
-    | EmployeeToScheduleToServicesSubscriptionWhereInput;
-  OR?:
-    | EmployeeToScheduleToServicesSubscriptionWhereInput[]
-    | EmployeeToScheduleToServicesSubscriptionWhereInput;
-  NOT?:
-    | EmployeeToScheduleToServicesSubscriptionWhereInput[]
-    | EmployeeToScheduleToServicesSubscriptionWhereInput;
-}
-
-export interface AppointmentCreateManyInput {
-  create?: AppointmentCreateInput[] | AppointmentCreateInput;
-}
-
-export interface UserToScheduleUpdateInput {
-  user?: UserUpdateOneRequiredInput;
-  schedule?: UserScheduleUpdateOneRequiredInput;
-}
-
-export interface AppointmentUpdateManyInput {
-  create?: AppointmentCreateInput[] | AppointmentCreateInput;
-}
-
-export interface ServiceUpdateInput {
-  name?: String;
-  female_title?: String;
-  male_title?: String;
-  time_blocks?: Int;
-}
-
-export interface RoleUpdateWithoutOwnerDataInput {
-  admin?: Boolean;
-  employee?: Boolean;
-  user?: Boolean;
-}
-
-export interface UserUpsertNestedInput {
-  update: UserUpdateDataInput;
-  create: UserCreateInput;
-}
-
-export interface WorkingTimeUpdateManyInput {
-  create?: WorkingTimeCreateInput[] | WorkingTimeCreateInput;
-}
-
-export interface WorkingTimeWhereInput {
-  start?: DateTimeInput;
-  start_not?: DateTimeInput;
-  start_in?: DateTimeInput[] | DateTimeInput;
-  start_not_in?: DateTimeInput[] | DateTimeInput;
-  start_lt?: DateTimeInput;
-  start_lte?: DateTimeInput;
-  start_gt?: DateTimeInput;
-  start_gte?: DateTimeInput;
-  end?: DateTimeInput;
-  end_not?: DateTimeInput;
-  end_in?: DateTimeInput[] | DateTimeInput;
-  end_not_in?: DateTimeInput[] | DateTimeInput;
-  end_lt?: DateTimeInput;
-  end_lte?: DateTimeInput;
-  end_gt?: DateTimeInput;
-  end_gte?: DateTimeInput;
-  AND?: WorkingTimeWhereInput[] | WorkingTimeWhereInput;
-  OR?: WorkingTimeWhereInput[] | WorkingTimeWhereInput;
-  NOT?: WorkingTimeWhereInput[] | WorkingTimeWhereInput;
-}
-
-export interface UserScheduleWhereInput {
-  appointments_every?: AppointmentWhereInput;
-  appointments_some?: AppointmentWhereInput;
-  appointments_none?: AppointmentWhereInput;
-  AND?: UserScheduleWhereInput[] | UserScheduleWhereInput;
-  OR?: UserScheduleWhereInput[] | UserScheduleWhereInput;
-  NOT?: UserScheduleWhereInput[] | UserScheduleWhereInput;
-}
-
-export interface UserScheduleUpdateInput {
-  appointments?: AppointmentUpdateManyInput;
-}
-
-export interface WorkingTimeUpdateInput {
-  start?: DateTimeInput;
-  end?: DateTimeInput;
-}
-
-export interface ServiceSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ServiceWhereInput;
-  AND?: ServiceSubscriptionWhereInput[] | ServiceSubscriptionWhereInput;
-  OR?: ServiceSubscriptionWhereInput[] | ServiceSubscriptionWhereInput;
-  NOT?: ServiceSubscriptionWhereInput[] | ServiceSubscriptionWhereInput;
-}
+export type UserWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  email?: String;
+}>;
 
 export interface NodeNode {
   id: ID_Output;
 }
 
 export interface WorkingTimePreviousValuesNode {
+  id: ID_Output;
   start: DateTimeOutput;
   end: DateTimeOutput;
 }
@@ -1174,6 +1146,7 @@ export interface WorkingTimePreviousValuesNode {
 export interface WorkingTimePreviousValues
   extends Promise<WorkingTimePreviousValuesNode>,
     Fragmentable {
+  id: () => Promise<ID_Output>;
   start: () => Promise<DateTimeOutput>;
   end: () => Promise<DateTimeOutput>;
 }
@@ -1181,72 +1154,9 @@ export interface WorkingTimePreviousValues
 export interface WorkingTimePreviousValuesSubscription
   extends Promise<AsyncIterator<WorkingTimePreviousValuesNode>>,
     Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
   start: () => Promise<AsyncIterator<DateTimeOutput>>;
   end: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface PageInfoNode {
-  hasNextPage: Boolean;
-  hasPreviousPage: Boolean;
-  startCursor?: String;
-  endCursor?: String;
-}
-
-export interface PageInfo extends Promise<PageInfoNode>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>;
-  hasPreviousPage: () => Promise<Boolean>;
-  startCursor: () => Promise<String>;
-  endCursor: () => Promise<String>;
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfoNode>>,
-    Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
-  startCursor: () => Promise<AsyncIterator<String>>;
-  endCursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface UserNode {
-  id: ID_Output;
-  name: String;
-  email: String;
-  password: String;
-}
-
-export interface User extends Promise<UserNode>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  email: () => Promise<String>;
-  password: () => Promise<String>;
-  roles: <T = Role>() => T;
-}
-
-export interface UserSubscription
-  extends Promise<AsyncIterator<UserNode>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  email: () => Promise<AsyncIterator<String>>;
-  password: () => Promise<AsyncIterator<String>>;
-  roles: <T = RoleSubscription>() => T;
-}
-
-export interface AggregateEmployeeToScheduleToServicesNode {
-  count: Int;
-}
-
-export interface AggregateEmployeeToScheduleToServices
-  extends Promise<AggregateEmployeeToScheduleToServicesNode>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateEmployeeToScheduleToServicesSubscription
-  extends Promise<AsyncIterator<AggregateEmployeeToScheduleToServicesNode>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface RoleNode {
@@ -1271,62 +1181,38 @@ export interface RoleSubscription
   user: () => Promise<AsyncIterator<Boolean>>;
 }
 
-export interface EmployeeScheduleNode {}
-
-export interface EmployeeSchedule
-  extends Promise<EmployeeScheduleNode>,
-    Fragmentable {
-  employee: <T = User>() => T;
-  workingTimes: <T = FragmentableArray<WorkingTimeNode>>(
-    args?: {
-      where?: WorkingTimeWhereInput;
-      orderBy?: WorkingTimeOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  appointments: <T = FragmentableArray<AppointmentNode>>(
-    args?: {
-      where?: AppointmentWhereInput;
-      orderBy?: AppointmentOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
+export interface AppointmentEdgeNode {
+  cursor: String;
 }
 
-export interface EmployeeScheduleSubscription
-  extends Promise<AsyncIterator<EmployeeScheduleNode>>,
+export interface AppointmentEdge
+  extends Promise<AppointmentEdgeNode>,
     Fragmentable {
-  employee: <T = UserSubscription>() => T;
-  workingTimes: <T = Promise<AsyncIterator<WorkingTimeSubscription>>>(
-    args?: {
-      where?: WorkingTimeWhereInput;
-      orderBy?: WorkingTimeOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  appointments: <T = Promise<AsyncIterator<AppointmentSubscription>>>(
-    args?: {
-      where?: AppointmentWhereInput;
-      orderBy?: AppointmentOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
+  node: <T = Appointment>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface AppointmentEdgeSubscription
+  extends Promise<AsyncIterator<AppointmentEdgeNode>>,
+    Fragmentable {
+  node: <T = AppointmentSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface UserSchedulePreviousValuesNode {
+  id: ID_Output;
+}
+
+export interface UserSchedulePreviousValues
+  extends Promise<UserSchedulePreviousValuesNode>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+}
+
+export interface UserSchedulePreviousValuesSubscription
+  extends Promise<AsyncIterator<UserSchedulePreviousValuesNode>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
 }
 
 export interface UserScheduleSubscriptionPayloadNode {
@@ -1340,6 +1226,7 @@ export interface UserScheduleSubscriptionPayload
   mutation: () => Promise<MutationType>;
   node: <T = UserSchedule>() => T;
   updatedFields: () => Promise<String[]>;
+  previousValues: <T = UserSchedulePreviousValues>() => T;
 }
 
 export interface UserScheduleSubscriptionPayloadSubscription
@@ -1348,40 +1235,7 @@ export interface UserScheduleSubscriptionPayloadSubscription
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = UserScheduleSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-}
-
-export interface AggregateAppointmentNode {
-  count: Int;
-}
-
-export interface AggregateAppointment
-  extends Promise<AggregateAppointmentNode>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateAppointmentSubscription
-  extends Promise<AsyncIterator<AggregateAppointmentNode>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface EmployeeToScheduleToServicesEdgeNode {
-  cursor: String;
-}
-
-export interface EmployeeToScheduleToServicesEdge
-  extends Promise<EmployeeToScheduleToServicesEdgeNode>,
-    Fragmentable {
-  node: <T = EmployeeToScheduleToServices>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface EmployeeToScheduleToServicesEdgeSubscription
-  extends Promise<AsyncIterator<EmployeeToScheduleToServicesEdgeNode>>,
-    Fragmentable {
-  node: <T = EmployeeToScheduleToServicesSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  previousValues: <T = UserSchedulePreviousValuesSubscription>() => T;
 }
 
 export interface BatchPayloadNode {
@@ -1416,119 +1270,108 @@ export interface WorkingTimeEdgeSubscription
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface EmployeeToScheduleToServicesConnectionNode {}
-
-export interface EmployeeToScheduleToServicesConnection
-  extends Promise<EmployeeToScheduleToServicesConnectionNode>,
-    Fragmentable {
-  pageInfo: <T = PageInfo>() => T;
-  edges: <T = FragmentableArray<EmployeeToScheduleToServicesEdgeNode>>() => T;
-  aggregate: <T = AggregateEmployeeToScheduleToServices>() => T;
-}
-
-export interface EmployeeToScheduleToServicesConnectionSubscription
-  extends Promise<AsyncIterator<EmployeeToScheduleToServicesConnectionNode>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<EmployeeToScheduleToServicesEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateEmployeeToScheduleToServicesSubscription>() => T;
-}
-
-export interface AggregateUserToScheduleNode {
+export interface AggregateEmployeeScheduleNode {
   count: Int;
 }
 
-export interface AggregateUserToSchedule
-  extends Promise<AggregateUserToScheduleNode>,
+export interface AggregateEmployeeSchedule
+  extends Promise<AggregateEmployeeScheduleNode>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateUserToScheduleSubscription
-  extends Promise<AsyncIterator<AggregateUserToScheduleNode>>,
+export interface AggregateEmployeeScheduleSubscription
+  extends Promise<AsyncIterator<AggregateEmployeeScheduleNode>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface UserToScheduleSubscriptionPayloadNode {
-  mutation: MutationType;
-  updatedFields?: String[];
+export interface AggregateUserScheduleNode {
+  count: Int;
 }
 
-export interface UserToScheduleSubscriptionPayload
-  extends Promise<UserToScheduleSubscriptionPayloadNode>,
+export interface AggregateUserSchedule
+  extends Promise<AggregateUserScheduleNode>,
     Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = UserToSchedule>() => T;
-  updatedFields: () => Promise<String[]>;
+  count: () => Promise<Int>;
 }
 
-export interface UserToScheduleSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<UserToScheduleSubscriptionPayloadNode>>,
+export interface AggregateUserScheduleSubscription
+  extends Promise<AsyncIterator<AggregateUserScheduleNode>>,
     Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = UserToScheduleSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface UserToScheduleConnectionNode {}
+export interface EmployeeScheduleEdgeNode {
+  cursor: String;
+}
 
-export interface UserToScheduleConnection
-  extends Promise<UserToScheduleConnectionNode>,
+export interface EmployeeScheduleEdge
+  extends Promise<EmployeeScheduleEdgeNode>,
+    Fragmentable {
+  node: <T = EmployeeSchedule>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface EmployeeScheduleEdgeSubscription
+  extends Promise<AsyncIterator<EmployeeScheduleEdgeNode>>,
+    Fragmentable {
+  node: <T = EmployeeScheduleSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface UserScheduleConnectionNode {}
+
+export interface UserScheduleConnection
+  extends Promise<UserScheduleConnectionNode>,
     Fragmentable {
   pageInfo: <T = PageInfo>() => T;
-  edges: <T = FragmentableArray<UserToScheduleEdgeNode>>() => T;
-  aggregate: <T = AggregateUserToSchedule>() => T;
+  edges: <T = FragmentableArray<UserScheduleEdgeNode>>() => T;
+  aggregate: <T = AggregateUserSchedule>() => T;
 }
 
-export interface UserToScheduleConnectionSubscription
-  extends Promise<AsyncIterator<UserToScheduleConnectionNode>>,
+export interface UserScheduleConnectionSubscription
+  extends Promise<AsyncIterator<UserScheduleConnectionNode>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<UserToScheduleEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateUserToScheduleSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<UserScheduleEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateUserScheduleSubscription>() => T;
 }
 
-export interface WorkingTimeNode {
+export interface AppointmentNode {
+  id: ID_Output;
   start: DateTimeOutput;
   end: DateTimeOutput;
 }
 
-export interface WorkingTime extends Promise<WorkingTimeNode>, Fragmentable {
+export interface Appointment extends Promise<AppointmentNode>, Fragmentable {
+  id: () => Promise<ID_Output>;
   start: () => Promise<DateTimeOutput>;
   end: () => Promise<DateTimeOutput>;
 }
 
-export interface WorkingTimeSubscription
-  extends Promise<AsyncIterator<WorkingTimeNode>>,
+export interface AppointmentSubscription
+  extends Promise<AsyncIterator<AppointmentNode>>,
     Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
   start: () => Promise<AsyncIterator<DateTimeOutput>>;
   end: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface WorkingTimeSubscriptionPayloadNode {
-  mutation: MutationType;
-  updatedFields?: String[];
+export interface AggregateUserNode {
+  count: Int;
 }
 
-export interface WorkingTimeSubscriptionPayload
-  extends Promise<WorkingTimeSubscriptionPayloadNode>,
+export interface AggregateUser
+  extends Promise<AggregateUserNode>,
     Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = WorkingTime>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = WorkingTimePreviousValues>() => T;
+  count: () => Promise<Int>;
 }
 
-export interface WorkingTimeSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<WorkingTimeSubscriptionPayloadNode>>,
+export interface AggregateUserSubscription
+  extends Promise<AsyncIterator<AggregateUserNode>>,
     Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = WorkingTimeSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = WorkingTimePreviousValuesSubscription>() => T;
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface AppointmentSubscriptionPayloadNode {
@@ -1554,138 +1397,6 @@ export interface AppointmentSubscriptionPayloadSubscription
   previousValues: <T = AppointmentPreviousValuesSubscription>() => T;
 }
 
-export interface UserScheduleEdgeNode {
-  cursor: String;
-}
-
-export interface UserScheduleEdge
-  extends Promise<UserScheduleEdgeNode>,
-    Fragmentable {
-  node: <T = UserSchedule>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface UserScheduleEdgeSubscription
-  extends Promise<AsyncIterator<UserScheduleEdgeNode>>,
-    Fragmentable {
-  node: <T = UserScheduleSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AppointmentPreviousValuesNode {
-  start: DateTimeOutput;
-  end: DateTimeOutput;
-}
-
-export interface AppointmentPreviousValues
-  extends Promise<AppointmentPreviousValuesNode>,
-    Fragmentable {
-  start: () => Promise<DateTimeOutput>;
-  end: () => Promise<DateTimeOutput>;
-}
-
-export interface AppointmentPreviousValuesSubscription
-  extends Promise<AsyncIterator<AppointmentPreviousValuesNode>>,
-    Fragmentable {
-  start: () => Promise<AsyncIterator<DateTimeOutput>>;
-  end: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface UserScheduleNode {}
-
-export interface UserSchedule extends Promise<UserScheduleNode>, Fragmentable {
-  appointments: <T = FragmentableArray<AppointmentNode>>(
-    args?: {
-      where?: AppointmentWhereInput;
-      orderBy?: AppointmentOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-}
-
-export interface UserScheduleSubscription
-  extends Promise<AsyncIterator<UserScheduleNode>>,
-    Fragmentable {
-  appointments: <T = Promise<AsyncIterator<AppointmentSubscription>>>(
-    args?: {
-      where?: AppointmentWhereInput;
-      orderBy?: AppointmentOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-}
-
-export interface ServiceNode {
-  id: ID_Output;
-  name: String;
-  female_title: String;
-  male_title: String;
-  time_blocks: Int;
-}
-
-export interface Service extends Promise<ServiceNode>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  female_title: () => Promise<String>;
-  male_title: () => Promise<String>;
-  time_blocks: () => Promise<Int>;
-}
-
-export interface ServiceSubscription
-  extends Promise<AsyncIterator<ServiceNode>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  female_title: () => Promise<AsyncIterator<String>>;
-  male_title: () => Promise<AsyncIterator<String>>;
-  time_blocks: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface AggregateUserNode {
-  count: Int;
-}
-
-export interface AggregateUser
-  extends Promise<AggregateUserNode>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateUserSubscription
-  extends Promise<AsyncIterator<AggregateUserNode>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface EmployeeScheduleSubscriptionPayloadNode {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface EmployeeScheduleSubscriptionPayload
-  extends Promise<EmployeeScheduleSubscriptionPayloadNode>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = EmployeeSchedule>() => T;
-  updatedFields: () => Promise<String[]>;
-}
-
-export interface EmployeeScheduleSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<EmployeeScheduleSubscriptionPayloadNode>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = EmployeeScheduleSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-}
-
 export interface UserConnectionNode {}
 
 export interface UserConnection
@@ -1704,129 +1415,184 @@ export interface UserConnectionSubscription
   aggregate: <T = AggregateUserSubscription>() => T;
 }
 
-export interface AppointmentEdgeNode {
+export interface AppointmentPreviousValuesNode {
+  id: ID_Output;
+  start: DateTimeOutput;
+  end: DateTimeOutput;
+}
+
+export interface AppointmentPreviousValues
+  extends Promise<AppointmentPreviousValuesNode>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  start: () => Promise<DateTimeOutput>;
+  end: () => Promise<DateTimeOutput>;
+}
+
+export interface AppointmentPreviousValuesSubscription
+  extends Promise<AsyncIterator<AppointmentPreviousValuesNode>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  start: () => Promise<AsyncIterator<DateTimeOutput>>;
+  end: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface ServiceEdgeNode {
   cursor: String;
 }
 
-export interface AppointmentEdge
-  extends Promise<AppointmentEdgeNode>,
-    Fragmentable {
-  node: <T = Appointment>() => T;
+export interface ServiceEdge extends Promise<ServiceEdgeNode>, Fragmentable {
+  node: <T = Service>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface AppointmentEdgeSubscription
-  extends Promise<AsyncIterator<AppointmentEdgeNode>>,
+export interface ServiceEdgeSubscription
+  extends Promise<AsyncIterator<ServiceEdgeNode>>,
     Fragmentable {
-  node: <T = AppointmentSubscription>() => T;
+  node: <T = ServiceSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateServiceNode {
+export interface EmployeeScheduleConnectionNode {}
+
+export interface EmployeeScheduleConnection
+  extends Promise<EmployeeScheduleConnectionNode>,
+    Fragmentable {
+  pageInfo: <T = PageInfo>() => T;
+  edges: <T = FragmentableArray<EmployeeScheduleEdgeNode>>() => T;
+  aggregate: <T = AggregateEmployeeSchedule>() => T;
+}
+
+export interface EmployeeScheduleConnectionSubscription
+  extends Promise<AsyncIterator<EmployeeScheduleConnectionNode>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<EmployeeScheduleEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateEmployeeScheduleSubscription>() => T;
+}
+
+export interface AggregateRoleNode {
   count: Int;
 }
 
-export interface AggregateService
-  extends Promise<AggregateServiceNode>,
+export interface AggregateRole
+  extends Promise<AggregateRoleNode>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateServiceSubscription
-  extends Promise<AsyncIterator<AggregateServiceNode>>,
+export interface AggregateRoleSubscription
+  extends Promise<AsyncIterator<AggregateRoleNode>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface EmployeeToScheduleToServicesSubscriptionPayloadNode {
+export interface EmployeeScheduleSubscriptionPayloadNode {
   mutation: MutationType;
   updatedFields?: String[];
 }
 
-export interface EmployeeToScheduleToServicesSubscriptionPayload
-  extends Promise<EmployeeToScheduleToServicesSubscriptionPayloadNode>,
+export interface EmployeeScheduleSubscriptionPayload
+  extends Promise<EmployeeScheduleSubscriptionPayloadNode>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = EmployeeToScheduleToServices>() => T;
+  node: <T = EmployeeSchedule>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = EmployeeToScheduleToServicesPreviousValues>() => T;
+  previousValues: <T = EmployeeSchedulePreviousValues>() => T;
 }
 
-export interface EmployeeToScheduleToServicesSubscriptionPayloadSubscription
-  extends Promise<
-      AsyncIterator<EmployeeToScheduleToServicesSubscriptionPayloadNode>
-    >,
+export interface EmployeeScheduleSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<EmployeeScheduleSubscriptionPayloadNode>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = EmployeeToScheduleToServicesSubscription>() => T;
+  node: <T = EmployeeScheduleSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <
-    T = EmployeeToScheduleToServicesPreviousValuesSubscription
-  >() => T;
+  previousValues: <T = EmployeeSchedulePreviousValuesSubscription>() => T;
 }
 
-export interface ServiceConnectionNode {}
+export interface RoleConnectionNode {}
 
-export interface ServiceConnection
-  extends Promise<ServiceConnectionNode>,
+export interface RoleConnection
+  extends Promise<RoleConnectionNode>,
     Fragmentable {
   pageInfo: <T = PageInfo>() => T;
-  edges: <T = FragmentableArray<ServiceEdgeNode>>() => T;
-  aggregate: <T = AggregateService>() => T;
+  edges: <T = FragmentableArray<RoleEdgeNode>>() => T;
+  aggregate: <T = AggregateRole>() => T;
 }
 
-export interface ServiceConnectionSubscription
-  extends Promise<AsyncIterator<ServiceConnectionNode>>,
+export interface RoleConnectionSubscription
+  extends Promise<AsyncIterator<RoleConnectionNode>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<ServiceEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateServiceSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<RoleEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateRoleSubscription>() => T;
 }
 
-export interface EmployeeToScheduleToServicesPreviousValuesNode {
+export interface EmployeeSchedulePreviousValuesNode {
   id: ID_Output;
 }
 
-export interface EmployeeToScheduleToServicesPreviousValues
-  extends Promise<EmployeeToScheduleToServicesPreviousValuesNode>,
+export interface EmployeeSchedulePreviousValues
+  extends Promise<EmployeeSchedulePreviousValuesNode>,
     Fragmentable {
   id: () => Promise<ID_Output>;
 }
 
-export interface EmployeeToScheduleToServicesPreviousValuesSubscription
-  extends Promise<
-      AsyncIterator<EmployeeToScheduleToServicesPreviousValuesNode>
-    >,
+export interface EmployeeSchedulePreviousValuesSubscription
+  extends Promise<AsyncIterator<EmployeeSchedulePreviousValuesNode>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
 }
 
-export interface RoleEdgeNode {
-  cursor: String;
+export interface AggregateAppointmentNode {
+  count: Int;
 }
 
-export interface RoleEdge extends Promise<RoleEdgeNode>, Fragmentable {
-  node: <T = Role>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface RoleEdgeSubscription
-  extends Promise<AsyncIterator<RoleEdgeNode>>,
+export interface AggregateAppointment
+  extends Promise<AggregateAppointmentNode>,
     Fragmentable {
-  node: <T = RoleSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  count: () => Promise<Int>;
 }
 
-export interface EmployeeToScheduleToServicesNode {
+export interface AggregateAppointmentSubscription
+  extends Promise<AsyncIterator<AggregateAppointmentNode>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface AppointmentConnectionNode {}
+
+export interface AppointmentConnection
+  extends Promise<AppointmentConnectionNode>,
+    Fragmentable {
+  pageInfo: <T = PageInfo>() => T;
+  edges: <T = FragmentableArray<AppointmentEdgeNode>>() => T;
+  aggregate: <T = AggregateAppointment>() => T;
+}
+
+export interface AppointmentConnectionSubscription
+  extends Promise<AsyncIterator<AppointmentConnectionNode>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<AppointmentEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateAppointmentSubscription>() => T;
+}
+
+export interface UserNode {
   id: ID_Output;
+  name: String;
+  email: String;
+  password: String;
 }
 
-export interface EmployeeToScheduleToServices
-  extends Promise<EmployeeToScheduleToServicesNode>,
-    Fragmentable {
+export interface User extends Promise<UserNode>, Fragmentable {
   id: () => Promise<ID_Output>;
-  employee: <T = User>() => T;
-  schedule: <T = EmployeeSchedule>() => T;
+  name: () => Promise<String>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
+  roles: <T = Role>() => T;
+  userSchedule: <T = UserSchedule>() => T;
+  employeeSchedule: <T = EmployeeSchedule>() => T;
   services: <T = FragmentableArray<ServiceNode>>(
     args?: {
       where?: ServiceWhereInput;
@@ -1840,12 +1606,16 @@ export interface EmployeeToScheduleToServices
   ) => T;
 }
 
-export interface EmployeeToScheduleToServicesSubscription
-  extends Promise<AsyncIterator<EmployeeToScheduleToServicesNode>>,
+export interface UserSubscription
+  extends Promise<AsyncIterator<UserNode>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  employee: <T = UserSubscription>() => T;
-  schedule: <T = EmployeeScheduleSubscription>() => T;
+  name: () => Promise<AsyncIterator<String>>;
+  email: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
+  roles: <T = RoleSubscription>() => T;
+  userSchedule: <T = UserScheduleSubscription>() => T;
+  employeeSchedule: <T = EmployeeScheduleSubscription>() => T;
   services: <T = Promise<AsyncIterator<ServiceSubscription>>>(
     args?: {
       where?: ServiceWhereInput;
@@ -1857,22 +1627,6 @@ export interface EmployeeToScheduleToServicesSubscription
       last?: Int;
     }
   ) => T;
-}
-
-export interface AggregateWorkingTimeNode {
-  count: Int;
-}
-
-export interface AggregateWorkingTime
-  extends Promise<AggregateWorkingTimeNode>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateWorkingTimeSubscription
-  extends Promise<AsyncIterator<AggregateWorkingTimeNode>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface RoleSubscriptionPayloadNode {
@@ -1898,22 +1652,22 @@ export interface RoleSubscriptionPayloadSubscription
   previousValues: <T = RolePreviousValuesSubscription>() => T;
 }
 
-export interface UserToScheduleEdgeNode {
-  cursor: String;
+export interface WorkingTimeConnectionNode {}
+
+export interface WorkingTimeConnection
+  extends Promise<WorkingTimeConnectionNode>,
+    Fragmentable {
+  pageInfo: <T = PageInfo>() => T;
+  edges: <T = FragmentableArray<WorkingTimeEdgeNode>>() => T;
+  aggregate: <T = AggregateWorkingTime>() => T;
 }
 
-export interface UserToScheduleEdge
-  extends Promise<UserToScheduleEdgeNode>,
+export interface WorkingTimeConnectionSubscription
+  extends Promise<AsyncIterator<WorkingTimeConnectionNode>>,
     Fragmentable {
-  node: <T = UserToSchedule>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface UserToScheduleEdgeSubscription
-  extends Promise<AsyncIterator<UserToScheduleEdgeNode>>,
-    Fragmentable {
-  node: <T = UserToScheduleSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<WorkingTimeEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateWorkingTimeSubscription>() => T;
 }
 
 export interface RolePreviousValuesNode {
@@ -1938,53 +1692,63 @@ export interface RolePreviousValuesSubscription
   user: () => Promise<AsyncIterator<Boolean>>;
 }
 
-export interface AggregateUserScheduleNode {
-  count: Int;
+export interface WorkingTimeSubscriptionPayloadNode {
+  mutation: MutationType;
+  updatedFields?: String[];
 }
 
-export interface AggregateUserSchedule
-  extends Promise<AggregateUserScheduleNode>,
+export interface WorkingTimeSubscriptionPayload
+  extends Promise<WorkingTimeSubscriptionPayloadNode>,
     Fragmentable {
-  count: () => Promise<Int>;
+  mutation: () => Promise<MutationType>;
+  node: <T = WorkingTime>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = WorkingTimePreviousValues>() => T;
 }
 
-export interface AggregateUserScheduleSubscription
-  extends Promise<AsyncIterator<AggregateUserScheduleNode>>,
+export interface WorkingTimeSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<WorkingTimeSubscriptionPayloadNode>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = WorkingTimeSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = WorkingTimePreviousValuesSubscription>() => T;
 }
 
-export interface AggregateEmployeeScheduleNode {
-  count: Int;
-}
-
-export interface AggregateEmployeeSchedule
-  extends Promise<AggregateEmployeeScheduleNode>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateEmployeeScheduleSubscription
-  extends Promise<AsyncIterator<AggregateEmployeeScheduleNode>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface AppointmentNode {
+export interface WorkingTimeNode {
+  id: ID_Output;
   start: DateTimeOutput;
   end: DateTimeOutput;
 }
 
-export interface Appointment extends Promise<AppointmentNode>, Fragmentable {
+export interface WorkingTime extends Promise<WorkingTimeNode>, Fragmentable {
+  id: () => Promise<ID_Output>;
   start: () => Promise<DateTimeOutput>;
   end: () => Promise<DateTimeOutput>;
 }
 
-export interface AppointmentSubscription
-  extends Promise<AsyncIterator<AppointmentNode>>,
+export interface WorkingTimeSubscription
+  extends Promise<AsyncIterator<WorkingTimeNode>>,
     Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
   start: () => Promise<AsyncIterator<DateTimeOutput>>;
   end: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface AggregateServiceNode {
+  count: Int;
+}
+
+export interface AggregateService
+  extends Promise<AggregateServiceNode>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateServiceSubscription
+  extends Promise<AsyncIterator<AggregateServiceNode>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface ServiceSubscriptionPayloadNode {
@@ -2010,22 +1774,20 @@ export interface ServiceSubscriptionPayloadSubscription
   previousValues: <T = ServicePreviousValuesSubscription>() => T;
 }
 
-export interface AppointmentConnectionNode {}
-
-export interface AppointmentConnection
-  extends Promise<AppointmentConnectionNode>,
-    Fragmentable {
-  pageInfo: <T = PageInfo>() => T;
-  edges: <T = FragmentableArray<AppointmentEdgeNode>>() => T;
-  aggregate: <T = AggregateAppointment>() => T;
+export interface RoleEdgeNode {
+  cursor: String;
 }
 
-export interface AppointmentConnectionSubscription
-  extends Promise<AsyncIterator<AppointmentConnectionNode>>,
+export interface RoleEdge extends Promise<RoleEdgeNode>, Fragmentable {
+  node: <T = Role>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface RoleEdgeSubscription
+  extends Promise<AsyncIterator<RoleEdgeNode>>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<AppointmentEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateAppointmentSubscription>() => T;
+  node: <T = RoleSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface ServicePreviousValuesNode {
@@ -2056,56 +1818,100 @@ export interface ServicePreviousValuesSubscription
   time_blocks: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface AggregateRoleNode {
-  count: Int;
+export interface UserScheduleNode {
+  id: ID_Output;
 }
 
-export interface AggregateRole
-  extends Promise<AggregateRoleNode>,
-    Fragmentable {
-  count: () => Promise<Int>;
+export interface UserSchedule extends Promise<UserScheduleNode>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  appointments: <T = FragmentableArray<AppointmentNode>>(
+    args?: {
+      where?: AppointmentWhereInput;
+      orderBy?: AppointmentOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
 }
 
-export interface AggregateRoleSubscription
-  extends Promise<AsyncIterator<AggregateRoleNode>>,
+export interface UserScheduleSubscription
+  extends Promise<AsyncIterator<UserScheduleNode>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  appointments: <T = Promise<AsyncIterator<AppointmentSubscription>>>(
+    args?: {
+      where?: AppointmentWhereInput;
+      orderBy?: AppointmentOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
 }
 
-export interface WorkingTimeConnectionNode {}
-
-export interface WorkingTimeConnection
-  extends Promise<WorkingTimeConnectionNode>,
-    Fragmentable {
-  pageInfo: <T = PageInfo>() => T;
-  edges: <T = FragmentableArray<WorkingTimeEdgeNode>>() => T;
-  aggregate: <T = AggregateWorkingTime>() => T;
+export interface EmployeeScheduleNode {
+  id: ID_Output;
 }
 
-export interface WorkingTimeConnectionSubscription
-  extends Promise<AsyncIterator<WorkingTimeConnectionNode>>,
+export interface EmployeeSchedule
+  extends Promise<EmployeeScheduleNode>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<WorkingTimeEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateWorkingTimeSubscription>() => T;
+  id: () => Promise<ID_Output>;
+  workingTimes: <T = FragmentableArray<WorkingTimeNode>>(
+    args?: {
+      where?: WorkingTimeWhereInput;
+      orderBy?: WorkingTimeOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  appointments: <T = FragmentableArray<AppointmentNode>>(
+    args?: {
+      where?: AppointmentWhereInput;
+      orderBy?: AppointmentOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
 }
 
-export interface EmployeeScheduleConnectionNode {}
-
-export interface EmployeeScheduleConnection
-  extends Promise<EmployeeScheduleConnectionNode>,
+export interface EmployeeScheduleSubscription
+  extends Promise<AsyncIterator<EmployeeScheduleNode>>,
     Fragmentable {
-  pageInfo: <T = PageInfo>() => T;
-  edges: <T = FragmentableArray<EmployeeScheduleEdgeNode>>() => T;
-  aggregate: <T = AggregateEmployeeSchedule>() => T;
-}
-
-export interface EmployeeScheduleConnectionSubscription
-  extends Promise<AsyncIterator<EmployeeScheduleConnectionNode>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<EmployeeScheduleEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateEmployeeScheduleSubscription>() => T;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  workingTimes: <T = Promise<AsyncIterator<WorkingTimeSubscription>>>(
+    args?: {
+      where?: WorkingTimeWhereInput;
+      orderBy?: WorkingTimeOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  appointments: <T = Promise<AsyncIterator<AppointmentSubscription>>>(
+    args?: {
+      where?: AppointmentWhereInput;
+      orderBy?: AppointmentOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
 }
 
 export interface UserPreviousValuesNode {
@@ -2156,72 +1962,87 @@ export interface UserSubscriptionPayloadSubscription
   previousValues: <T = UserPreviousValuesSubscription>() => T;
 }
 
-export interface EmployeeScheduleEdgeNode {
-  cursor: String;
+export interface PageInfoNode {
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String;
+  endCursor?: String;
 }
 
-export interface EmployeeScheduleEdge
-  extends Promise<EmployeeScheduleEdgeNode>,
+export interface PageInfo extends Promise<PageInfoNode>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>;
+  hasPreviousPage: () => Promise<Boolean>;
+  startCursor: () => Promise<String>;
+  endCursor: () => Promise<String>;
+}
+
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfoNode>>,
     Fragmentable {
-  node: <T = EmployeeSchedule>() => T;
-  cursor: () => Promise<String>;
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
+  startCursor: () => Promise<AsyncIterator<String>>;
+  endCursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface EmployeeScheduleEdgeSubscription
-  extends Promise<AsyncIterator<EmployeeScheduleEdgeNode>>,
+export interface AggregateWorkingTimeNode {
+  count: Int;
+}
+
+export interface AggregateWorkingTime
+  extends Promise<AggregateWorkingTimeNode>,
     Fragmentable {
-  node: <T = EmployeeScheduleSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  count: () => Promise<Int>;
 }
 
-export interface UserToScheduleNode {}
-
-export interface UserToSchedule
-  extends Promise<UserToScheduleNode>,
+export interface AggregateWorkingTimeSubscription
+  extends Promise<AsyncIterator<AggregateWorkingTimeNode>>,
     Fragmentable {
-  user: <T = User>() => T;
-  schedule: <T = UserSchedule>() => T;
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface UserToScheduleSubscription
-  extends Promise<AsyncIterator<UserToScheduleNode>>,
+export interface ServiceNode {
+  id: ID_Output;
+  name: String;
+  female_title: String;
+  male_title: String;
+  time_blocks: Int;
+}
+
+export interface Service extends Promise<ServiceNode>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  female_title: () => Promise<String>;
+  male_title: () => Promise<String>;
+  time_blocks: () => Promise<Int>;
+}
+
+export interface ServiceSubscription
+  extends Promise<AsyncIterator<ServiceNode>>,
     Fragmentable {
-  user: <T = UserSubscription>() => T;
-  schedule: <T = UserScheduleSubscription>() => T;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  female_title: () => Promise<AsyncIterator<String>>;
+  male_title: () => Promise<AsyncIterator<String>>;
+  time_blocks: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface RoleConnectionNode {}
+export interface ServiceConnectionNode {}
 
-export interface RoleConnection
-  extends Promise<RoleConnectionNode>,
+export interface ServiceConnection
+  extends Promise<ServiceConnectionNode>,
     Fragmentable {
   pageInfo: <T = PageInfo>() => T;
-  edges: <T = FragmentableArray<RoleEdgeNode>>() => T;
-  aggregate: <T = AggregateRole>() => T;
+  edges: <T = FragmentableArray<ServiceEdgeNode>>() => T;
+  aggregate: <T = AggregateService>() => T;
 }
 
-export interface RoleConnectionSubscription
-  extends Promise<AsyncIterator<RoleConnectionNode>>,
+export interface ServiceConnectionSubscription
+  extends Promise<AsyncIterator<ServiceConnectionNode>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<RoleEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateRoleSubscription>() => T;
-}
-
-export interface ServiceEdgeNode {
-  cursor: String;
-}
-
-export interface ServiceEdge extends Promise<ServiceEdgeNode>, Fragmentable {
-  node: <T = Service>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface ServiceEdgeSubscription
-  extends Promise<AsyncIterator<ServiceEdgeNode>>,
-    Fragmentable {
-  node: <T = ServiceSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  edges: <T = Promise<AsyncIterator<ServiceEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateServiceSubscription>() => T;
 }
 
 export interface UserEdgeNode {
@@ -2240,36 +2061,35 @@ export interface UserEdgeSubscription
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface UserScheduleConnectionNode {}
-
-export interface UserScheduleConnection
-  extends Promise<UserScheduleConnectionNode>,
-    Fragmentable {
-  pageInfo: <T = PageInfo>() => T;
-  edges: <T = FragmentableArray<UserScheduleEdgeNode>>() => T;
-  aggregate: <T = AggregateUserSchedule>() => T;
+export interface UserScheduleEdgeNode {
+  cursor: String;
 }
 
-export interface UserScheduleConnectionSubscription
-  extends Promise<AsyncIterator<UserScheduleConnectionNode>>,
+export interface UserScheduleEdge
+  extends Promise<UserScheduleEdgeNode>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<UserScheduleEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateUserScheduleSubscription>() => T;
+  node: <T = UserSchedule>() => T;
+  cursor: () => Promise<String>;
 }
 
-/*
-The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
-*/
-export type ID_Input = string | number;
-export type ID_Output = string;
-
-export type Long = string;
+export interface UserScheduleEdgeSubscription
+  extends Promise<AsyncIterator<UserScheduleEdgeNode>>,
+    Fragmentable {
+  node: <T = UserScheduleSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
 
 /*
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
 export type String = string;
+
+/*
+The `Boolean` scalar type represents `true` or `false`.
+*/
+export type Boolean = boolean;
+
+export type Long = string;
 
 /*
 DateTime scalar input type, allowing Date
@@ -2282,14 +2102,15 @@ DateTime scalar output type, which is always a string
 export type DateTimeOutput = string;
 
 /*
-The `Boolean` scalar type represents `true` or `false`.
-*/
-export type Boolean = boolean;
-
-/*
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
 */
 export type Int = number;
+
+/*
+The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+*/
+export type ID_Input = string | number;
+export type ID_Output = string;
 
 /**
  * Type Defs
