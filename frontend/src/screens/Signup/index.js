@@ -90,18 +90,6 @@ class SignupComponent extends Component {
 
             // Error Handling
         } catch (err) {
-            // console.log(err);
-            // // parse error
-            // const e = err.graphQLErrors[0];
-
-            // // get message
-            // let msg = null;
-            // if (e.name === 'UniqueFieldAlreadyExists') {
-            //     msg = e.data.message;
-            // } else {
-            //     msg = e.message;
-            // }
-            console.log(err.graphQLErrors[0]);
             const error = new ApiError(err);
             this.setState({ status: { message: error.userMessage(), type: 'error' } });
 
