@@ -6,7 +6,7 @@ const AuthPayload = require('./resolvers/AuthPayload');
 const User = require('./resolvers/User');
 const EmployeeSchedule = require('./resolvers/EmployeeSchedule');
 const UserSchedule = require('./resolvers/UserSchedule');
-// const EmployeeToScheduleToServices = require('./resolvers/EmployeeToScheduleToServices');
+const Employee = require('./resolvers/Employee');
 const { formatError } = require('apollo-errors');
 
 const resolvers = {
@@ -16,7 +16,7 @@ const resolvers = {
     User,
     UserSchedule,
     EmployeeSchedule,
-    // EmployeeToScheduleToServices,
+    Employee,
 }
 
 /*

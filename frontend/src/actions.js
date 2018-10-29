@@ -1,4 +1,4 @@
-import { USER_LOGIN, SET_SELECTED_SERVICES } from './constants';
+import { USER_LOGIN, SET_SELECTED_SERVICES, SET_SELECTED_PEOPLE } from './constants';
 
 function userLogin(user, token) {
     return { type: USER_LOGIN, user, token };
@@ -8,4 +8,8 @@ function setSelectedServicesAction(selected) {
     return { type: SET_SELECTED_SERVICES, selected };
 }
 
-export { userLogin, setSelectedServicesAction };
+function setSelectedPeopleAction(selected) {
+    return { type: SET_SELECTED_PEOPLE, selected };
+}
+
+export { userLogin, setSelectedServicesAction, setSelectedPeopleAction };

@@ -11,7 +11,13 @@ import { setSelectedServicesAction } from 'src/actions';
 import ServiceListItem from './components/ServiceListItem';
 
 const GET_SERVICES = gql`
-    {
+    query($filterData: EmployeeServiceTimeFilter) {
+        employees(filterData: $filterData) {
+            services {
+                id
+                name
+            }
+        }
     }
 `;
 
@@ -26,6 +32,8 @@ class ChooseServices extends Component {
 
     static propTypes = {
         navigation: PropTypes.instanceOf(Navigation).isRequired,
+        selected: PropTypes.arrayOf(PropTypes.string).isRequired,
+        setSelectedServices: PropTypes.func.isRequired,
         getServices: PropTypes.shape({
             services: PropTypes.arrayOf(
                 PropTypes.shape({
@@ -34,38 +42,26 @@ class ChooseServices extends Component {
                 })
             ),
             loading: PropTypes.bool.isRequired,
-            error: PropTypes.bool.isRequired,
+            error: PropTypes.bool,
         }).isRequired,
     };
 
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {
-    //         selected: 0,
-    //     };
-    // }
-
     select(id) {
         const { selected, setSelectedServices } = this.props;
-        console.log('selected before:', selected);
 
         // choose to remove or add id (toggle)
         if (selected.includes(id)) {
             // deselect
             _.remove(selected, n => n === id);
-            // this.setState({ selected: selected.length - 1 });
         } else {
             // select
             selected.push(id);
-            // this.setState({ selected: selected.length + 1 });
         }
-        console.log('selected after: ', selected);
 
         setSelectedServices(selected);
     }
 
     renderListItem(item, index) {
-        console.log('render list item');
         const { selected } = this.props;
         const active = selected.includes(item.id);
 
@@ -85,17 +81,23 @@ class ChooseServices extends Component {
         const {
             selected,
             navigation,
-            getServices: { services, loading, error },
+            getServices: { employees, loading, error },
         } = this.props;
-
-        console.log('redux selected: ', selected);
 
         if (loading) {
             return <Text>Loading...</Text>;
         }
         if (error) {
+            console.log(error);
             return <Text>Failed to load services</Text>;
         }
+
+        // this is rather inefficient. should filter on the serve side with a specific query
+        let services = [];
+        employees.map(item => {
+            services = services.concat(item.services);
+            return null;
+        });
 
         return (
             <View>
@@ -127,6 +129,7 @@ class ChooseServices extends Component {
  */
 const mapStateToProps = state => ({
     selected: state.createAppointment.selectedServices,
+    selectedPeople: state.createAppointment.selectedPeople,
 });
 
 /*
@@ -138,11 +141,28 @@ const mapDispatchToProps = dispatch => ({
     },
 });
 
+// export default ChooseServicesRedux;
+
+const ChooseServicesGQL = graphql(GET_SERVICES, {
+    options: props => {
+        // add GPL filters if we have them in our redux state
+        const filterData = {};
+        if (props.selectedPeople.length > 0) {
+            filterData.employeeFilterIds = props.selectedPeople;
+        }
+
+        return {
+            variables: {
+                filterData,
+            },
+        };
+    },
+    name: 'getServices',
+})(ChooseServices);
+
 const ChooseServicesRedux = connect(
     mapStateToProps,
     mapDispatchToProps
-)(ChooseServices);
+)(ChooseServicesGQL);
 
-export default graphql(GET_SERVICES, {
-    name: 'getServices',
-})(ChooseServicesRedux);
+export default ChooseServicesRedux;

@@ -1,12 +1,12 @@
-# interface CreatedUpdatedDate {
-#   createdDate: DateTime!
-#   updatedDate: DateTime!
-# }
+interface CreatedUpdatedDate {
+  createdDate: DateTime!
+  updatedDate: DateTime!
+}
 
-# interface CreatedUpdatedBy {
-#   createdBy: User!
-#   updatedBy: User!
-# }
+interface CreatedUpdatedBy {
+  createdBy: User!
+  updatedBy: User!
+}
 
 type User {
   id: ID! @unique
@@ -15,21 +15,14 @@ type User {
   password: String!
   roles: Role!
   userSchedule: UserSchedule 
-  employeeSchedule: EmployeeSchedule
-  services: [Service!]!
 }
 
-# type UserToSchedule{
-#   user: User!
-#   schedule: UserSchedule!
-# }
-
-# type EmployeeToScheduleToServices{
-#   id: ID! @unique
-#   employee: User!
-#   schedule: EmployeeSchedule!
-#   services: [Service!]!
-# }
+type Employee{
+  employeeId: ID! @unique 
+  user: User!
+  schedule: EmployeeSchedule!
+  services: [Service!]!
+}
 
 type Role {
   owner: User!
@@ -52,7 +45,6 @@ interface Schedule {
 }
 
 type EmployeeSchedule implements Schedule{
-  # employee: User!
   id: ID! @unique
   workingTimes: [WorkingTime!]!
   appointments: [Appointment!]!

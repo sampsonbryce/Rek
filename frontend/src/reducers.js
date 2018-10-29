@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
-import { USER_LOGIN, SET_SELECTED_SERVICES } from './constants';
+import _ from 'lodash';
+import { USER_LOGIN, SET_SELECTED_SERVICES, SET_SELECTED_PEOPLE } from './constants';
 
 function user(state = {}, action) {
     switch (action.type) {
@@ -23,7 +24,17 @@ function selectedServices(state = [], action) {
     switch (action.type) {
         case SET_SELECTED_SERVICES:
             console.log('new state: ', action.selected);
-            return action.selected;
+            return _.clone(action.selected);
+        default:
+            return state;
+    }
+}
+
+function selectedPeople(state = [], action) {
+    switch (action.type) {
+        case SET_SELECTED_PEOPLE:
+            console.log('new state: ', action.selected);
+            return _.clone(action.selected);
         default:
             return state;
     }
@@ -32,6 +43,7 @@ function selectedServices(state = [], action) {
 // reducer for the state of create appointments
 const createAppointmentReducer = combineReducers({
     selectedServices,
+    selectedPeople,
 });
 
 const mainReducer = combineReducers({

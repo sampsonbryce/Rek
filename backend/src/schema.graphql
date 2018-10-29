@@ -5,9 +5,9 @@ type Query {
     users: [User!]!
     service(id: String!): Service!
     services: [Service!]!
-    # getEmployeeSchedulesServices(filterData: GetEmployeeSchedulesServicesInput): [EmployeeToScheduleToServices]
-    # usersByServicesAndAvailability(filterData: UsersByServicesAndAvailabilityInput): AvailableUsersWithService!
-    usersByServicesAndAvailability(filterData: UsersByServicesAndAvailabilityInput): [User!]!
+    employees(filterData: EmployeeServiceTimeFilter): [Employee!]!
+    # usersByServicesAndAvailability(filterData: EmployeeServiceTimeFilter): [User!]!
+    servicesByEmployeesAndAvailability(filterData: EmployeeServiceTimeFilter): [Service!]!
 }
 
 type Mutation {
@@ -18,7 +18,7 @@ type Mutation {
     updateService(id: String!, name: String!, male_title: String!, female_title: String!): Service
 }
 
-input UsersByServicesAndAvailabilityInput{
+input EmployeeServiceTimeFilter{
     employeeFilterIds: [ID!]
     serviceFilterIds:[ID!]
     desiredStartTime: DateTime 

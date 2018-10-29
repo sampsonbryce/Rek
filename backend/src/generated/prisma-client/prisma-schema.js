@@ -3,6 +3,10 @@ module.exports = {
   count: Int!
 }
 
+type AggregateEmployee {
+  count: Int!
+}
+
 type AggregateEmployeeSchedule {
   count: Int!
 }
@@ -167,6 +171,46 @@ type BatchPayload {
 
 scalar DateTime
 
+type Employee {
+  employeeId: ID!
+  user: User!
+  schedule: EmployeeSchedule!
+  services(where: ServiceWhereInput, orderBy: ServiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Service!]
+}
+
+type EmployeeConnection {
+  pageInfo: PageInfo!
+  edges: [EmployeeEdge]!
+  aggregate: AggregateEmployee!
+}
+
+input EmployeeCreateInput {
+  employeeId: ID!
+  user: UserCreateOneInput!
+  schedule: EmployeeScheduleCreateOneInput!
+  services: ServiceCreateManyInput
+}
+
+type EmployeeEdge {
+  node: Employee!
+  cursor: String!
+}
+
+enum EmployeeOrderByInput {
+  employeeId_ASC
+  employeeId_DESC
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type EmployeePreviousValues {
+  employeeId: ID!
+}
+
 type EmployeeSchedule {
   id: ID!
   workingTimes(where: WorkingTimeWhereInput, orderBy: WorkingTimeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WorkingTime!]
@@ -235,12 +279,10 @@ input EmployeeScheduleUpdateInput {
   appointments: AppointmentUpdateManyInput
 }
 
-input EmployeeScheduleUpdateOneInput {
+input EmployeeScheduleUpdateOneRequiredInput {
   create: EmployeeScheduleCreateInput
   update: EmployeeScheduleUpdateDataInput
   upsert: EmployeeScheduleUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
   connect: EmployeeScheduleWhereUniqueInput
 }
 
@@ -279,6 +321,60 @@ input EmployeeScheduleWhereUniqueInput {
   id: ID
 }
 
+type EmployeeSubscriptionPayload {
+  mutation: MutationType!
+  node: Employee
+  updatedFields: [String!]
+  previousValues: EmployeePreviousValues
+}
+
+input EmployeeSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: EmployeeWhereInput
+  AND: [EmployeeSubscriptionWhereInput!]
+  OR: [EmployeeSubscriptionWhereInput!]
+  NOT: [EmployeeSubscriptionWhereInput!]
+}
+
+input EmployeeUpdateInput {
+  employeeId: ID
+  user: UserUpdateOneRequiredInput
+  schedule: EmployeeScheduleUpdateOneRequiredInput
+  services: ServiceUpdateManyInput
+}
+
+input EmployeeWhereInput {
+  employeeId: ID
+  employeeId_not: ID
+  employeeId_in: [ID!]
+  employeeId_not_in: [ID!]
+  employeeId_lt: ID
+  employeeId_lte: ID
+  employeeId_gt: ID
+  employeeId_gte: ID
+  employeeId_contains: ID
+  employeeId_not_contains: ID
+  employeeId_starts_with: ID
+  employeeId_not_starts_with: ID
+  employeeId_ends_with: ID
+  employeeId_not_ends_with: ID
+  user: UserWhereInput
+  schedule: EmployeeScheduleWhereInput
+  services_every: ServiceWhereInput
+  services_some: ServiceWhereInput
+  services_none: ServiceWhereInput
+  AND: [EmployeeWhereInput!]
+  OR: [EmployeeWhereInput!]
+  NOT: [EmployeeWhereInput!]
+}
+
+input EmployeeWhereUniqueInput {
+  employeeId: ID
+}
+
 scalar Long
 
 type Mutation {
@@ -288,6 +384,12 @@ type Mutation {
   upsertAppointment(where: AppointmentWhereUniqueInput!, create: AppointmentCreateInput!, update: AppointmentUpdateInput!): Appointment!
   deleteAppointment(where: AppointmentWhereUniqueInput!): Appointment
   deleteManyAppointments(where: AppointmentWhereInput): BatchPayload!
+  createEmployee(data: EmployeeCreateInput!): Employee!
+  updateEmployee(data: EmployeeUpdateInput!, where: EmployeeWhereUniqueInput!): Employee
+  updateManyEmployees(data: EmployeeUpdateInput!, where: EmployeeWhereInput): BatchPayload!
+  upsertEmployee(where: EmployeeWhereUniqueInput!, create: EmployeeCreateInput!, update: EmployeeUpdateInput!): Employee!
+  deleteEmployee(where: EmployeeWhereUniqueInput!): Employee
+  deleteManyEmployees(where: EmployeeWhereInput): BatchPayload!
   createEmployeeSchedule(data: EmployeeScheduleCreateInput!): EmployeeSchedule!
   updateEmployeeSchedule(data: EmployeeScheduleUpdateInput!, where: EmployeeScheduleWhereUniqueInput!): EmployeeSchedule
   updateManyEmployeeSchedules(data: EmployeeScheduleUpdateInput!, where: EmployeeScheduleWhereInput): BatchPayload!
@@ -344,6 +446,9 @@ type Query {
   appointment(where: AppointmentWhereUniqueInput!): Appointment
   appointments(where: AppointmentWhereInput, orderBy: AppointmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Appointment]!
   appointmentsConnection(where: AppointmentWhereInput, orderBy: AppointmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AppointmentConnection!
+  employee(where: EmployeeWhereUniqueInput!): Employee
+  employees(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee]!
+  employeesConnection(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeConnection!
   employeeSchedule(where: EmployeeScheduleWhereUniqueInput!): EmployeeSchedule
   employeeSchedules(where: EmployeeScheduleWhereInput, orderBy: EmployeeScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmployeeSchedule]!
   employeeSchedulesConnection(where: EmployeeScheduleWhereInput, orderBy: EmployeeScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeScheduleConnection!
@@ -660,6 +765,7 @@ input ServiceWhereUniqueInput {
 
 type Subscription {
   appointment(where: AppointmentSubscriptionWhereInput): AppointmentSubscriptionPayload
+  employee(where: EmployeeSubscriptionWhereInput): EmployeeSubscriptionPayload
   employeeSchedule(where: EmployeeScheduleSubscriptionWhereInput): EmployeeScheduleSubscriptionPayload
   role(where: RoleSubscriptionWhereInput): RoleSubscriptionPayload
   service(where: ServiceSubscriptionWhereInput): ServiceSubscriptionPayload
@@ -675,8 +781,6 @@ type User {
   password: String!
   roles: Role!
   userSchedule: UserSchedule
-  employeeSchedule: EmployeeSchedule
-  services(where: ServiceWhereInput, orderBy: ServiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Service!]
 }
 
 type UserConnection {
@@ -691,8 +795,11 @@ input UserCreateInput {
   password: String!
   roles: RoleCreateOneWithoutOwnerInput!
   userSchedule: UserScheduleCreateOneInput
-  employeeSchedule: EmployeeScheduleCreateOneInput
-  services: ServiceCreateManyInput
+}
+
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutRolesInput {
@@ -705,8 +812,6 @@ input UserCreateWithoutRolesInput {
   email: String!
   password: String!
   userSchedule: UserScheduleCreateOneInput
-  employeeSchedule: EmployeeScheduleCreateOneInput
-  services: ServiceCreateManyInput
 }
 
 type UserEdge {
@@ -859,14 +964,27 @@ input UserSubscriptionWhereInput {
   NOT: [UserSubscriptionWhereInput!]
 }
 
+input UserUpdateDataInput {
+  name: String
+  email: String
+  password: String
+  roles: RoleUpdateOneRequiredWithoutOwnerInput
+  userSchedule: UserScheduleUpdateOneInput
+}
+
 input UserUpdateInput {
   name: String
   email: String
   password: String
   roles: RoleUpdateOneRequiredWithoutOwnerInput
   userSchedule: UserScheduleUpdateOneInput
-  employeeSchedule: EmployeeScheduleUpdateOneInput
-  services: ServiceUpdateManyInput
+}
+
+input UserUpdateOneRequiredInput {
+  create: UserCreateInput
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+  connect: UserWhereUniqueInput
 }
 
 input UserUpdateOneRequiredWithoutRolesInput {
@@ -881,8 +999,11 @@ input UserUpdateWithoutRolesDataInput {
   email: String
   password: String
   userSchedule: UserScheduleUpdateOneInput
-  employeeSchedule: EmployeeScheduleUpdateOneInput
-  services: ServiceUpdateManyInput
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
 }
 
 input UserUpsertWithoutRolesInput {
@@ -949,10 +1070,6 @@ input UserWhereInput {
   password_not_ends_with: String
   roles: RoleWhereInput
   userSchedule: UserScheduleWhereInput
-  employeeSchedule: EmployeeScheduleWhereInput
-  services_every: ServiceWhereInput
-  services_some: ServiceWhereInput
-  services_none: ServiceWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
