@@ -13,7 +13,15 @@ const UniqueFieldAlreadyExists = createError("UniqueFieldAlreadyExists", {
 });
 
 const InvalidEmailFormat = createError("InvalidEmailFormat", {
-    message: "not a valid email format"
+    message: "Not a valid email format"
+});
+
+const InvalidName = createError("InvalidName", {
+    message: "Invalid Name."
+});
+
+const InvalidPassword = createError("InvalidPassword", {
+    message: "Invalid Password."
 });
 
 
@@ -22,4 +30,7 @@ module.exports = {
     InvalidCredentialsError,
     UniqueFieldAlreadyExists,
     ServerError,
+    InvalidEmailFormat,
+    InvalidName,
+    InvalidPassword,
 }

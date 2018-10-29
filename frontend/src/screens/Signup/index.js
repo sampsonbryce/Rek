@@ -13,7 +13,6 @@ import { userLogin } from '../../actions';
 // create form structure
 const { Form } = t.form;
 
-// create validator for tcomb form
 // https://github.com/gcanti/tcomb-validation#form-validation   GoTo Refinements
 const emailValidation = email_dirty => {
     const email = email_dirty.trim().toLowerCase();
@@ -105,7 +104,13 @@ class SignupComponent extends Component {
     async submit(signup) {
         const { onUserSignup, navigation } = this.props;
         // get form data
+        // let test = this.form.current.getComponent('password');
+        // console.log(this.form.current.getComponent('password')._reactInternalFiber.pendingProps.value);
+        console.log(this.form.current.getComponent('password'));
+        // console.log(this.form.current.getComponent('confirm_password')._reactInternalFiber.pendingProps.value);
+
         const value = this.form.current.getValue();
+
         this.setState({ status: { msg: '', type: 'error' } });
         if (!value) {
             // Validation failed

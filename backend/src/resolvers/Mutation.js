@@ -6,7 +6,9 @@ const validator = require('validator');
 const { ServerError, 
         InvalidCredentialsError, 
         UniqueFieldAlreadyExists,
-        InvalidEmailFormat } = require('../errors.js');
+        InvalidEmailFormat,
+        InvalidName,
+        InvalidPassword, } = require('../errors.js');
 
 // User Signup functionality
 async function signup(parent, args, context, info){
@@ -18,7 +20,13 @@ async function signup(parent, args, context, info){
         throw new InvalidEmailFormat();
     }
 
-    
+    if(!validator.isAlphanumeric(args.name)) {
+        throw new InvalidName();
+    }
+
+    if(args.password.length < 6) {
+        throw new InvalidPassword();
+    }   
 
     // Create user
     let user = null;
@@ -60,6 +68,15 @@ async function signup(parent, args, context, info){
 
 // User login functionality
 async function login(parent, args, context, info){
+
+    if (!validator.isEmail(args.email)) {
+        throw new InvalidEmailFormat();
+    }
+
+    if(args.password.length < 6) {
+        throw new InvalidPassword();
+    }
+
     // check if email exists
     const user = await context.db.user({ email: args.email },`{ id password }`);
 
