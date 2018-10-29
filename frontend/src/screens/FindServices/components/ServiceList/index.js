@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation/lib/dist/Navigation';
-import Images from '@assets/images';
+import Images from 'src/assets/images';
 import ServiceListItem from '../ServiceListItem';
 
 /*

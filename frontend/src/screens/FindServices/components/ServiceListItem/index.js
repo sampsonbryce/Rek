@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View, StyleSheet, Image } from 'react-native';
 import Button from 'src/components/Button';
 import PropTypes from 'prop-types';
-import Images from '@assets/images';
+import Images from 'src/assets/images';
 
 /*
  * Individual employee that can provide a service

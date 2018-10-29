@@ -1,4 +1,4 @@
-{
+module.exports = {
   "parser": "babel-eslint",
   "extends": [
     "airbnb",
@@ -38,6 +38,6 @@
     "react-native"
   ],
   "settings": {
-    "import/resolver": "reactnative"
+    "import/resolver": 'reactnative'
   }
 }
