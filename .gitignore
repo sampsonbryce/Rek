@@ -9,6 +9,8 @@
 # vscode folder
 .vscode
 
+# ignore prisma generated files
+*/generated/*
 
 */npm-debug.*
 */yarn-debug.*
