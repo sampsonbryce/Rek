@@ -10,7 +10,6 @@ async function services(root, args, ctx) {
 
 async function userSchedule(root, args, ctx) {
     const user_schedule = await ctx.db.user({ id: root.id }).userSchedule();
-    console.log('got schedule: ', user_schedule);
     return user_schedule;
 }
 

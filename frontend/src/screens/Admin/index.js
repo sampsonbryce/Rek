@@ -2,13 +2,22 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Text, FlatList, TouchableHighlight } from 'react-native';
 import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation';
-import { BERRY_LIGHT_BLUE, BERRY_MAROON } from '../../constants';
+import { BERRY_LIGHT_BLUE, BERRY_BLUE } from '../../constants';
 
-const renderListItem = item => (
-    <TouchableHighlight key={item.title} onPress={item.onPress}>
-        <Text>{item.title}</Text>
-    </TouchableHighlight>
-);
+const renderListItem = (item, index) => {
+    const item_styles = [styles.item];
+
+    // cycle dark blue color
+    if (index % 2 === 0) {
+        item_styles.push(styles.darkblue);
+    }
+
+    return (
+        <TouchableHighlight style={item_styles} key={item.title} onPress={item.onPress}>
+            <Text>{item.title}</Text>
+        </TouchableHighlight>
+    );
+};
 
 /*
  * Admin service for store admins
@@ -49,7 +58,8 @@ export default class Admin extends Component {
             <View style={styles.admin}>
                 <FlatList
                     data={this.getListItems()}
-                    renderItem={({ item }) => renderListItem(item)}
+                    renderItem={({ item, index }) => renderListItem(item, index)}
+                    keyExtractor={(item, index) => index.toString()}
                 />
             </View>
         );
@@ -64,9 +74,14 @@ const styles = StyleSheet.create({
     title: {
         color: 'white',
     },
-    titleContainer: {
+    item: {
+        paddingLeft: 20,
+        flex: 1,
+        flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: BERRY_MAROON,
-        padding: 10,
+        height: 50,
+    },
+    darkblue: {
+        backgroundColor: BERRY_BLUE,
     },
 });

@@ -67,12 +67,8 @@ export default class AddService extends Component {
 
     async submit(addService) {
         const { navigation } = this.props;
-        console.log('form: ', this.form);
-        console.log('getValue: ', this.form.current.getValue);
         // get form data
         const value = this.form.current.getValue();
-
-        console.log('value: ', value);
 
         // create service
         try {
@@ -87,14 +83,10 @@ export default class AddService extends Component {
                 message = 'Data is incorrect';
             }
 
-            console.log('error');
             this.setState({ status: { message, type: 'error' } });
             return;
         }
 
-        // TODO: handle error
-
-        console.log('created');
         this.setState({ status: { message: 'Created Service!', type: 'success' } });
 
         // on success go back to list
@@ -103,7 +95,6 @@ export default class AddService extends Component {
 
     render() {
         const { status } = this.state;
-        console.log('render');
         return (
             <View>
                 <StatusBar message={status.message} type={status.type} />

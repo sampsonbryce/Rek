@@ -23,7 +23,6 @@ function token(state = '', action) {
 function selectedServices(state = [], action) {
     switch (action.type) {
         case SET_SELECTED_SERVICES:
-            console.log('new state: ', action.selected);
             return _.clone(action.selected);
         default:
             return state;
@@ -33,7 +32,6 @@ function selectedServices(state = [], action) {
 function selectedPeople(state = [], action) {
     switch (action.type) {
         case SET_SELECTED_PEOPLE:
-            console.log('new state: ', action.selected);
             return _.clone(action.selected);
         default:
             return state;

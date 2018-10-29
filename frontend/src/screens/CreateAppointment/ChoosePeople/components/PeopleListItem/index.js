@@ -49,6 +49,14 @@ const styles = StyleSheet.create({
     active: {
         backgroundColor: BERRY_BLUE,
     },
+    image: {
+        borderRadius: 10,
+        margin: 10,
+        position: 'relative',
+        left: 40,
+        height: 50,
+        width: 50,
+    },
 });
 
 PeopleListItem.propTypes = {
@@ -57,7 +65,7 @@ PeopleListItem.propTypes = {
     }).isRequired,
     onSelect: PropTypes.func.isRequired,
     active: PropTypes.bool.isRequired,
-    image: PropTypes.string,
+    image: PropTypes.number,
 };
 
 PeopleListItem.defaultProps = {

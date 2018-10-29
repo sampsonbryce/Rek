@@ -2,8 +2,6 @@ const { service, services } = require('./ServiceQueries');
 const { user, users } = require('./UserQueries');
 
 async function employees(parent, args, ctx) {
-    console.log('IN GET EMPLOYEES: ', args);
-
     const where_query = {};
 
     if (args.filterData) {
@@ -43,13 +41,10 @@ async function employees(parent, args, ctx) {
     }
 
     const db_employees = await ctx.db.employees({ where: where_query });
-    console.log('got employees: ', db_employees);
     return db_employees;
 }
 
 async function servicesByEmployeesAndAvailability(parent, args, ctx) {
-    console.log('in get: ', args);
-
     const where_query = {};
 
     if (args.filterData) {
@@ -89,10 +84,6 @@ async function servicesByEmployeesAndAvailability(parent, args, ctx) {
     }
 
     const user_services = await ctx.db.users({ where: where_query }).services();
-    console.log('got services: ', services);
-    // services = services.map(item =>{
-    //     item
-    // })
     return user_services;
 }
 

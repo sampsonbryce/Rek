@@ -43,13 +43,7 @@ export default class ServiceList extends Component {
     renderListItem(item, index) {
         const { navigation } = this.props;
         return (
-            <ServiceListItem
-                name={item.name}
-                id={item.id}
-                key={item.id}
-                index={index}
-                navigation={navigation}
-            />
+            <ServiceListItem name={item.name} id={item.id} index={index} navigation={navigation} />
         );
     }
 
@@ -65,7 +59,7 @@ export default class ServiceList extends Component {
                             <FlatList
                                 data={data.services}
                                 renderItem={({ item, index }) => this.renderListItem(item, index)}
-                                keyExtractor={item => item.id}
+                                keyExtractor={(item, index) => index.toString()}
                             />
                         );
                     }}

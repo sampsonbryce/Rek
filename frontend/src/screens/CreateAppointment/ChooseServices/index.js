@@ -88,7 +88,6 @@ class ChooseServices extends Component {
             return <Text>Loading...</Text>;
         }
         if (error) {
-            console.log(error);
             return <Text>Failed to load services</Text>;
         }
 
