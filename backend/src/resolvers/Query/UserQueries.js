@@ -6,7 +6,7 @@ async function user(root, args, ctx, info) {
     return db_user;
 }
 
-async function users(root, args, ctx, info) {
+async function users(root, args, ctx) {
     const db_users = await ctx.db.users();
     return db_users;
 }

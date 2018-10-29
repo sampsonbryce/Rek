@@ -1,7 +1,7 @@
 const { service, services } = require('./ServiceQueries');
 const { user, users } = require('./UserQueries');
 
-async function employees(parent, args, ctx, info) {
+async function employees(parent, args, ctx) {
     console.log('IN GET EMPLOYEES: ', args);
 
     const where_query = {};
@@ -47,7 +47,7 @@ async function employees(parent, args, ctx, info) {
     return db_employees;
 }
 
-async function servicesByEmployeesAndAvailability(parent, args, ctx, info) {
+async function servicesByEmployeesAndAvailability(parent, args, ctx) {
     console.log('in get: ', args);
 
     const where_query = {};

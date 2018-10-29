@@ -1,8 +1,9 @@
 import React from 'react';
-import { Text, View, TouchableHighlight, StyleSheet } from 'react-native';
+import { Image, Text, View, TouchableHighlight, StyleSheet } from 'react-native';
 import Button from 'src/components/Button';
 import PropTypes from 'prop-types';
 import { BERRY_BLUE } from 'src/constants';
+import Images from 'src/assets/images';
 
 /*
  * Individual employee that can provide a service
@@ -12,6 +13,7 @@ const PeopleListItem = props => {
         person: { name },
         onSelect,
         active,
+        image,
     } = props;
 
     const style = [styles.item];
@@ -22,6 +24,7 @@ const PeopleListItem = props => {
     return (
         <TouchableHighlight style={style} onPress={onSelect}>
             <View>
+                <Image source={image} style={styles.image} />
                 <Text style={styles.text}>{name}</Text>
                 {/* <Text style={styles.text}>{title}</Text> */}
 
@@ -54,6 +57,11 @@ PeopleListItem.propTypes = {
     }).isRequired,
     onSelect: PropTypes.func.isRequired,
     active: PropTypes.bool.isRequired,
+    image: PropTypes.string,
+};
+
+PeopleListItem.defaultProps = {
+    image: Images.defaultProfilePic,
 };
 
 export default PeopleListItem;

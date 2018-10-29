@@ -1,14 +1,14 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
-const { APP_SECRET, getUserId } = require('../utils');
+const { APP_SECRET } = require('../utils');
 
 const { ServerError, InvalidCredentialsError, UniqueFieldAlreadyExists } = require('../errors.js');
 
 /*
  * Signup: Creates a new user and logs them in
  */
-async function signup(parent, args, context, info) {
+async function signup(parent, args, context) {
     // hash the password
     const password = await bcrypt.hash(args.password, 10);
 
@@ -58,7 +58,7 @@ async function signup(parent, args, context, info) {
 /*
  * Login: Logs in the user
  */
-async function login(parent, args, context, info) {
+async function login(parent, args, context) {
     // check if email exists
     const user = await context.db.user({ email: args.email }, `{ id password }`);
 
@@ -85,7 +85,7 @@ async function login(parent, args, context, info) {
 /*
  * Updates the user and the roles for the user
  */
-async function updateUserWithRoles(parent, args, context, info) {
+async function updateUserWithRoles(parent, args, context) {
     const user = await context.db.updateUser({
         data: {
             email: args.email,
@@ -104,7 +104,7 @@ async function updateUserWithRoles(parent, args, context, info) {
 /*
  * Adds a new service
  */
-async function addService(parent, args, context, info) {
+async function addService(parent, args, context) {
     const service = await context.db.createService({ ...args });
     return service;
 }
@@ -112,7 +112,7 @@ async function addService(parent, args, context, info) {
 /*
  * Updates a service
  */
-async function updateService(parent, args, context, info) {
+async function updateService(parent, args, context) {
     const args_clone = _.clone(args);
     const { id } = args_clone;
 

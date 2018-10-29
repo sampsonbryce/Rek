@@ -23,8 +23,5 @@ module.exports = {
             }
         ],
         "eqeqeq": 2,
-        "no-unused-vars": [
-            "warn"
-        ],
     }
 }

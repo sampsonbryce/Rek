@@ -18,7 +18,6 @@ type Mutation {
     updateService(id: String!, name: String!, male_title: String!, female_title: String!): Service
 }
 
-
 input EmployeeServiceTimeFilter{
     employeeFilterIds: [ID!]
     serviceFilterIds:[ID!]

@@ -1,4 +1,4 @@
-async function appointments(root, args, ctx, info) {
+async function appointments(root, args, ctx) {
     console.log('in appointments');
     console.log('root: ', root);
     console.log('args: ', args);

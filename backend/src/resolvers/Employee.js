@@ -1,4 +1,4 @@
-async function user(root, args, ctx, info) {
+async function user(root, args, ctx) {
     console.log('in user of employee: ');
     console.log('ROOT: ', root);
     console.log('args: ', root);
@@ -7,7 +7,7 @@ async function user(root, args, ctx, info) {
     return employee;
 }
 
-async function services(root, args, ctx, info) {
+async function services(root, args, ctx) {
     console.log('in services: ');
     console.log('ROOT: ', root);
     console.log('args: ', root);
@@ -16,7 +16,7 @@ async function services(root, args, ctx, info) {
     return employee_services;
 }
 
-async function schedule(root, args, ctx, info) {
+async function schedule(root, args, ctx) {
     const employee_schedule = await ctx.db.employee({ employeeId: root.employeeId }).schedule();
     console.log('got schedule: ', schedule);
     return employee_schedule;
