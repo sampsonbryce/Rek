@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon src/index.js",
-    "prisma": "prisma deploy && prisma generate"
+    "prisma": "prisma deploy && prisma generate",
+    "lint": "eslint ."
   },
   "dependencies": {
     "apollo-errors": "^1.9.0",
@@ -14,11 +15,19 @@
     "graphql-tag": "^2.9.2",
     "graphql-yoga": "1.4.3",
     "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.11",
     "prisma-binding": "2.1.5",
     "prisma-client-lib": "1.18.1"
   },
   "devDependencies": {
-    "prisma": "1.18.1",
-    "nodemon": "^1.18.4"
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.7.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^3.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "nodemon": "^1.18.4",
+    "prettier": "^1.14.3",
+    "prisma": "1.18.1"
   }
 }
