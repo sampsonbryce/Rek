@@ -7,6 +7,7 @@ import Button from 'src/components/Button';
 import { PropTypes } from 'prop-types';
 import { Navigation } from 'react-native-navigation';
 import { connect } from 'react-redux';
+import ApiError from 'src/class/Error';
 import StatusBar from '../../components/StatusBar';
 import { userLogin } from '../../actions';
 
@@ -67,7 +68,7 @@ class SignupComponent extends Component {
         // init state
         this.state = {
             status: {
-                msg: '',
+                message: '',
                 type: null,
             },
         };
@@ -89,19 +90,21 @@ class SignupComponent extends Component {
 
             // Error Handling
         } catch (err) {
-            console.log(err);
-            // parse error
-            const e = err.graphQLErrors[0];
+            // console.log(err);
+            // // parse error
+            // const e = err.graphQLErrors[0];
 
-            // get message
-            let msg = null;
-            if (e.name === 'UniqueFieldAlreadyExists') {
-                msg = e.data.message;
-            } else {
-                msg = e.message;
-            }
+            // // get message
+            // let msg = null;
+            // if (e.name === 'UniqueFieldAlreadyExists') {
+            //     msg = e.data.message;
+            // } else {
+            //     msg = e.message;
+            // }
+            console.log(err.graphQLErrors[0]);
+            const error = new ApiError(err);
+            this.setState({ status: { message: error.userMessage(), type: 'error' } });
 
-            this.setState({ status: { msg, type: 'error' } });
             return;
         }
 
@@ -125,7 +128,7 @@ class SignupComponent extends Component {
         return (
             <View style={styles.container}>
                 {/* Page Status */}
-                <StatusBar message={status.msg} type={status.type} />
+                <StatusBar message={status.message} type={status.type} />
 
                 {/* Signup Form */}
                 <Form ref={this.form} type={SignupType} options={SignupOptions} />
@@ -156,7 +159,6 @@ class SignupComponent extends Component {
 const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
-        // alignItems: 'center',
         padding: 20,
     },
 });

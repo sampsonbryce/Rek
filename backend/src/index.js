@@ -9,6 +9,8 @@ const EmployeeSchedule = require('./resolvers/EmployeeSchedule');
 const UserSchedule = require('./resolvers/UserSchedule');
 const Employee = require('./resolvers/Employee');
 
+/* eslint no-console: 0 */
+
 const resolvers = {
     Query,
     Mutation,

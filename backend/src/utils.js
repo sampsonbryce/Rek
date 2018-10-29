@@ -17,7 +17,12 @@ function getUserId(context) {
     throw new Error('Not authenticated');
 }
 
+function capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 module.exports = {
     APP_SECRET,
     getUserId,
+    capitalize,
 };

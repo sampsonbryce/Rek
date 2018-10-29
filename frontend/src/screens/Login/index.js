@@ -7,6 +7,7 @@ import Button from 'src/components/Button';
 import t from 'tcomb-form-native';
 import StatusBar from 'src/components/StatusBar';
 import PropTypes from 'prop-types';
+import ApiError from 'src/class/Error';
 import { Navigation } from 'react-native-navigation';
 import { userLogin } from '../../actions';
 
@@ -94,8 +95,8 @@ class LoginComponent extends Component {
         try {
             response = await login({ variables: value });
         } catch (err) {
-            const e = err.graphQLErrors[0];
-            this.setState({ status: { message: e.message, type: 'error' } });
+            const error = new ApiError(err);
+            this.setState({ status: { message: error.userMessage(), type: 'error' } });
             return;
         }
 

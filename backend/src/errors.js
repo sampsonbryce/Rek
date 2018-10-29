@@ -1,7 +1,7 @@
 const { createError } = require('apollo-errors');
 
 const ServerError = createError('ServerError', {
-    message: 'Something went wrong on the server',
+    message: 'Something went wrong on our end. Please try again later',
 });
 
 const InvalidCredentialsError = createError('InvalidCredentialsError', {

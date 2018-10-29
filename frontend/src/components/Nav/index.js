@@ -49,8 +49,8 @@ const AppNavigator = createSwitchNavigator(
         Dashboard: dashboardNav,
     },
     {
-        // initialRouteName: 'Auth',
-        initialRouteName: 'Dashboard',
+        initialRouteName: 'Auth',
+        // initialRouteName: 'Dashboard',
     },
     {
         headerMode: 'none',

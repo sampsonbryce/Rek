@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
-const { APP_SECRET } = require('../utils');
+const { APP_SECRET, capitalize } = require('../utils');
 
 const { ServerError, InvalidCredentialsError, UniqueFieldAlreadyExists } = require('../errors.js');
 
@@ -29,11 +29,11 @@ async function signup(parent, args, context) {
         const e = err.result.errors[0];
 
         // handle unique field already exists error
-        if (e.code === '3010') {
+        if (e.code === 3010) {
             const field = e.message.split('=')[1].trim();
             throw new UniqueFieldAlreadyExists({
                 data: {
-                    message: `${field} already exists`,
+                    message: `${capitalize(field)} already exists`,
                 },
             });
         } else {
@@ -63,7 +63,6 @@ async function login(parent, args, context) {
     const user = await context.db.user({ email: args.email }, `{ id password }`);
 
     if (!user) {
-        // throw new Error('No such user found');
         throw new InvalidCredentialsError();
     }
 
