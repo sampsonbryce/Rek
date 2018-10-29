@@ -1,6 +1,6 @@
 const { GraphQLServer } = require('graphql-yoga');
 const { formatError } = require('apollo-errors');
-const { prisma } = require('./generated/prisma-client');
+const { prisma } = require('./generated/prisma-client'); // eslint-disabe-line import/no-unresolved
 const Query = require('./resolvers/Query');
 const Mutation = require('./resolvers/Mutation');
 const AuthPayload = require('./resolvers/AuthPayload');
