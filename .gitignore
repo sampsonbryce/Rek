@@ -10,7 +10,8 @@
 .vscode
 
 # ignore prisma generated files
-*/generated/*
+# */generated/**/*
+generated/
 
 */npm-debug.*
 */yarn-debug.*
