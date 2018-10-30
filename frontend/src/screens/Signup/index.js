@@ -20,7 +20,7 @@ const emailValidation = email_dirty => {
     return re.test(email);
 };
 
-const passLength = pass => {
+const passValidation = pass => {
     const password = pass.trim();
     let ret = true;
     if (password.length < 6) {
@@ -30,20 +30,30 @@ const passLength = pass => {
 };
 
 const Email = t.refinement(t.String, emailValidation);
-const Password = t.refinement(t.String, passLength);
 
-const SignupType = t.struct({
-    name: t.String,
-    // email: t.String,
-    email: Email,
-    // password: t.String,
-    password: Password,
-    // confirm_password: t.String,
-    confirm_password: Password,
-    // confirm_password: SamePassword,
-});
+const Password = t.refinement(t.String, passValidation);
+
+// https://github.com/gcanti/tcomb-form/issues/233
+function SamePassword(x) {
+    return x.password === x.confirm_password;
+}
+
+const SignupType = t.subtype(
+    t.struct({
+        name: t.String,
+        // email: t.String,
+        email: Email,
+        // password: t.String,
+        password: Password,
+        // confirm_password: t.String,
+        confirm_password: Password,
+        // confirm_password: SamePassword,
+    }),
+    SamePassword
+);
 
 const SignupOptions = {
+    error: 'Passwords must match',
     fields: {
         email: {
             error: 'Invalid email. Must be in form "example@example.com"',
@@ -54,7 +64,7 @@ const SignupOptions = {
         },
         confirm_password: {
             secureTextEntry: true,
-            error: 'Passwords be at least 6 characters in length.',
+            error: 'Passwords do not match.',
         },
     },
     auto: 'placeholders',
@@ -106,8 +116,9 @@ class SignupComponent extends Component {
         // get form data
         // let test = this.form.current.getComponent('password');
         // console.log(this.form.current.getComponent('password')._reactInternalFiber.pendingProps.value);
-        console.log(this.form.current.getComponent('password'));
+        // console.log(this.form.current.getComponent('confirm_password'));
         // console.log(this.form.current.getComponent('confirm_password')._reactInternalFiber.pendingProps.value);
+        // this.refs.form.getComponent('name').refs.input.focus();
 
         const value = this.form.current.getValue();
 
@@ -115,14 +126,22 @@ class SignupComponent extends Component {
         if (!value) {
             // Validation failed
             this.setState({ status: { msg: 'Create account failed.', type: 'error' } });
-            return;
-        }
-
+            this.form.setState({options: t.update(this.state.options, {
+                fields: {
+                  confirmPassword: {
+                    hasError: { $set: true },
+                    error: { $set: 'Password must match' }
+                  }
+                }
+              })});
+        /*
         if (value.password !== value.confirm_password) {
             // Validation failed
+            this.form.current.getComponent('confirm_password').setState({ hasError: true });
             this.setState({ status: { msg: "Passwords don't match.", type: 'error' } });
             return;
         }
+        */
 
         // signup
         let response = null;
@@ -168,10 +187,8 @@ class SignupComponent extends Component {
             <View style={styles.container}>
                 {/* Page Status */}
                 <StatusBar message={status.msg} type={status.type} />
-
                 {/* Signup Form */}
                 <Form ref={this.form} type={SignupType} options={SignupOptions} />
-
                 {/* Submit form button/mutation */}
                 <Mutation mutation={SIGNUP_MUTATION}>
                     {(signup, { loading }) => (
@@ -181,7 +198,6 @@ class SignupComponent extends Component {
                         />
                     )}
                 </Mutation>
-
                 {/* Go to login */}
                 <Button
                     onPress={() => {
