@@ -126,14 +126,9 @@ class SignupComponent extends Component {
         if (!value) {
             // Validation failed
             this.setState({ status: { msg: 'Create account failed.', type: 'error' } });
-            this.form.setState({options: t.update(this.state.options, {
-                fields: {
-                  confirmPassword: {
-                    hasError: { $set: true },
-                    error: { $set: 'Password must match' }
-                  }
-                }
-              })});
+            return;
+        }
+
         /*
         if (value.password !== value.confirm_password) {
             // Validation failed
