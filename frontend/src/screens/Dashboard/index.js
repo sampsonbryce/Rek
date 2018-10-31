@@ -4,8 +4,9 @@ import Button from 'src/components/Button';
 import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation';
 import { connect } from 'react-redux';
+import User from '../../class/User';
 
-const User = {};
+// const User = {};
 
 const Dashboard = props => {
     const { navigation, user } = props;
