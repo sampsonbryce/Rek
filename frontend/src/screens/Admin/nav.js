@@ -1,12 +1,19 @@
 import { createStackNavigator } from 'react-navigation';
 import Admin from '.';
-import EditUser from './components/EditUser';
+import UserList from './components/UserList';
+import ServiceList from './components/ServiceList';
+import EditUser from './components/UserList/components/EditUser';
+import EditService from './components/ServiceList/components/EditService';
+import AddService from './components/ServiceList/components/AddService';
 
 const adminNav = createStackNavigator(
     {
         Admin,
+        UserList,
+        ServiceList,
         EditUser,
-        // Additional routes go here
+        EditService,
+        AddService,
     },
     {
         initialRouteName: 'Admin',
@@ -19,4 +26,5 @@ const adminNav = createStackNavigator(
         },
     }
 );
+
 export default adminNav;

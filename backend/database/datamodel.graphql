@@ -1,16 +1,28 @@
+interface CreatedUpdatedDate {
+  createdDate: DateTime!
+  updatedDate: DateTime!
+}
+
+interface CreatedUpdatedBy {
+  createdBy: User!
+  updatedBy: User!
+}
+
 type User {
   id: ID! @unique
   name: String!
   email: String! @unique
   password: String!
   roles: Role!
+  userSchedule: UserSchedule 
 }
 
-# enum Role{
-#   ADMIN
-#   EMPLOYEE
-#   USER
-# }
+type Employee{
+  employeeId: ID! @unique 
+  user: User!
+  schedule: EmployeeSchedule!
+  services: [Service!]!
+}
 
 type Role {
   owner: User!
@@ -18,3 +30,40 @@ type Role {
   employee: Boolean! @default(value: "false")
   user: Boolean! @default(value: "true")
 }
+
+type Service {
+  id: ID! @unique
+  name: String! @unique
+  female_title: String!
+  male_title: String!
+  time_blocks: Int! @default(value: 2)
+}
+
+interface Schedule {
+  id: ID! @unique
+  appointments: [Appointment!]!
+}
+
+type EmployeeSchedule implements Schedule{
+  id: ID! @unique
+  workingTimes: [WorkingTime!]!
+  appointments: [Appointment!]!
+}
+
+type WorkingTime {
+  id: ID! @unique
+  start: DateTime!
+  end: DateTime!
+}
+
+type UserSchedule implements Schedule{
+  id: ID! @unique
+  appointments: [Appointment!]!
+}
+
+type Appointment {
+  id: ID! @unique
+  start: DateTime!
+  end: DateTime!
+}
+

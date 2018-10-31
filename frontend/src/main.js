@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 // For navigation
-import AppNavigator from 'src/components/nav';
+import AppNavigator from 'src/components/Nav';
 
 function Main() {
     return (
