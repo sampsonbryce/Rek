@@ -23,11 +23,10 @@ const emailValidation = email_dirty => {
 
 const passLength = pass => {
     const password = pass.trim();
-    let ret = true;
     if (password.length < 6) {
-        ret = false;
+        return false;
     }
-    return ret;
+    return true;
 };
 
 const Email = t.refinement(t.String, emailValidation);
@@ -60,6 +59,11 @@ const LOGIN_MUTATION = gql`
                 id
                 name
                 email
+                roles {
+                    user
+                    employee
+                    admin
+                }
             }
         }
     }
@@ -122,7 +126,7 @@ class LoginComponent extends Component {
         // update gui
         this.setState({ status: { message: 'User Logged in!' } });
 
-        global.id = user.id;
+        // global.id = user.id;
 
         // Success! Navigate
         navigation.navigate('Dashboard');

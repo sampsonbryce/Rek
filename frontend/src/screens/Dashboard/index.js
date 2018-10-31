@@ -1,68 +1,53 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import Button from 'src/components/Button';
 import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation';
+import { connect } from 'react-redux';
 
-import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
-
-const GET_USER = gql`
-    query($id: String!) {
-        user(id: $id) {
-            id
-            name
-            email
-            roles {
-                user
-                employee
-                admin
-            }
-        }
-    }
-`;
+const User = {};
 
 const Dashboard = props => {
-    const { navigation } = props;
-    const id = global.id; // eslint-disable-line
+    console.log('props: ', props);
+    const { navigation, user } = props;
 
     return (
         <View>
-            <Query variables={{ id }} query={GET_USER}>
-                {({ loading, error, data }) => {
-                    if (loading) return <Text>Loading...</Text>;
-                    if (error) return <Text>`Error! ${error.message}`</Text>;
-
-                    const { user } = data;
-                    return (
-                        <View>
-                            {/* Button to Schedule Appointments */}
-                            <Button
-                                onPress={() => {
-                                    navigation.navigate('CreateAppointment');
-                                }}
-                                title="Schedule Appointment"
-                            />
-
-                            {/* Button to Admin */}
-                            {user.roles.admin && (
-                                <Button
-                                    onPress={() => {
-                                        navigation.navigate('Admin');
-                                    }}
-                                    title="Admin"
-                                />
-                            )}
-                        </View>
-                    );
+            {/* Button to Schedule Appointments */}
+            <Button
+                onPress={() => {
+                    navigation.navigate('CreateAppointment');
                 }}
-            </Query>
+                title="Schedule Appointment"
+            />
+
+            {/* Button to Admin */}
+            {user.roles.admin && (
+                <Button
+                    onPress={() => {
+                        navigation.navigate('Admin');
+                    }}
+                    title="Admin"
+                />
+            )}
         </View>
     );
 };
 
 Dashboard.propTypes = {
     navigation: PropTypes.instanceOf(Navigation).isRequired,
+    user: PropTypes.instanceOf(User).isRequired,
 };
 
-export default Dashboard;
+const mapStateToProps = state => {
+    return {
+        user: state.user,
+    };
+};
+
+// export default Dashboard;
+
+export default connect(
+    mapStateToProps,
+    null
+)(Dashboard);

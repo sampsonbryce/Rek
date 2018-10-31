@@ -23,11 +23,10 @@ const emailValidation = email_dirty => {
 
 const passValidation = pass => {
     const password = pass.trim();
-    let ret = true;
     if (password.length < 6) {
-        ret = false;
+        return false;
     }
-    return ret;
+    return true;
 };
 
 const Email = t.refinement(t.String, emailValidation);
@@ -79,6 +78,11 @@ const SIGNUP_MUTATION = gql`
                 id
                 name
                 email
+                roles {
+                    user
+                    employee
+                    admin
+                }
             }
         }
     }
@@ -144,7 +148,7 @@ class SignupComponent extends Component {
         // update gui
         this.setState({ status: { msg: 'New user created!' } });
 
-        global.id = user.id;
+        // global.id = user.id;
 
         // navigate on success
         navigation.navigate('Dashboard');
