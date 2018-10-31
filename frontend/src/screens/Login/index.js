@@ -7,12 +7,14 @@ import Button from 'src/components/Button';
 import t from 'tcomb-form-native';
 import StatusBar from 'src/components/StatusBar';
 import PropTypes from 'prop-types';
+import ApiError from 'src/class/Error';
 import { Navigation } from 'react-native-navigation';
 import { userLogin } from '../../actions';
 
 // Define Login form structure and options
 const { Form } = t.form;
 
+// https://github.com/gcanti/tcomb-validation#form-validation   GoTo Refinements
 const emailValidation = email_dirty => {
     const email = email_dirty.trim().toLowerCase();
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -106,8 +108,8 @@ class LoginComponent extends Component {
         try {
             response = await login({ variables: value });
         } catch (err) {
-            const e = err.graphQLErrors[0];
-            this.setState({ status: { message: e.message, type: 'error' } });
+            const error = new ApiError(err);
+            this.setState({ status: { message: error.userMessage(), type: 'error' } });
             return;
         }
 

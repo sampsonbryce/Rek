@@ -36,11 +36,10 @@ const Dashboard = props => {
                     const { user } = data;
                     return (
                         <View>
-                            <Text>No appointments</Text>
                             {/* Button to Schedule Appointments */}
                             <Button
                                 onPress={() => {
-                                    navigation.navigate('FindServices');
+                                    navigation.navigate('CreateAppointment');
                                 }}
                                 title="Schedule Appointment"
                             />

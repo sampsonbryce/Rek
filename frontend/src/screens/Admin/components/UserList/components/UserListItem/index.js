@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import Button from 'src/components/Button';
 import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation';
-import { BERRY_BLUE } from '../../../../constants';
+import { BERRY_BLUE } from 'src/constants';
 
 const UserListItem = props => {
     const item_styles = [styles.item];
@@ -18,7 +18,7 @@ const UserListItem = props => {
             <View style={styles.nameContainer}>
                 <Text style={styles.name}>{name}</Text>
             </View>
-            <View style={styles.buttonContainer}>
+            <View>
                 <Button
                     title="Edit"
                     styles={styles.button}
@@ -42,14 +42,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    buttonContainer: {
-        // flex:1,
-    },
     button: {
         flex: 1,
-    },
-    name: {
-        // textAlign: 'center',
     },
     nameContainer: {
         flex: 1,

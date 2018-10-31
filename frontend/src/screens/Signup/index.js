@@ -7,6 +7,7 @@ import Button from 'src/components/Button';
 import { PropTypes } from 'prop-types';
 import { Navigation } from 'react-native-navigation';
 import { connect } from 'react-redux';
+import ApiError from 'src/class/Error';
 import StatusBar from '../../components/StatusBar';
 import { userLogin } from '../../actions';
 
@@ -55,6 +56,9 @@ const SignupType = t.subtype(
 const SignupOptions = {
     error: 'Passwords must match',
     fields: {
+        name: {
+            error: 'Name cannot be left blank and must contain non-numeric characters.',
+        },
         email: {
             error: 'Invalid email. Must be in form "example@example.com"',
         },
@@ -105,7 +109,7 @@ class SignupComponent extends Component {
         // init state
         this.state = {
             status: {
-                msg: '',
+                message: '',
                 type: null,
             },
         };
@@ -119,7 +123,6 @@ class SignupComponent extends Component {
         this.setState({ status: { msg: '', type: 'error' } });
         if (!value) {
             // Validation failed
-            this.setState({ status: { msg: 'Create account failed.', type: 'error' } });
             return;
         }
 
@@ -130,19 +133,9 @@ class SignupComponent extends Component {
 
             // Error Handling
         } catch (err) {
-            // console.log(err);
-            // parse error
-            const e = err.graphQLErrors[0];
+            const error = new ApiError(err);
+            this.setState({ status: { message: error.userMessage(), type: 'error' } });
 
-            // get message
-            let msg = null;
-            if (e.name === 'UniqueFieldAlreadyExists') {
-                msg = e.data.message;
-            } else {
-                msg = e.message;
-            }
-
-            this.setState({ status: { msg, type: 'error' } });
             return;
         }
 
@@ -168,7 +161,8 @@ class SignupComponent extends Component {
         return (
             <View style={styles.container}>
                 {/* Page Status */}
-                <StatusBar message={status.msg} type={status.type} />
+                <StatusBar message={status.message} type={status.type} />
+
                 {/* Signup Form */}
                 <Form ref={this.form} type={SignupType} options={SignupOptions} />
                 {/* Submit form button/mutation */}
@@ -196,7 +190,6 @@ class SignupComponent extends Component {
 const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
-        // alignItems: 'center',
         padding: 20,
     },
 });

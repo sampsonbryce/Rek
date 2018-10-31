@@ -3,11 +3,15 @@
 */npm-debug.*
 
 
-# misc
-*/.env.local
-*/.env.development.local
-*/.env.test.local
-*/.env.production.local
+# environment files
+*/.env*
+
+# vscode folder
+.vscode
+
+# ignore prisma generated files
+# */generated/**/*
+generated/
 
 */npm-debug.*
 */yarn-debug.*

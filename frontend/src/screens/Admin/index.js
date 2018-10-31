@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text, FlatList } from 'react-native';
-import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
+import { View, StyleSheet, Text, FlatList, TouchableHighlight } from 'react-native';
 import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation';
-import UserListItem from './components/UserListItem';
-import { BERRY_LIGHT_BLUE, BERRY_MAROON } from '../../constants';
+import { BERRY_LIGHT_BLUE, BERRY_BLUE } from '../../constants';
 
-// define graphql queries
-const GET_USERS = gql`
-    {
-        users {
-            id
-            name
-        }
+const renderListItem = (item, index) => {
+    const item_styles = [styles.item];
+
+    // cycle dark blue color
+    if (index % 2 === 0) {
+        item_styles.push(styles.darkblue);
     }
-`;
+
+    return (
+        <TouchableHighlight style={item_styles} key={item.title} onPress={item.onPress}>
+            <Text>{item.title}</Text>
+        </TouchableHighlight>
+    );
+};
 
 /*
  * Admin service for store admins
@@ -26,43 +28,39 @@ export default class Admin extends Component {
         title: 'Admin',
     };
 
-    propTypes = {
+    static propTypes = {
         navigation: PropTypes.instanceOf(Navigation).isRequired,
     };
 
-    renderListItem(item, index) {
+    getListItems() {
         const { navigation } = this.props;
-        return (
-            <UserListItem
-                name={item.name}
-                id={item.id}
-                key={item.id}
-                index={index}
-                navigation={navigation}
-            />
-        );
+        // list items
+        const items = [
+            {
+                title: 'Users',
+                onPress: () => {
+                    navigation.navigate('UserList');
+                },
+            },
+            {
+                title: 'Services',
+                onPress: () => {
+                    navigation.navigate('ServiceList');
+                },
+            },
+        ];
+
+        return items;
     }
 
     render() {
         return (
             <View style={styles.admin}>
-                <View style={styles.titleContainer}>
-                    <Text style={styles.title}>Admin</Text>
-                </View>
-                <Query query={GET_USERS}>
-                    {({ loading, error, data }) => {
-                        if (loading) return <Text>Loading...</Text>;
-                        if (error) return <Text>`Error! ${error.message}`</Text>;
-
-                        return (
-                            <FlatList
-                                data={data.users}
-                                renderItem={({ item, index }) => this.renderListItem(item, index)}
-                                keyExtractor={item => item.id}
-                            />
-                        );
-                    }}
-                </Query>
+                <FlatList
+                    data={this.getListItems()}
+                    renderItem={({ item, index }) => renderListItem(item, index)}
+                    keyExtractor={(item, index) => index.toString()}
+                />
             </View>
         );
     }
@@ -76,9 +74,14 @@ const styles = StyleSheet.create({
     title: {
         color: 'white',
     },
-    titleContainer: {
+    item: {
+        paddingLeft: 20,
+        flex: 1,
+        flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: BERRY_MAROON,
-        padding: 10,
+        height: 50,
+    },
+    darkblue: {
+        backgroundColor: BERRY_BLUE,
     },
 });
