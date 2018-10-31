@@ -42,13 +42,9 @@ function SamePassword(x) {
 const SignupType = t.subtype(
     t.struct({
         name: t.String,
-        // email: t.String,
         email: Email,
-        // password: t.String,
         password: Password,
-        // confirm_password: t.String,
         confirm_password: Password,
-        // confirm_password: SamePassword,
     }),
     SamePassword
 );
