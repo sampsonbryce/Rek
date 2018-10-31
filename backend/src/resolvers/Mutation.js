@@ -1,14 +1,16 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { APP_SECRET, capitalize } = require('../utils');
 const validator = require('validator');
+const { APP_SECRET, capitalize } = require('../utils');
 
-const { ServerError, 
-        InvalidCredentialsError, 
-        UniqueFieldAlreadyExists,
-        InvalidEmailFormat,
-        InvalidName,
-        InvalidPassword, } = require('../errors.js');
+const {
+    ServerError,
+    InvalidCredentialsError,
+    UniqueFieldAlreadyExists,
+    InvalidEmailFormat,
+    InvalidName,
+    InvalidPassword,
+} = require('../errors.js');
 
 /*
  * Signup: Creates a new user and logs them in
@@ -22,13 +24,13 @@ async function signup(parent, args, context) {
         throw new InvalidEmailFormat();
     }
 
-    if(!validator.isAscii(args.name)) {
+    if (!validator.isAscii(args.name)) {
         throw new InvalidName();
     }
 
-    if(args.password.length < 6) {
+    if (args.password.length < 6) {
         throw new InvalidPassword();
-    }   
+    }
 
     // Create user
     let user = null;
@@ -43,7 +45,7 @@ async function signup(parent, args, context) {
             },
         });
     } catch (err) {
-        console.log('err json: ', JSON.stringify(err));
+        console.log('err json: ', JSON.stringify(err)); // eslint-disable-line no-console
         const e = err.result.errors[0];
 
         // handle unique field already exists error
@@ -74,13 +76,12 @@ async function signup(parent, args, context) {
 }
 
 // User login functionality
-async function login(parent, args, context){
-
+async function login(parent, args, context) {
     if (!validator.isEmail(args.email)) {
         throw new InvalidEmailFormat();
     }
 
-    if(args.password.length < 6) {
+    if (args.password.length < 6) {
         throw new InvalidPassword();
     }
 
@@ -137,7 +138,7 @@ async function addService(parent, args, context) {
  * Updates a service
  */
 async function updateService(parent, args, context) {
-    const args_clone = _.clone(args);
+    const args_clone = _.clone(args); // eslint-disable-line
     const { id } = args_clone;
 
     delete args_clone.id;
