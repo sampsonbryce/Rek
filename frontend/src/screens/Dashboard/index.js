@@ -1,15 +1,18 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import Button from 'src/components/Button';
 import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation';
+import { connect } from 'react-redux';
+import User from '../../class/User';
+
+// const User = {};
 
 const Dashboard = props => {
-    const { navigation } = props;
+    const { navigation, user } = props;
+
     return (
         <View>
-            <Text>No appointments</Text>
-
             {/* Button to Schedule Appointments */}
             <Button
                 onPress={() => {
@@ -19,18 +22,28 @@ const Dashboard = props => {
             />
 
             {/* Button to Admin */}
-            <Button
-                onPress={() => {
-                    navigation.navigate('Admin');
-                }}
-                title="Admin"
-            />
+            {user.roles.admin && (
+                <Button
+                    onPress={() => {
+                        navigation.navigate('Admin');
+                    }}
+                    title="Admin"
+                />
+            )}
         </View>
     );
 };
 
 Dashboard.propTypes = {
     navigation: PropTypes.instanceOf(Navigation).isRequired,
+    user: PropTypes.instanceOf(User).isRequired,
 };
 
-export default Dashboard;
+const mapStateToProps = state => ({ user: state.user });
+
+// export default Dashboard;
+
+export default connect(
+    mapStateToProps,
+    null
+)(Dashboard);
