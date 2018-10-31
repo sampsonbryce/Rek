@@ -33,4 +33,8 @@ Dashboard.propTypes = {
     navigation: PropTypes.instanceOf(Navigation).isRequired,
 };
 
+Dashboard.navigationOptions = {
+    header: null,
+};
+
 export default Dashboard;

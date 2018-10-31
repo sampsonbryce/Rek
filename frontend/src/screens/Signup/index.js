@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image, KeyboardAvoidingView } from 'react-native';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import t from 'tcomb-form-native';
@@ -8,8 +8,10 @@ import { PropTypes } from 'prop-types';
 import { Navigation } from 'react-native-navigation';
 import { connect } from 'react-redux';
 import ApiError from 'src/class/Error';
-import StatusBar from '../../components/StatusBar';
-import { userLogin } from '../../actions';
+import { userLogin } from 'src/actions';
+import { BERRY_DARK_BLUE, BERRY_LIGHT_BLUE } from 'src/constants';
+import StatusBar from 'src/components/StatusBar';
+import Images from 'src/assets/images';
 
 // create form structure
 const { Form } = t.form;
@@ -51,10 +53,6 @@ const SIGNUP_MUTATION = gql`
  * Component for rendering the signup form and handling user signup
  */
 class SignupComponent extends Component {
-    static navigationOptions = {
-        header: null,
-    };
-
     static propTypes = {
         navigation: PropTypes.instanceOf(Navigation).isRequired,
         onUserSignup: PropTypes.func.isRequired,
@@ -114,31 +112,37 @@ class SignupComponent extends Component {
         const { navigation } = this.props;
 
         return (
-            <View style={styles.container}>
+            <KeyboardAvoidingView style={styles.container} behavior="padding">
                 {/* Page Status */}
                 <StatusBar message={status.message} type={status.type} />
+
+                <Image source={Images.logoSilverTransparent} style={styles.image} />
 
                 {/* Signup Form */}
                 <Form ref={this.form} type={SignupType} options={SignupOptions} />
 
-                {/* Submit form button/mutation */}
-                <Mutation mutation={SIGNUP_MUTATION}>
-                    {(signup, { loading }) => (
-                        <Button
-                            onPress={() => this.submit(signup)}
-                            title={loading ? 'Loading...' : 'Signup'}
-                        />
-                    )}
-                </Mutation>
+                <View style={styles.buttonContainer}>
+                    {/* Submit form button/mutation */}
+                    <Mutation mutation={SIGNUP_MUTATION}>
+                        {(signup, { loading }) => (
+                            <Button
+                                onPress={() => this.submit(signup)}
+                                title={loading ? 'Loading...' : 'Signup'}
+                            />
+                        )}
+                    </Mutation>
 
-                {/* Go to login */}
-                <Button
-                    onPress={() => {
-                        navigation.navigate('Login');
-                    }}
-                    title="Login"
-                />
-            </View>
+                    {/* Go to login */}
+                    <Button
+                        style={styles.loginButton}
+                        textStyle={styles.loginButtonText}
+                        title="Already have an account?"
+                        onPress={() => {
+                            navigation.navigate('Login');
+                        }}
+                    />
+                </View>
+            </KeyboardAvoidingView>
         );
     }
 }
@@ -146,8 +150,25 @@ class SignupComponent extends Component {
 // component styles
 const styles = StyleSheet.create({
     container: {
-        justifyContent: 'center',
+        justifyContent: 'space-between',
+        height: '100%',
         padding: 20,
+    },
+    loginButton: {
+        width: '75%',
+        backgroundColor: BERRY_LIGHT_BLUE,
+    },
+    buttonContainer: {
+        alignItems: 'center',
+    },
+    loginButtonText: {
+        color: BERRY_DARK_BLUE,
+    },
+    image: {
+        width: '100%',
+        resizeMode: 'contain',
+        flex: 1,
+        margin: 10,
     },
 });
 

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { ServerError, UserNotAuthenticated } = require('./errors');
 
 const APP_SECRET = 'GraphQL-is-aw3some'; // TODO: make secure and change
 
@@ -14,15 +15,23 @@ function getUserId(context) {
         return userId;
     }
 
-    throw new Error('Not authenticated');
+    throw new UserNotAuthenticated();
 }
 
 function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+function assert(condition) {
+    if (!condition) {
+        console.error('Assertion Failed');
+        throw new ServerError();
+    }
+}
+
 module.exports = {
     APP_SECRET,
     getUserId,
     capitalize,
+    assert,
 };

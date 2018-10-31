@@ -8,14 +8,15 @@ import PropTypes from 'prop-types';
  */
 const Button = props => {
     const { activeOpacity, style, onPress, textStyle, title } = props;
+
     return (
         <TouchableHighlight
             activeOpacity={activeOpacity}
-            style={[style, styles.button]}
+            style={[styles.button, style]}
             underlayColor={BERRY_BLUE}
             onPress={onPress}
         >
-            <Text style={[textStyle, styles.text]}>{title}</Text>
+            <Text style={[styles.text, textStyle]}>{title}</Text>
         </TouchableHighlight>
     );
 };
@@ -26,6 +27,7 @@ const styles = StyleSheet.create({
         margin: 10,
         padding: 10,
         borderRadius: 5,
+        width: '100%',
     },
     text: {
         color: 'white',
@@ -35,8 +37,8 @@ const styles = StyleSheet.create({
 
 Button.propTypes = {
     activeOpacity: PropTypes.number,
-    style: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    textStyle: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    style: PropTypes.number,
+    textStyle: PropTypes.number,
     title: PropTypes.string.isRequired,
     onPress: PropTypes.func,
 };

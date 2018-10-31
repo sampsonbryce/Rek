@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Query, Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import t from 'tcomb-form-native';
 import Button from 'src/components/Button';
 import StatusBar from 'src/components/StatusBar';
+import ApiError from 'src/class/Error';
 import { PropTypes } from 'prop-types';
 import { Navigation } from 'react-native-navigation';
 
@@ -67,7 +68,6 @@ const UPDATE_USER = gql`
  */
 export default class EditUser extends Component {
     static navigationOptions = {
-        header: null,
         title: 'EditUser',
     };
 
@@ -98,17 +98,11 @@ export default class EditUser extends Component {
             await updateUser({ variables: value });
         } catch (err) {
             // handle error
-            const error = new Error(err);
-            let message = '';
-            if (error.isNetworkError) {
-                message = 'Something went wrong with our server';
-            } else if (error.isGqlError) {
-                message = 'Data is incorrect';
-            }
-            this.setState({ status: { message, type: 'error' } });
+            const error = new ApiError(err);
+            this.setState({ status: { message: error.userMessage(), type: 'error' } });
+            refetch();
+            return;
         }
-
-        // TODO: handle error
 
         // refetch user query
         refetch();
@@ -134,7 +128,7 @@ export default class EditUser extends Component {
                         const { user } = data;
 
                         return (
-                            <View>
+                            <View style={styles.container}>
                                 {/* User info form */}
                                 <Form ref={this.form} type={User} options={options} value={user} />
 
@@ -166,3 +160,9 @@ export default class EditUser extends Component {
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        padding: 20,
+    },
+});

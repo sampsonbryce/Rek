@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet, Image, KeyboardAvoidingView } from 'react-native';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import Button from 'src/components/Button';
@@ -9,6 +9,8 @@ import StatusBar from 'src/components/StatusBar';
 import PropTypes from 'prop-types';
 import ApiError from 'src/class/Error';
 import { Navigation } from 'react-native-navigation';
+import { BERRY_DARK_BLUE, BERRY_LIGHT_BLUE } from 'src/constants';
+import Images from 'src/assets/images';
 import { userLogin } from '../../actions';
 
 // Define Login form structure and options
@@ -53,11 +55,6 @@ const LOGIN_MUTATION = gql`
 `;
 
 class LoginComponent extends Component {
-    static navigationOptions = {
-        header: null,
-        title: 'Login',
-    };
-
     static propTypes = {
         onUserLogin: PropTypes.func.isRequired,
         navigation: PropTypes.instanceOf(Navigation).isRequired,
@@ -118,33 +115,63 @@ class LoginComponent extends Component {
         const { navigation } = this.props;
 
         return (
-            <View>
+            <KeyboardAvoidingView style={styles.container} behavior="padding">
                 <StatusBar message={status.message} type={status.type} />
+
+                <Image source={Images.logoSilverTransparent} style={styles.image} />
 
                 {/* Render Form */}
                 <Form ref={this.form} type={LoginType} options={LoginOptions} />
 
                 {/* Login submit mutation */}
-                <Mutation mutation={LOGIN_MUTATION}>
-                    {(login, { loading }) => (
-                        <Button
-                            onPress={() => this.submit(login)}
-                            title={loading ? 'Loading...' : 'Login'}
-                        />
-                    )}
-                </Mutation>
+                <View style={styles.buttonContainer}>
+                    <Mutation mutation={LOGIN_MUTATION}>
+                        {(login, { loading }) => (
+                            <Button
+                                onPress={() => this.submit(login)}
+                                title={loading ? 'Loading...' : 'Login'}
+                            />
+                        )}
+                    </Mutation>
 
-                {/* Signup link */}
-                <Button
-                    title="Signup"
-                    onPress={() => {
-                        navigation.navigate('Signup');
-                    }}
-                />
-            </View>
+                    {/* Signup link */}
+                    <Button
+                        style={styles.signupButton}
+                        textStyle={styles.signupButtonText}
+                        title="Don't have an account?"
+                        onPress={() => {
+                            navigation.navigate('Signup');
+                        }}
+                    />
+                </View>
+            </KeyboardAvoidingView>
         );
     }
 }
+
+// component styles
+const styles = StyleSheet.create({
+    container: {
+        justifyContent: 'space-between',
+        height: '100%',
+        padding: 20,
+    },
+    signupButton: {
+        width: '75%',
+        backgroundColor: BERRY_LIGHT_BLUE,
+    },
+    buttonContainer: {
+        alignItems: 'center',
+    },
+    signupButtonText: {
+        color: BERRY_DARK_BLUE,
+    },
+    image: {
+        width: '100%',
+        resizeMode: 'contain',
+        flex: 1,
+    },
+});
 
 /*
  * Add redux dispatch functions to props

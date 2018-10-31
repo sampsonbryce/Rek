@@ -25,8 +25,10 @@ export default class ApiError {
         if (this.isGqlError()) {
             // if we send back a developer thrown error, return that message
             const error = this.error.graphQLErrors[0];
-            if (error.message) {
-                if (error.data !== null && 'message' in error.data) {
+
+            // developer handled gql errors have a name
+            if ('name' in error && error.message) {
+                if ('data' in error && 'message' in error.data) {
                     return error.data.message;
                 }
                 return error.message;

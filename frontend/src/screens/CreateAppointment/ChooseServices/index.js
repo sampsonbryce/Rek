@@ -26,13 +26,14 @@ const GET_SERVICES = gql`
  */
 class ChooseServices extends Component {
     static navigationOptions = {
-        header: null,
+        // header: null,
         title: 'Choose Services',
     };
 
     static propTypes = {
         navigation: PropTypes.instanceOf(Navigation).isRequired,
         selected: PropTypes.arrayOf(PropTypes.string).isRequired,
+        selectedPeople: PropTypes.arrayOf(PropTypes.string).isRequired,
         setSelectedServices: PropTypes.func.isRequired,
         getServices: PropTypes.shape({
             services: PropTypes.arrayOf(
@@ -77,6 +78,22 @@ class ChooseServices extends Component {
         );
     }
 
+    renderChoosePeopleButton() {
+        const { selectedPeople, navigation } = this.props;
+        if (selectedPeople.length !== 0) {
+            return null;
+        }
+
+        return (
+            <Button
+                title="Choose People"
+                onPress={() => {
+                    navigation.navigate('ChoosePeople');
+                }}
+            />
+        );
+    }
+
     render() {
         const {
             selected,
@@ -112,12 +129,7 @@ class ChooseServices extends Component {
                         navigation.navigate('ChooseTime');
                     }}
                 />
-                <Button
-                    title="Choose People"
-                    onPress={() => {
-                        navigation.navigate('ChoosePeople');
-                    }}
-                />
+                {this.renderChoosePeopleButton()}
             </View>
         );
     }

@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
-const { APP_SECRET, capitalize } = require('../utils');
+const { APP_SECRET, capitalize, assert } = require('../utils');
 
 const { ServerError, InvalidCredentialsError, UniqueFieldAlreadyExists } = require('../errors.js');
 
@@ -97,6 +97,58 @@ async function updateUserWithRoles(parent, args, context) {
             id: args.id,
         },
     });
+
+    // check if employee record
+    const employees = await context.db.employees({
+        where: {
+            user: {
+                id: args.id,
+            },
+        },
+    });
+
+    assert(employees.length < 2); // ensure only one employee record max for a user
+
+    // if we are changing this user to an employee, then we need to create an employee record
+
+    if (args.roles.employee === true) {
+        console.log('is employee');
+
+        console.log('got employees: ', employees);
+        console.log('employees length: ', employees.length);
+
+        // if we don't already have an employee record created
+        if (employees.length === 0) {
+            console.log('creating new employee');
+            await context.db.createEmployee({
+                employeeId: args.id, // employeeId is the same as the user id
+                user: {
+                    connect: {
+                        id: args.id,
+                    },
+                },
+                schedule: {
+                    create: {
+                        workingTimes: {
+                            create: [],
+                        },
+                        appointments: {
+                            create: [],
+                        },
+                    },
+                },
+                services: {
+                    create: [],
+                },
+            });
+        }
+    } else if (args.roles.employee === false && employees.length === 1) {
+        // delete employee record if user is not longer an employee
+        await context.db.deleteEmployee({
+            employeeId: args.id,
+        });
+    }
+
     return user;
 }
 

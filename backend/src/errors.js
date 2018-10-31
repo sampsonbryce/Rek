@@ -12,8 +12,13 @@ const UniqueFieldAlreadyExists = createError('UniqueFieldAlreadyExists', {
     message: 'A field already exists',
 });
 
+const UserNotAuthenticated = createError('UserNotAuthenticated', {
+    message: 'User is not authenticated',
+});
+
 module.exports = {
     InvalidCredentialsError,
     UniqueFieldAlreadyExists,
+    UserNotAuthenticated,
     ServerError,
 };

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import t from 'tcomb-form-native';
@@ -99,7 +99,7 @@ export default class AddService extends Component {
             <View>
                 <StatusBar message={status.message} type={status.type} />
 
-                <View>
+                <View style={styles.container}>
                     {/* Service Add form */}
                     <Form ref={this.form} type={Service} options={options} />
 
@@ -117,3 +117,9 @@ export default class AddService extends Component {
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        padding: 20,
+    },
+});

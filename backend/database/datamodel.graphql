@@ -18,7 +18,7 @@ type User {
 }
 
 type Employee{
-  employeeId: ID! @unique 
+  employeeId: ID! @unique # this should be the same id as the user.id
   user: User!
   schedule: EmployeeSchedule!
   services: [Service!]!

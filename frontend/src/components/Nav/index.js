@@ -3,56 +3,47 @@ import Login from 'src/screens/Login';
 import FindServices from 'src/screens/FindServices';
 import Dashboard from 'src/screens/Dashboard';
 import adminNav from 'src/screens/Admin/nav';
-import appointmentWizardNav from 'src/screens/CreateAppointment/nav';
+import CreateAppointmentNav from 'src/screens/CreateAppointment/nav';
+import { BERRY_MAROON } from 'src/constants';
 
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 
+/*
+ * Main user navigator
+ */
 const dashboardNav = createStackNavigator(
     {
         FindServices,
         Dashboard,
-        Admin: adminNav,
-        CreateAppointment: appointmentWizardNav,
-        // Additional routes go here
+        ...adminNav,
+        ...CreateAppointmentNav,
     },
     {
         initialRouteName: 'Dashboard',
-    },
-    {
-        headerMode: 'none',
         navigationOptions: {
-            headerVisible: false,
+            headerStyle: {
+                backgroundColor: BERRY_MAROON,
+                paddingTop: 0,
+                height: 50,
+            },
+            headerTintColor: 'white',
+            headerTitleStyle: {
+                paddingTop: 0,
+            },
         },
     }
 );
 
+/*
+ * Authentication navigator
+ */
 const loginNav = createStackNavigator(
     {
         Login,
         Signup,
-        // Additional routes go here
     },
     {
         initialRouteName: 'Login',
-    },
-    {
-        headerMode: 'none',
-        navigationOptions: {
-            headerVisible: false,
-        },
-    }
-);
-
-const AppNavigator = createSwitchNavigator(
-    {
-        Auth: loginNav,
-        Dashboard: dashboardNav,
-    },
-    {
-        initialRouteName: 'Auth',
-        // initialRouteName: 'Dashboard',
-    },
-    {
         headerMode: 'none',
         navigationOptions: {
             header: null,
@@ -61,5 +52,23 @@ const AppNavigator = createSwitchNavigator(
     }
 );
 
-// export
+/*
+ * Core navigator
+ */
+const AppNavigator = createSwitchNavigator(
+    {
+        Auth: loginNav,
+        Dashboard: dashboardNav,
+    },
+    {
+        // initialRouteName: 'Dashboard',
+        initialRouteName: 'Auth',
+        headerMode: 'none',
+        navigationOptions: {
+            header: null,
+            headerVisible: false,
+        },
+    }
+);
+
 export default AppNavigator;

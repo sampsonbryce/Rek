@@ -9,7 +9,7 @@ import { Navigation } from 'react-native-navigation';
  */
 export default class CreateAppointment extends Component {
     static navigationOptions = {
-        header: null,
+        // header: null,
         title: 'Schedule Appointment',
     };
 
