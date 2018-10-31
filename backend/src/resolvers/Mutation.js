@@ -20,7 +20,7 @@ async function signup(parent, args, context, info){
         throw new InvalidEmailFormat();
     }
 
-    if(!validator.isAlphanumeric(args.name)) {
+    if(!validator.isAscii(args.name)) {
         throw new InvalidName();
     }
 

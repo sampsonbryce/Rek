@@ -114,12 +114,6 @@ class SignupComponent extends Component {
     async submit(signup) {
         const { onUserSignup, navigation } = this.props;
         // get form data
-        // let test = this.form.current.getComponent('password');
-        // console.log(this.form.current.getComponent('password')._reactInternalFiber.pendingProps.value);
-        // console.log(this.form.current.getComponent('confirm_password'));
-        // console.log(this.form.current.getComponent('confirm_password')._reactInternalFiber.pendingProps.value);
-        // this.refs.form.getComponent('name').refs.input.focus();
-
         const value = this.form.current.getValue();
 
         this.setState({ status: { msg: '', type: 'error' } });
@@ -128,15 +122,6 @@ class SignupComponent extends Component {
             this.setState({ status: { msg: 'Create account failed.', type: 'error' } });
             return;
         }
-
-        /*
-        if (value.password !== value.confirm_password) {
-            // Validation failed
-            this.form.current.getComponent('confirm_password').setState({ hasError: true });
-            this.setState({ status: { msg: "Passwords don't match.", type: 'error' } });
-            return;
-        }
-        */
 
         // signup
         let response = null;
@@ -169,6 +154,8 @@ class SignupComponent extends Component {
 
         // update gui
         this.setState({ status: { msg: 'New user created!' } });
+
+        global.id = user.id;
 
         // navigate on success
         navigation.navigate('Dashboard');
