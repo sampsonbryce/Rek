@@ -120,6 +120,8 @@ class LoginComponent extends Component {
         // update gui
         this.setState({ status: { message: 'User Logged in!' } });
 
+        global.id = user.id;
+
         // Success! Navigate
         navigation.navigate('Dashboard');
     }
