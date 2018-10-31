@@ -128,6 +128,7 @@ class LoginComponent extends Component {
                     <Mutation mutation={LOGIN_MUTATION}>
                         {(login, { loading }) => (
                             <Button
+                                style={styles.loginButton}
                                 onPress={() => this.submit(login)}
                                 title={loading ? 'Loading...' : 'Login'}
                             />
@@ -155,6 +156,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         height: '100%',
         padding: 20,
+    },
+    loginButton: {
+        width: '100%',
     },
     signupButton: {
         width: '75%',

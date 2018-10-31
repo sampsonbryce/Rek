@@ -2,7 +2,7 @@ import React from 'react';
 import { ApolloProvider } from 'react-apollo';
 import ApolloClient from 'apollo-boost';
 import { Provider } from 'react-redux';
-import { View } from 'react-native';
+import { View, StatusBar } from 'react-native';
 // import { Font } from 'expo';
 import { SERVER_URL } from 'react-native-dotenv';
 import store from './src/store';
@@ -16,6 +16,7 @@ const client = new ApolloClient({
     uri: SERVER_URL,
 });
 
+// disables warning box
 console.disableYellowBox = true;
 
 export default class App extends React.Component {
@@ -31,7 +32,12 @@ export default class App extends React.Component {
         return (
             <ApolloProvider client={client}>
                 <Provider store={store}>
-                    <View style={{ flex: 1 }}>{fontLoaded ? <Main /> : null}</View>
+                    <View style={{ flex: 1 }}>
+                        {/* Hides the top status bar */}
+                        <StatusBar hidden />
+
+                        {fontLoaded ? <Main /> : null}
+                    </View>
                 </Provider>
             </ApolloProvider>
         );

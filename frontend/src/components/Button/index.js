@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
         margin: 10,
         padding: 10,
         borderRadius: 5,
-        width: '100%',
+        // width: '100%',
     },
     text: {
         color: 'white',
