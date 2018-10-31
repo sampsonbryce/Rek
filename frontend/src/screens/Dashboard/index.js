@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 const User = {};
 
 const Dashboard = props => {
-    console.log('props: ', props);
     const { navigation, user } = props;
 
     return (
@@ -39,11 +38,7 @@ Dashboard.propTypes = {
     user: PropTypes.instanceOf(User).isRequired,
 };
 
-const mapStateToProps = state => {
-    return {
-        user: state.user,
-    };
-};
+const mapStateToProps = state => ({ user: state.user });
 
 // export default Dashboard;
 
