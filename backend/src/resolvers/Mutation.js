@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
+const _ = require('lodash');
 const { APP_SECRET, capitalize } = require('../utils');
 
 const {
@@ -138,7 +139,7 @@ async function addService(parent, args, context) {
  * Updates a service
  */
 async function updateService(parent, args, context) {
-    const args_clone = _.clone(args); // eslint-disable-line
+    const args_clone = _.clone(args);
     const { id } = args_clone;
 
     delete args_clone.id;
