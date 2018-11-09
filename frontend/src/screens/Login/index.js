@@ -23,18 +23,30 @@ const emailValidation = email_dirty => {
     return re.test(email);
 };
 
+const passLength = pass => {
+    const password = pass.trim();
+    if (password.length < 6) {
+        return false;
+    }
+    return true;
+};
+
 const Email = t.refinement(t.String, emailValidation);
+const Password = t.refinement(t.String, passLength);
 
 const LoginType = t.struct({
-    // email: t.String,
     email: Email,
-    password: t.String,
+    password: Password,
 });
 
 const LoginOptions = {
     fields: {
+        email: {
+            error: 'Invalid email. Must be in form "example@example.com"',
+        },
         password: {
             secureTextEntry: true,
+            error: 'Passwords be at least 6 characters in length.',
         },
     },
     auto: 'placeholders',
@@ -49,6 +61,11 @@ const LOGIN_MUTATION = gql`
                 id
                 name
                 email
+                roles {
+                    user
+                    employee
+                    admin
+                }
             }
         }
     }
@@ -83,7 +100,7 @@ class LoginComponent extends Component {
         const value = this.form.current.getValue();
         if (!value) {
             // Validation failed
-            this.setState({ status: { message: 'Login or Password is incorrect', type: 'error' } });
+            this.setState({ status: { message: 'Email or Password is incorrect', type: 'error' } });
             return;
         }
 
@@ -105,6 +122,8 @@ class LoginComponent extends Component {
 
         // update gui
         this.setState({ status: { message: 'User Logged in!' } });
+
+        // global.id = user.id;
 
         // Success! Navigate
         navigation.navigate('Dashboard');

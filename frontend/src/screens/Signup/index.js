@@ -16,20 +16,56 @@ import Images from 'src/assets/images';
 // create form structure
 const { Form } = t.form;
 
-const SignupType = t.struct({
-    name: t.String,
-    email: t.String,
-    password: t.String,
-    confirm_password: t.String,
-});
+// https://github.com/gcanti/tcomb-validation#form-validation   GoTo Refinements
+const emailValidation = email_dirty => {
+    const email = email_dirty.trim().toLowerCase();
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+};
+
+const passValidation = pass => {
+    const password = pass.trim();
+    if (password.length < 6) {
+        return false;
+    }
+    return true;
+};
+
+const Email = t.refinement(t.String, emailValidation);
+
+const Password = t.refinement(t.String, passValidation);
+
+// https://github.com/gcanti/tcomb-form/issues/233
+function SamePassword(x) {
+    return x.password === x.confirm_password;
+}
+
+const SignupType = t.subtype(
+    t.struct({
+        name: t.String,
+        email: Email,
+        password: Password,
+        confirm_password: Password,
+    }),
+    SamePassword
+);
 
 const SignupOptions = {
+    error: 'Passwords must match',
     fields: {
+        name: {
+            error: 'Name cannot be left blank and must contain non-numeric characters.',
+        },
+        email: {
+            error: 'Invalid email. Must be in form "example@example.com"',
+        },
         password: {
             secureTextEntry: true,
+            error: 'Passwords be at least characters 6 in length.',
         },
         confirm_password: {
             secureTextEntry: true,
+            error: 'Passwords do not match.',
         },
     },
     auto: 'placeholders',
@@ -44,6 +80,11 @@ const SIGNUP_MUTATION = gql`
                 id
                 name
                 email
+                roles {
+                    user
+                    employee
+                    admin
+                }
             }
         }
     }
@@ -76,6 +117,8 @@ class SignupComponent extends Component {
         const { onUserSignup, navigation } = this.props;
         // get form data
         const value = this.form.current.getValue();
+
+        this.setState({ status: { msg: '', type: 'error' } });
         if (!value) {
             // Validation failed
             return;
@@ -102,6 +145,8 @@ class SignupComponent extends Component {
 
         // update gui
         this.setState({ status: { msg: 'New user created!' } });
+
+        // global.id = user.id;
 
         // navigate on success
         navigation.navigate('Dashboard');

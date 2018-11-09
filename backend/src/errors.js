@@ -16,9 +16,24 @@ const UserNotAuthenticated = createError('UserNotAuthenticated', {
     message: 'User is not authenticated',
 });
 
+const InvalidEmailFormat = createError('InvalidEmailFormat', {
+    message: 'Not a valid email format',
+});
+
+const InvalidName = createError('InvalidName', {
+    message: 'Invalid Name.',
+});
+
+const InvalidPassword = createError('InvalidPassword', {
+    message: 'Invalid Password.',
+});
+
 module.exports = {
     InvalidCredentialsError,
     UniqueFieldAlreadyExists,
     UserNotAuthenticated,
     ServerError,
+    InvalidEmailFormat,
+    InvalidName,
+    InvalidPassword,
 };

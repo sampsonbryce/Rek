@@ -1,9 +1,17 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const validator = require('validator');
 const _ = require('lodash');
 const { APP_SECRET, capitalize, assert } = require('../utils');
 
-const { ServerError, InvalidCredentialsError, UniqueFieldAlreadyExists } = require('../errors.js');
+const {
+    ServerError,
+    InvalidCredentialsError,
+    UniqueFieldAlreadyExists,
+    InvalidEmailFormat,
+    InvalidName,
+    InvalidPassword,
+} = require('../errors.js');
 
 /*
  * Signup: Creates a new user and logs them in
@@ -11,6 +19,19 @@ const { ServerError, InvalidCredentialsError, UniqueFieldAlreadyExists } = requi
 async function signup(parent, args, context) {
     // hash the password
     const password = await bcrypt.hash(args.password, 10);
+
+    // begin validation
+    if (!validator.isEmail(args.email)) {
+        throw new InvalidEmailFormat();
+    }
+
+    if (!validator.isAscii(args.name)) {
+        throw new InvalidName();
+    }
+
+    if (args.password.length < 6) {
+        throw new InvalidPassword();
+    }
 
     // Create user
     let user = null;
@@ -25,7 +46,7 @@ async function signup(parent, args, context) {
             },
         });
     } catch (err) {
-        console.log('err json: ', JSON.stringify(err));
+        console.log('err json: ', JSON.stringify(err)); // eslint-disable-line no-console
         const e = err.result.errors[0];
 
         // handle unique field already exists error
@@ -55,10 +76,16 @@ async function signup(parent, args, context) {
     };
 }
 
-/*
- * Login: Logs in the user
- */
+// User login functionality
 async function login(parent, args, context) {
+    if (!validator.isEmail(args.email)) {
+        throw new InvalidEmailFormat();
+    }
+
+    if (args.password.length < 6) {
+        throw new InvalidPassword();
+    }
+
     // check if email exists
     const user = await context.db.user({ email: args.email }, `{ id password }`);
 
