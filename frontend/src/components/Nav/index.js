@@ -1,6 +1,9 @@
 import Signup from 'src/screens/Signup';
 import Login from 'src/screens/Login';
 import FindServices from 'src/screens/FindServices';
+import Profile from 'src/screens/Profile';
+import EmployeeSchedule from 'src/screens/EmployeeSchedule';
+import DaySchedule from 'src/screens/DaySchedule';
 import Dashboard from 'src/screens/Dashboard';
 import adminNav from 'src/screens/Admin/nav';
 import CreateAppointmentNav from 'src/screens/CreateAppointment/nav';
@@ -15,6 +18,9 @@ const dashboardNav = createStackNavigator(
     {
         FindServices,
         Dashboard,
+        Profile,
+        EmployeeSchedule,
+        DaySchedule,
         ...adminNav,
         ...CreateAppointmentNav,
     },

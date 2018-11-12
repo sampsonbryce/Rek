@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { View, StyleSheet, Image, KeyboardAvoidingView } from 'react-native';
-import { Mutation } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import Button from 'src/components/Button';
 import t from 'tcomb-form-native';
@@ -11,6 +11,7 @@ import ApiError from 'src/class/Error';
 import { Navigation } from 'react-native-navigation';
 import { BERRY_DARK_BLUE, BERRY_LIGHT_BLUE } from 'src/constants';
 import Images from 'src/assets/images';
+import { USER_EMAIL, USER_PASSWORD } from 'react-native-dotenv';
 import { userLogin } from '../../actions';
 
 // Define Login form structure and options
@@ -54,7 +55,7 @@ const LoginOptions = {
 
 // define login graphql mutation
 const LOGIN_MUTATION = gql`
-    mutation LoginMutation($email: String!, $password: String!) {
+    mutation($email: String!, $password: String!) {
         login(email: $email, password: $password) {
             token
             user {
@@ -90,27 +91,30 @@ class LoginComponent extends Component {
                 type: null,
             },
         };
+
+        if (USER_EMAIL && USER_PASSWORD) {
+            this.state.values = { email: USER_EMAIL, password: USER_PASSWORD };
+        }
     }
 
-    // Handle form submition
-    async submit(login) {
-        const { onUserLogin, navigation } = this.props;
-
-        // get form data
-        const value = this.form.current.getValue();
-        if (!value) {
-            // Validation failed
-            this.setState({ status: { message: 'Email or Password is incorrect', type: 'error' } });
-            return;
+    componentDidMount() {
+        // Add development login bypass by using credentials specified in the .env file
+        if (USER_EMAIL && USER_PASSWORD) {
+            // this.executeLogin(login, { email: USER_EMAIL, password: USER_PASSWORD });
+            this.executeLogin({ email: USER_EMAIL, password: USER_PASSWORD });
         }
+    }
 
-        // login
+    async executeLogin(variables) {
+        // async executeLogin(login, variables) {
+        const { onUserLogin, navigation, login } = this.props;
+
         let response = null;
         try {
-            response = await login({ variables: value });
+            response = await login({ variables });
         } catch (err) {
-            const error = new ApiError(err);
-            this.setState({ status: { message: error.userMessage(), type: 'error' } });
+            const api_error = new ApiError(err);
+            this.setState({ status: { message: api_error.userMessage(), type: 'error' } });
             return;
         }
 
@@ -129,9 +133,22 @@ class LoginComponent extends Component {
         navigation.navigate('Dashboard');
     }
 
+    // Handle form submition
+    async submit(login) {
+        // get form data
+        const form_values = this.form.current.getValue();
+        if (!form_values) {
+            // Validation failed
+            this.setState({ status: { message: 'Email or Password is incorrect', type: 'error' } });
+            return;
+        }
+
+        this.executeLogin(login, form_values);
+    }
+
     render() {
-        const { status } = this.state;
         const { navigation } = this.props;
+        const { status, values } = this.state;
 
         return (
             <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -140,19 +157,15 @@ class LoginComponent extends Component {
                 <Image source={Images.logoSilverTransparent} style={styles.image} />
 
                 {/* Render Form */}
-                <Form ref={this.form} type={LoginType} options={LoginOptions} />
+                <Form ref={this.form} type={LoginType} options={LoginOptions} value={values} />
 
                 {/* Login submit mutation */}
                 <View style={styles.buttonContainer}>
-                    <Mutation mutation={LOGIN_MUTATION}>
-                        {(login, { loading }) => (
-                            <Button
-                                style={styles.loginButton}
-                                onPress={() => this.submit(login)}
-                                title={loading ? 'Loading...' : 'Login'}
-                            />
-                        )}
-                    </Mutation>
+                    <Button
+                        style={styles.loginButton}
+                        onPress={() => this.submit()}
+                        title="Login"
+                    />
 
                     {/* Signup link */}
                     <Button
@@ -205,9 +218,13 @@ const mapDispatchToProps = dispatch => ({
     },
 });
 
+const LoginGQL = graphql(LOGIN_MUTATION, {
+    name: 'login',
+})(LoginComponent);
+
 const Login = connect(
     null,
     mapDispatchToProps
-)(LoginComponent);
+)(LoginGQL);
 
 export default Login;

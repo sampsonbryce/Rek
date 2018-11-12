@@ -152,8 +152,6 @@ const mapDispatchToProps = dispatch => ({
     },
 });
 
-// export default ChooseServicesRedux;
-
 const ChooseServicesGQL = graphql(GET_SERVICES, {
     options: props => {
         // add GPL filters if we have them in our redux state

@@ -35,9 +35,9 @@ export default class CreateAppointment extends Component {
                     }}
                 />
                 <Button
-                    title="Start with Time"
+                    title="Start with Date/Time"
                     onPress={() => {
-                        navigation.navigate('ChooseTime');
+                        navigation.navigate('ChooseDate');
                     }}
                 />
             </View>

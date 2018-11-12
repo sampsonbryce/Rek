@@ -6,8 +6,8 @@ type Query {
     service(id: String!): Service!
     services: [Service!]!
     employees(filterData: EmployeeServiceTimeFilter): [Employee!]!
-    # usersByServicesAndAvailability(filterData: EmployeeServiceTimeFilter): [User!]!
     servicesByEmployeesAndAvailability(filterData: EmployeeServiceTimeFilter): [Service!]!
+    workingTimes(employee: ID!, days: [DateTime!]): [WorkingTime!]!
 }
 
 type Mutation {

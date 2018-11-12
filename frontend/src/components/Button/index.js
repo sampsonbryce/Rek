@@ -7,10 +7,11 @@ import PropTypes from 'prop-types';
  * Customized button component to use instead of the builtin
  */
 const Button = props => {
-    const { activeOpacity, style, onPress, textStyle, title } = props;
+    const { activeOpacity, style, onPress, textStyle, title, reference } = props;
 
     return (
         <TouchableHighlight
+            ref={reference}
             activeOpacity={activeOpacity}
             style={[styles.button, style]}
             underlayColor={BERRY_BLUE}

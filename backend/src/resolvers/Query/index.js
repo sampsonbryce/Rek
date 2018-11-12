@@ -1,5 +1,6 @@
 const { service, services } = require('./ServiceQueries');
 const { user, users } = require('./UserQueries');
+const { workingTimes } = require('./EmployeeQueries');
 
 async function employees(parent, args, ctx) {
     const where_query = {};
@@ -93,6 +94,7 @@ const Query = {
     service,
     services,
     employees,
+    workingTimes,
     servicesByEmployeesAndAvailability,
 };
 

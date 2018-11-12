@@ -22,7 +22,6 @@ const GET_USERS = gql`
  */
 export default class UserList extends Component {
     static navigationOptions = {
-        // header: null,
         title: 'Users',
     };
 

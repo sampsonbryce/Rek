@@ -6,8 +6,6 @@ import { Navigation } from 'react-native-navigation';
 import { connect } from 'react-redux';
 import User from '../../class/User';
 
-// const User = {};
-
 const Dashboard = props => {
     const { navigation, user } = props;
 
@@ -19,6 +17,13 @@ const Dashboard = props => {
                     navigation.navigate('CreateAppointment');
                 }}
                 title="Schedule Appointment"
+            />
+
+            <Button
+                onPress={() => {
+                    navigation.navigate('Profile');
+                }}
+                title="Profile"
             />
 
             {/* Button to Admin */}
@@ -36,7 +41,7 @@ const Dashboard = props => {
 
 Dashboard.propTypes = {
     navigation: PropTypes.instanceOf(Navigation).isRequired,
-    user: PropTypes.instanceOf(User).isRequired,
+    user: PropTypes.shape(User).isRequired,
 };
 
 Dashboard.navigationOptions = {
@@ -44,8 +49,6 @@ Dashboard.navigationOptions = {
 };
 
 const mapStateToProps = state => ({ user: state.user });
-
-// export default Dashboard;
 
 export default connect(
     mapStateToProps,
