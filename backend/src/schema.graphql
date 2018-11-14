@@ -16,6 +16,13 @@ type Mutation {
     updateUserWithRoles(id: String!, email: String!, name: String!, roles: UpdateRoleInput!): User
     addService(name: String!, male_title: String!, female_title: String!): Service
     updateService(id: String!, name: String!, male_title: String!, female_title: String!): Service
+    addWorkingTimes(dates: [WorkingTimeInput!]!): EmployeeSchedule!
+}
+
+# This input use used to submit working times for add/update
+input WorkingTimeInput{
+    start: DateTime!
+    end: DateTime!
 }
 
 input EmployeeServiceTimeFilter{

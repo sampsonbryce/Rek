@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
 const _ = require('lodash');
-const { APP_SECRET, capitalize, assert } = require('../utils');
+const { APP_SECRET, capitalize, assert, getUserId } = require('../utils');
 
 const {
     ServerError,
@@ -139,14 +139,8 @@ async function updateUserWithRoles(parent, args, context) {
     // if we are changing this user to an employee, then we need to create an employee record
 
     if (args.roles.employee === true) {
-        console.log('is employee');
-
-        console.log('got employees: ', employees);
-        console.log('employees length: ', employees.length);
-
         // if we don't already have an employee record created
         if (employees.length === 0) {
-            console.log('creating new employee');
             await context.db.createEmployee({
                 employeeId: args.id, // employeeId is the same as the user id
                 user: {
@@ -199,10 +193,38 @@ async function updateService(parent, args, context) {
     return service;
 }
 
+/**
+ * Add's working times to an employee's schedule
+ */
+
+async function addWorkingTimes(parent, args, ctx) {
+    const user_id = getUserId(ctx);
+
+    // TODO: ensure we are employee
+
+    const { dates } = args;
+
+    const schedule = await ctx.db.employee({ employeeId: user_id }).schedule();
+
+    const updated_schedule = await ctx.db.updateEmployeeSchedule({
+        where: {
+            id: schedule.id,
+        },
+        data: {
+            workingTimes: {
+                create: dates,
+            },
+        },
+    });
+
+    return updated_schedule;
+}
+
 module.exports = {
     signup,
     login,
     updateUserWithRoles,
     addService,
     updateService,
+    addWorkingTimes,
 };

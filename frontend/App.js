@@ -14,6 +14,15 @@ Theme.init();
 
 const client = new ApolloClient({
     uri: SERVER_URL,
+    request: operation => {
+        // append authorization token to all network requests
+        const { token } = store.getState();
+        operation.setContext({
+            headers: {
+                Authorization: token ? `Bearer ${token}` : '',
+            },
+        });
+    },
 });
 
 // disables warning box
