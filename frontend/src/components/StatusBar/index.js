@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import PropTypes from 'prop-types';
 import { ERROR_RED } from 'src/constants';
+import { Ionicons } from '@expo/vector-icons';
+
+const BAR_HEIGHT = 60;
+const ANIMATION_DURATION = 2000;
 
 /*
  * Status bar for rendering ui messages to the user
@@ -12,37 +16,64 @@ class StatusBar extends Component {
         super(props);
         this.state = {
             show: false,
-            message: null,
+            top_position: new Animated.Value(-BAR_HEIGHT),
         };
     }
 
-    componentWillUpdate() {
-        const { message: current_message, show } = this.state;
-        const { message } = this.props;
-        if (message !== current_message && show === false) {
-            this.setState({ show: true }); // eslint-disable-line
+    // determine if we will show the status bar
+    componentWillReceiveProps(nextProps) {
+        const { message: current_message } = this.props;
+        const { message } = nextProps;
+        // Show status bar if the message is different and the message is not empty
+        if (message !== current_message && message !== '') {
+            this.show();
         }
     }
 
+    // show the bar
+    show() {
+        const { top_position } = this.state;
+        this.setState({ show: true });
+
+        // animate the show
+        Animated.timing(top_position, {
+            toValue: 10,
+            duration: ANIMATION_DURATION,
+        }).start();
+    }
+
+    // Hide the bar
+    hide() {
+        const { top_position } = this.state;
+        this.setState({ show: false });
+
+        // Animate the hide
+        Animated.timing(top_position, {
+            toValue: -BAR_HEIGHT,
+            duration: ANIMATION_DURATION,
+        }).start();
+    }
+
     render() {
-        const { show } = this.state;
+        const { show, top_position } = this.state;
         const { message, type, timeout } = this.props;
 
         // use negative numbers to indicate timeout. Only set timeout if status bar is visible
         if (timeout > 0 && show) {
             setTimeout(() => {
-                this.setState({ show: false });
+                this.hide();
             }, timeout);
         }
 
         // render a status if one exists
-        if (show) {
-            return (
-                <View style={[styles[type], styles.bar]}>
-                    <Text style={styles.text}>{message}</Text>
-                </View>
-            );
-        }
+        return (
+            <Animated.View style={[styles[type], styles.bar, { top: top_position }]}>
+                <Text style={styles.text}>{message}</Text>
+                <TouchableOpacity onPress={() => this.hide()}>
+                    <Ionicons name="ios-close-circle-outline" size={35} color="white" />
+                </TouchableOpacity>
+            </Animated.View>
+        );
 
         // otherwise render an empty view
         return <View />;
@@ -52,6 +83,7 @@ class StatusBar extends Component {
 const styles = StyleSheet.create({
     text: {
         color: 'white',
+        flex: 1,
     },
     error: {
         backgroundColor: ERROR_RED,
@@ -60,13 +92,15 @@ const styles = StyleSheet.create({
         backgroundColor: 'green',
     },
     bar: {
-        padding: 15,
+        height: BAR_HEIGHT,
+        padding: 10,
         position: 'absolute',
-        top: 10,
         right: 10,
         left: 10,
         borderRadius: 5,
         zIndex: 1000,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 });
 
