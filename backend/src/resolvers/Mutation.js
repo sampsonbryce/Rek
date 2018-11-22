@@ -202,8 +202,8 @@ async function upsertWorkingTimes(parent, args, ctx) {
 
     // TODO: ensure we are employee
     const { dates } = args;
-    console.log('dates: ', dates);
 
+    // weird error where no dates are submitted
     if (dates.length === 0) {
         throw new InvalidNumberOfParameters({
             data: {
@@ -226,6 +226,7 @@ async function upsertWorkingTimes(parent, args, ctx) {
             update: {},
         };
     }
+
     // create upsert object
     for (let i = 0; i < dates.length; i += 1) {
         const { id, start, end } = dates[i];
@@ -234,8 +235,6 @@ async function upsertWorkingTimes(parent, args, ctx) {
         } else {
             updateOrCreate.update = { where: { id }, data: { start, end } };
         }
-        // id should be null if we want to create
-        // dates_upsert.push({ where: { id }, create: { start, end }, update: { start, end } });
     }
 
     const schedule = await ctx.db.employee({ employeeId: user_id }).schedule();
@@ -247,16 +246,6 @@ async function upsertWorkingTimes(parent, args, ctx) {
         data: {
             workingTimes: {
                 ...updateOrCreate,
-                // upsert: dates_upsert,
-                //     {
-                //         where: {
-                //             // can do this because 1) if we are creating then ID should be null for all dates
-                //             id: dates[0].id,
-                //         },
-                //         create: dates,
-                //         update: dates[0],
-                //     },
-                // ],
             },
         },
     });
