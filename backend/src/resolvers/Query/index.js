@@ -3,6 +3,7 @@ const { user, users } = require('./UserQueries');
 const { workingTimes } = require('./EmployeeQueries');
 
 async function employees(parent, args, ctx) {
+    console.log(args);
     const where_query = {};
 
     if (args.filterData) {
@@ -42,6 +43,7 @@ async function employees(parent, args, ctx) {
     }
 
     const db_employees = await ctx.db.employees({ where: where_query });
+    console.log('db_employees: ', db_employees);
     return db_employees;
 }
 

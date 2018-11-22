@@ -4,6 +4,10 @@ const ServerError = createError('ServerError', {
     message: 'Something went wrong on our end. Please try again later',
 });
 
+const InvalidNumberOfParameters = createError('InvalidNumberOfParameters', {
+    message: 'There was an invalid number of parameters provided',
+});
+
 const InvalidCredentialsError = createError('InvalidCredentialsError', {
     message: 'The provided credentials are invalid',
 });
@@ -30,6 +34,7 @@ const InvalidPassword = createError('InvalidPassword', {
 
 module.exports = {
     InvalidCredentialsError,
+    InvalidNumberOfParameters,
     UniqueFieldAlreadyExists,
     UserNotAuthenticated,
     ServerError,

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { View, Text, StyleSheet } from 'react-native';
 import Button from 'src/components/Button';
 import { graphql } from 'react-apollo';
@@ -9,7 +10,8 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import _ from 'lodash';
 import ApiError from 'src/class/Error';
 import StatusBar from 'src/components/StatusBar';
-import { BERRY_DARK_BLUE } from 'src/constants';
+import { ERROR_RED } from 'src/constants';
+import ErrorUtils from 'src/utils/ErrorUtils';
 import {
     startOfToday,
     endOfToday,
@@ -20,17 +22,32 @@ import {
     setMinutes,
     parse,
     isAfter,
+    isSameDay,
 } from 'date-fns';
 
-const ADD_WORKING_TIMES = gql`
+const UPSERT_WORKING_TIMES = gql`
     # mutation($dates: [String!]!, $start_time: String!, $end_time: String!) {
-    #     addWorkingTimes(dates: $dates, start_time: $start_time, end_time: $end_time) {
+    #     upsertWorkingTimes(dates: $dates, start_time: $start_time, end_time: $end_time) {
     mutation($dates: [WorkingTimeInput!]!) {
-        addWorkingTimes(dates: $dates) {
+        upsertWorkingTimes(dates: $dates) {
             workingTimes {
                 id
                 start
                 end
+            }
+        }
+    }
+`;
+
+const GET_WORKING_TIMES = gql`
+    query($filterData: EmployeeServiceTimeFilter) {
+        employees(filterData: $filterData) {
+            schedule {
+                workingTimes {
+                    id
+                    start
+                    end
+                }
             }
         }
     }
@@ -48,32 +65,61 @@ class EmployeeSchedule extends Component {
             time_picker_visible: false,
             start_time: startOfToday(), // default val
             end_time: endOfToday(),
+            working_time_edit_id: null, // the id of the working time we are editing
             editing_time_for: null, //  the state field we want the TimePicker to update ( start or end)
             selected_dates: [],
+            mode: 'add', // 'add' or 'edit'
         };
     }
 
-    // Adds/removes a date from the states selected_dates array
-    toggleDate(date) {
+    // Handles parsing the getWorkingTimes query and creates the calendares marked_dates
+    // object from both the query and the selected_dates list
+    getMarkedDates() {
         const { selected_dates } = this.state;
-        const selected_date = parse(date.dateString);
+        const {
+            getWorkingTimes: { employees },
+        } = this.props;
 
-        // see if we can find the date in the array
-        if (_.find(selected_dates, d => d.toISOString() === selected_date.toISOString())) {
-            // remove it if we find it
-            _.remove(selected_dates, d => d.toISOString() === selected_date.toISOString());
-        } else {
-            // otherwise add it
-            selected_dates.push(selected_date);
+        // check that our query is only returning one employee
+        ErrorUtils.assert({
+            condition: employees.length === 1,
+            message: 'getWorkingTimes returned more or less that 1 employee',
+        });
+
+        // get working times
+        const {
+            schedule: { workingTimes },
+        } = employees[0];
+
+        const marked_dates = {};
+
+        // create the marked_dates object for the calendar from selected_dates
+        for (let i = 0; i < selected_dates.length; i += 1) {
+            const date = selected_dates[i];
+            marked_dates[format(date, 'YYYY-MM-DD')] = { selected: true };
         }
 
-        // Update state. Clone to ensure state update is detected
-        this.setState({ selected_dates: _.clone(selected_dates) });
+        // create the marked_dates object for the calendar from workingTimes
+        for (let i = 0; i < workingTimes.length; i += 1) {
+            const { id, start } = workingTimes[i];
+            const date = format(new Date(start), 'YYYY-MM-DD');
+
+            if (date in marked_dates) {
+                // if date is selected, add mark to object that already exists
+                marked_dates[date] = { ...marked_dates[date], marked: true, dotColor: 'red' };
+            } else {
+                // otherwise just create new object
+                marked_dates[date] = { marked: true, dotColor: 'red' };
+            }
+        }
+
+        return marked_dates;
     }
 
-    async addWorkingTimes() {
-        const { executeAddWorkingTimes } = this.props;
-        const { selected_dates, start_time, end_time } = this.state;
+    async upsertWorkingTimes() {
+        const { executeUpsertWorkingTimes } = this.props;
+        const { selected_dates, start_time, end_time, mode, working_time_edit_id } = this.state;
+        const id = mode === 'edit' ? working_time_edit_id : null;
 
         // close the dialog
         this.setState({ date_dialog_visible: false });
@@ -93,10 +139,8 @@ class EmployeeSchedule extends Component {
             end = setMinutes(end, getMinutes(end_time));
 
             // add dates to list in UTC ISO format
-            dates.push({ start: start.toISOString(), end: end.toISOString() });
+            dates.push({ id, start: start.toISOString(), end: end.toISOString() });
         }
-
-        console.log('dates: ', dates);
 
         const variables = {
             dates,
@@ -104,7 +148,7 @@ class EmployeeSchedule extends Component {
 
         let response = null;
         try {
-            response = await executeAddWorkingTimes({ variables });
+            response = await executeUpsertWorkingTimes({ variables });
         } catch (err) {
             const error = new ApiError(err);
             this.setState({ status: { message: error.userMessage(), type: 'error' } });
@@ -112,10 +156,74 @@ class EmployeeSchedule extends Component {
         }
 
         console.log('response: ', response);
-
-        this.setState({ status: { message: 'Added new working times!', type: 'success' } });
+        const message = mode === 'edit' ? 'Updated working time!' : 'Added new working times!';
+        this.setState({ status: { message, type: 'success' } });
 
         // do something to update calendar
+    }
+
+    // Adds/removes a date from the states selected_dates array
+    selectDate(date) {
+        const { selected_dates } = this.state;
+        const selected_date = parse(date.dateString);
+
+        // see if we can find the date in the array
+        if (_.find(selected_dates, d => d.toISOString() === selected_date.toISOString())) {
+            // remove it if we find it
+            _.remove(selected_dates, d => d.toISOString() === selected_date.toISOString());
+        } else {
+            // otherwise add it
+            selected_dates.push(selected_date);
+        }
+
+        // Update state. Clone to ensure state update is detected
+        this.setState({ selected_dates: _.clone(selected_dates) });
+    }
+
+    // Handles matching the selected calendar date to a working time
+    // and opens the dialog in 'edit' mode for the working time if found
+    editDate(date) {
+        const selected_date = parse(date.dateString);
+        console.log('editing date: ', selected_date);
+        let working_time_edit_id = null;
+        let start_time = null;
+        let end_time = null;
+
+        const {
+            getWorkingTimes: { employees },
+        } = this.props;
+
+        // get working times
+        const {
+            schedule: { workingTimes },
+        } = employees[0];
+
+        // find working times for selected date
+        for (let i = 0; i < workingTimes.length; i += 1) {
+            const { id, start, end } = workingTimes[i];
+
+            // check if working time is for today, and if so set start and end time
+            if (isSameDay(start, selected_date)) {
+                working_time_edit_id = id;
+                start_time = start;
+                end_time = end;
+                console.log('found date: ', start);
+                break;
+            }
+        }
+
+        // check if we found a working time for today
+        if (start_time != null) {
+            console.log('opening dialog');
+            // open dialog in correct mode
+            this.setState({
+                mode: 'edit',
+                date_dialog_visible: true,
+                start_time,
+                end_time,
+                working_time_edit_id,
+            });
+        }
     }
 
     render() {
@@ -125,24 +233,35 @@ class EmployeeSchedule extends Component {
             start_time,
             end_time,
             editing_time_for,
-            selected_dates,
             status,
+            mode,
         } = this.state;
 
-        const marked_dates = {};
+        // error check the working times query
+        const {
+            getWorkingTimes: { loading, error },
+        } = this.props;
 
-        // create the marked_dates object for the calendar from selected_dates
-        for (let i = 0; i < selected_dates.length; i += 1) {
-            const date = selected_dates[i];
-            marked_dates[format(date, 'YYYY-MM-DD')] = { selected: true };
+        if (loading) {
+            return <Text>Loading...</Text>;
         }
+        if (error) {
+            return <Text>{error}</Text>;
+        }
+
+        // get the marked dates for the calendar
+        const marked_dates = this.getMarkedDates();
 
         return (
             <View>
                 <StatusBar message={status.message} type={status.type} />
                 {/* Calendar */}
                 <Calendar
-                    onDayPress={date => this.toggleDate(date)}
+                    onDayPress={date => this.selectDate(date)}
+                    onDayLongPress={date => {
+                        this.selectDate(date);
+                        this.editDate(date);
+                    }}
                     minDate={format(new Date(), 'YYYY-MM-DD')}
                     markedDates={marked_dates}
                 />
@@ -151,6 +270,9 @@ class EmployeeSchedule extends Component {
                     onPress={() => {
                         this.setState({
                             date_dialog_visible: true,
+                            mode: 'add',
+                            start_time: startOfToday(),
+                            end_time: endOfToday(),
                         });
                     }}
                 />
@@ -172,12 +294,11 @@ class EmployeeSchedule extends Component {
                                 onPress={() => {
                                     this.setState({
                                         time_picker_visible: true,
-                                        editing_time_for: 'start',
+                                        editing_time_for: 'start_time',
                                     });
                                 }}
                             />
                         </View>
-
                         {/* End Time */}
                         <View style={styles.time}>
                             <Text>{format(end_time, 'HH:mm')}</Text>
@@ -186,12 +307,11 @@ class EmployeeSchedule extends Component {
                                 onPress={() => {
                                     this.setState({
                                         time_picker_visible: true,
-                                        editing_time_for: 'end',
+                                        editing_time_for: 'end_time',
                                     });
                                 }}
                             />
                         </View>
-
                         <DateTimePicker
                             isVisible={time_picker_visible}
                             mode="time"
@@ -199,6 +319,7 @@ class EmployeeSchedule extends Component {
                                 // update datetime object to avoid changing the date as
                                 // onConfirm returns a date object for the current day
                                 let { [editing_time_for]: time_to_edit } = this.state;
+                                // time to edit is either 'start_time' or 'end_time'
 
                                 // update hours and minutes of currently editing time object
                                 const hours = getHours(time);
@@ -208,16 +329,29 @@ class EmployeeSchedule extends Component {
                                 time_to_edit = setMinutes(time_to_edit, minutes);
 
                                 // error check the new time
-                                if (editing_time_for === 'start') {
+                                if (editing_time_for === 'start_time') {
+                                    // editing start and the time is after the end time, throw error
                                     if (isAfter(time_to_edit, end_time)) {
-                                        // TODO: throw error here
-                                        this.setState({ time_picker_visible: false });
+                                        this.setState({
+                                            time_picker_visible: false,
+                                            status: {
+                                                type: 'error',
+                                                message: 'Start time must be before end time',
+                                            },
+                                        });
                                         return;
                                     }
-                                } else if (editing_time_for === 'end') {
+
+                                    // editing end and the time is before the start time, throw error
+                                } else if (editing_time_for === 'end_time') {
                                     if (!isAfter(time_to_edit, start_time)) {
-                                        // TODO: throw error here
-                                        this.setState({ time_picker_visible: false });
+                                        this.setState({
+                                            time_picker_visible: false,
+                                            status: {
+                                                type: 'error',
+                                                message: 'End time must be after start time',
+                                            },
+                                        });
                                         return;
                                     }
                                 }
@@ -231,13 +365,21 @@ class EmployeeSchedule extends Component {
                             onCancel={() => this.setState({ time_picker_visible: false })}
                         />
                         <Button
-                            // style={styles.dialogButton}
-                            // textStyle={styles.dialogButtonText}
                             title="Confirm"
                             onPress={() => {
-                                this.addWorkingTimes();
+                                this.upsertWorkingTimes();
                             }}
                         />
+                        {mode === 'edit' ? (
+                            <Button
+                                style={styles.deleteButton}
+                                // textStyle={styles.dialogButtonText}
+                                title="Delete"
+                                onPress={() => {
+                                    this.deleteWorkingTimes();
+                                }}
+                            />
+                        ) : null}
                     </DialogContent>
                 </Dialog>
             </View>
@@ -254,16 +396,29 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    dialogButton: {
-        backgroundColor: BERRY_DARK_BLUE,
+    deleteButton: {
+        backgroundColor: ERROR_RED,
     },
     dialogButtonText: {
         color: 'white',
     },
 });
 
-const EmployeeScheduleGQL = graphql(ADD_WORKING_TIMES, {
-    name: 'executeAddWorkingTimes',
+// add redux state
+const mapStateToProps = state => ({ user: state.user });
+
+// Query for adding working times
+const EmployeeScheduleAdd = graphql(UPSERT_WORKING_TIMES, {
+    options: () => ({ refetchQueries: ['getWorkingTimes'] }), // refetch working times on upsert
+    name: 'executeUpsertWorkingTimes',
 })(EmployeeSchedule);
 
-export default EmployeeScheduleGQL;
+// query for getting working times
+const EmployeeScheduleGet = graphql(GET_WORKING_TIMES, {
+    options: props => ({ variables: { filterData: { employeeFilterIds: [props.user.id] } } }),
+    name: 'getWorkingTimes',
+})(EmployeeScheduleAdd);
+
+const EmployeeScheduleRedux = connect(mapStateToProps)(EmployeeScheduleGet);
+
+export default EmployeeScheduleRedux;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
+import { ERROR_RED } from 'src/constants';
 
 /*
  * Status bar for rendering ui messages to the user
@@ -26,7 +27,7 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     error: {
-        backgroundColor: 'red',
+        backgroundColor: ERROR_RED,
     },
     success: {
         backgroundColor: 'green',

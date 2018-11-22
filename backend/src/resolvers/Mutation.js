@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const validator = require('validator');
 const _ = require('lodash');
 const { APP_SECRET, capitalize, assert, getUserId } = require('../utils');
+const { InvalidNumberOfParameters } = require('../errors.js');
 
 const {
     ServerError,
@@ -194,15 +195,48 @@ async function updateService(parent, args, context) {
 }
 
 /**
- * Add's working times to an employee's schedule
+ * Update or insert working times working times to an employee's schedule
  */
-
-async function addWorkingTimes(parent, args, ctx) {
+async function upsertWorkingTimes(parent, args, ctx) {
     const user_id = getUserId(ctx);
 
     // TODO: ensure we are employee
-
     const { dates } = args;
+    console.log('dates: ', dates);
+
+    if (dates.length === 0) {
+        throw new InvalidNumberOfParameters({
+            data: {
+                message:
+                    'No dates were provided. Please provide at least on date to update or create',
+            },
+        });
+    }
+
+    // const dates_upsert = [];
+    let updateOrCreate = null;
+
+    //  if we are creating, id's will be null
+    if (dates[0].id == null) {
+        updateOrCreate = {
+            create: [],
+        };
+    } else {
+        updateOrCreate = {
+            update: {},
+        };
+    }
+    // create upsert object
+    for (let i = 0; i < dates.length; i += 1) {
+        const { id, start, end } = dates[i];
+        if (id == null) {
+            updateOrCreate.create.push({ start, end });
+        } else {
+            updateOrCreate.update = { where: { id }, data: { start, end } };
+        }
+        // id should be null if we want to create
+        // dates_upsert.push({ where: { id }, create: { start, end }, update: { start, end } });
+    }
 
     const schedule = await ctx.db.employee({ employeeId: user_id }).schedule();
 
@@ -212,7 +246,17 @@ async function addWorkingTimes(parent, args, ctx) {
         },
         data: {
             workingTimes: {
-                create: dates,
+                ...updateOrCreate,
+                // upsert: dates_upsert,
+                //     {
+                //         where: {
+                //             // can do this because 1) if we are creating then ID should be null for all dates
+                //             id: dates[0].id,
+                //         },
+                //         create: dates,
+                //         update: dates[0],
+                //     },
+                // ],
             },
         },
     });
@@ -226,5 +270,5 @@ module.exports = {
     updateUserWithRoles,
     addService,
     updateService,
-    addWorkingTimes,
+    upsertWorkingTimes,
 };

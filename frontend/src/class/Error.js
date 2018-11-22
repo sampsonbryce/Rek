@@ -6,15 +6,26 @@ export default class ApiError {
     }
 
     isNetworkError() {
-        return this.error.networkError !== null && 'response' in this.error.networkError;
+        const { error } = this;
+
+        return (
+            'networkError' in error &&
+            error.networkError != null &&
+            'response' in error.networkError
+        );
     }
 
     isGqlError() {
-        return this.error.graphQLErrors.length > 0;
+        const { error } = this;
+        return (
+            'graphQLErrors' in error &&
+            error.graphQLErrors != null &&
+            error.graphQLErrors.length > 0
+        );
     }
 
     developerMessage() {
-        return this.error.message;
+        return this.error.message.trim();
     }
 
     userMessage() {
@@ -34,12 +45,19 @@ export default class ApiError {
                 return error.message;
             }
 
-            // otherwise something went wrong. throw generic error
-            return 'Something went wrong on our end. Please try again later';
+            // otherwise something went wrong on the server end. throw generic error
+            return 'Something went wrong with our servers :(. Please try again later';
         }
 
-        // can't connect to server
-        return "We're having trouble connecting to TheRek";
+        // to check if its a network error we need to check the stupid long message for a specific message
+        // cause apollo returns a garbage error for no network connection
+        if (this.developerMessage() === 'Network error: Network request failed') {
+            // can't connect to server
+            return "We're having trouble connecting to TheRek";
+        }
+
+        // generic message for whacky shit
+        return 'Something went wrong. Please contact support or try again later';
     }
 
     errorType() {
