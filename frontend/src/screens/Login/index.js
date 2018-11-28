@@ -14,7 +14,7 @@ import Images from 'src/assets/images';
 import { USER_EMAIL, USER_PASSWORD } from 'react-native-dotenv';
 import { userLogin } from '../../actions';
 
-// Define Login form structure and options
+// ----- Define Login form structure and options
 const { Form } = t.form;
 
 // https://github.com/gcanti/tcomb-validation#form-validation   GoTo Refinements
@@ -52,6 +52,9 @@ const LoginOptions = {
     },
     auto: 'placeholders',
 };
+
+// function to check if we have provided env credentials for automatic login
+const credentialsExist = () => USER_EMAIL && USER_PASSWORD;
 
 // define login graphql mutation
 const LOGIN_MUTATION = gql`
@@ -92,15 +95,14 @@ class LoginComponent extends Component {
             },
         };
 
-        if (USER_EMAIL && USER_PASSWORD) {
+        if (credentialsExist()) {
             this.state.values = { email: USER_EMAIL, password: USER_PASSWORD };
         }
     }
 
     componentDidMount() {
         // Add development login bypass by using credentials specified in the .env file
-        if (USER_EMAIL && USER_PASSWORD) {
-            // this.executeLogin(login, { email: USER_EMAIL, password: USER_PASSWORD });
+        if (credentialsExist()) {
             this.executeLogin({ email: USER_EMAIL, password: USER_PASSWORD });
         }
     }
@@ -134,16 +136,12 @@ class LoginComponent extends Component {
     }
 
     // Handle form submition
-    async submit(login) {
+    async submit() {
         // get form data
         const form_values = this.form.current.getValue();
-        if (!form_values) {
-            // Validation failed
-            this.setState({ status: { message: 'Email or Password is incorrect', type: 'error' } });
-            return;
+        if (form_values) {
+            this.executeLogin(form_values);
         }
-
-        this.executeLogin(login, form_values);
     }
 
     render() {

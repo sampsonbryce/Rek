@@ -23,11 +23,11 @@ import {
     parse,
     isAfter,
     isSameDay,
+    areRangesOverlapping,
 } from 'date-fns';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 const UPSERT_WORKING_TIMES = gql`
-    # mutation($dates: [String!]!, $start_time: String!, $end_time: String!) {
-    #     upsertWorkingTimes(dates: $dates, start_time: $start_time, end_time: $end_time) {
     mutation($dates: [WorkingTimeInput!]!) {
         upsertWorkingTimes(dates: $dates) {
             workingTimes {
@@ -39,8 +39,14 @@ const UPSERT_WORKING_TIMES = gql`
     }
 `;
 
+const DELETE_WORKING_TIMES = gql`
+    mutation($date_ids: [ID!]!) {
+        deleteWorkingTimes(date_ids: $date_ids)
+    }
+`;
+
 const GET_WORKING_TIMES = gql`
-    query($filterData: EmployeeServiceTimeFilter) {
+    query getWorkingTimes($filterData: EmployeeServiceTimeFilter) {
         employees(filterData: $filterData) {
             schedule {
                 workingTimes {
@@ -61,12 +67,13 @@ class EmployeeSchedule extends Component {
         super(props);
         this.state = {
             status: { message: '', type: null },
+            confirm: { message: '', visible: false, onConfirm: null },
             date_dialog_visible: false,
             time_picker_visible: false,
             start_time: startOfToday(), // default val
             end_time: endOfToday(),
             working_time_edit_id: null, // the id of the working time we are editing
-            editing_time_for: null, //  the state field we want the TimePicker to update ( start or end)
+            edit_time_name: null, //  the state field we want the TimePicker to update ( start or end)
             selected_dates: [],
             mode: 'add', // 'add' or 'edit'
         };
@@ -76,6 +83,35 @@ class EmployeeSchedule extends Component {
     // object from both the query and the selected_dates list
     getMarkedDates() {
         const { selected_dates } = this.state;
+        const workingTimes = this.getWorkingTimes();
+
+        const marked_dates = {};
+
+        // create the marked_dates object for the calendar from selected_dates
+        for (let i = 0; i < selected_dates.length; i += 1) {
+            const date = selected_dates[i];
+            marked_dates[format(date, 'YYYY-MM-DD')] = { selected: true };
+        }
+
+        // create the marked_dates object for the calendar from workingTimes
+        for (let i = 0; i < workingTimes.length; i += 1) {
+            const { start } = workingTimes[i];
+            const date = format(new Date(start), 'YYYY-MM-DD');
+
+            if (date in marked_dates) {
+                // if date is selected, add mark to object that already exists
+                marked_dates[date] = { ...marked_dates[date], marked: true, dotColor: 'red' };
+            } else {
+                // otherwise just create new object
+                marked_dates[date] = { marked: true, dotColor: 'red' };
+            }
+        }
+
+        return marked_dates;
+    }
+
+    // parses the props to get the provide GQL working times object
+    getWorkingTimes() {
         const {
             getWorkingTimes: { employees },
         } = this.props;
@@ -91,35 +127,64 @@ class EmployeeSchedule extends Component {
             schedule: { workingTimes },
         } = employees[0];
 
-        const marked_dates = {};
+        return workingTimes;
+    }
 
-        // create the marked_dates object for the calendar from selected_dates
-        for (let i = 0; i < selected_dates.length; i += 1) {
-            const date = selected_dates[i];
-            marked_dates[format(date, 'YYYY-MM-DD')] = { selected: true };
-        }
+    // checks if provided working time overlaps the working times from GET_WORKING_TIMES query
+    doesWorkingTimeOverlap(working_time) {
+        const workingTimes = this.getWorkingTimes();
+        const { start, end } = working_time;
 
-        // create the marked_dates object for the calendar from workingTimes
+        // for all working times, check if they overlap
         for (let i = 0; i < workingTimes.length; i += 1) {
-            const { id, start } = workingTimes[i];
-            const date = format(new Date(start), 'YYYY-MM-DD');
+            const { start: existing_start, end: existing_end } = workingTimes[i];
 
-            if (date in marked_dates) {
-                // if date is selected, add mark to object that already exists
-                marked_dates[date] = { ...marked_dates[date], marked: true, dotColor: 'red' };
-            } else {
-                // otherwise just create new object
-                marked_dates[date] = { marked: true, dotColor: 'red' };
+            // check if there is overlap
+            if (areRangesOverlapping(start, end, existing_start, existing_end)) {
+                return true;
             }
         }
 
-        return marked_dates;
+        // no overlap
+        return false;
     }
 
-    async upsertWorkingTimes() {
-        const { executeUpsertWorkingTimes } = this.props;
+    // Handles the gql request to delete a working time
+    async deleteWorkingTimes() {
+        const { deleteWorkingTimes } = this.props;
+        const { working_time_edit_id } = this.state;
+        const variables = { date_ids: [working_time_edit_id] };
+        let response = null;
+        try {
+            response = await deleteWorkingTimes({ variables });
+        } catch (err) {
+            const error = new ApiError(err);
+            this.setState({ status: { message: error.userMessage(), type: 'error' } });
+        }
+
+        // get the number of db entries deleted
+        const { deleteWorkingTimes: count } = response.data;
+
+        // check and make sure something was actually deleted
+        if (count > 0) {
+            this.setState({
+                status: { message: 'Deleted working time!', type: 'success' },
+                date_dialog_visible: false,
+            });
+        } else {
+            this.setState({
+                status: { message: 'Nothing to delete!', type: 'error' },
+                date_dialog_visible: false,
+                selected_dates: [], // deselect dates
+            });
+        }
+    }
+
+    validateAndFormatDates() {
         const { selected_dates, start_time, end_time, mode, working_time_edit_id } = this.state;
         const id = mode === 'edit' ? working_time_edit_id : null;
+
+        const overlapping_times = [];
 
         // close the dialog
         this.setState({ date_dialog_visible: false });
@@ -138,28 +203,52 @@ class EmployeeSchedule extends Component {
             end = setHours(end, getHours(end_time));
             end = setMinutes(end, getMinutes(end_time));
 
-            // add dates to list in UTC ISO format
-            dates.push({ id, start: start.toISOString(), end: end.toISOString() });
+            // check to makes sure not datetimes overlap with existing working times
+            const overlap = this.doesWorkingTimeOverlap({ start, end });
+            if (overlap) {
+                overlapping_times.push({ start, end });
+            } else {
+                // add dates to list in UTC ISO format
+                dates.push({ id, start: start.toISOString(), end: end.toISOString() });
+            }
+        }
+
+        return { dates, overlapping_times };
+    }
+
+    /**
+     * Handles the gql request to update/create a working_time
+     *
+     * @param dates [{id, start, end}] the working time dates to upsert
+     */
+    async upsertWorkingTimes(dates) {
+        const { executeUpsertWorkingTimes } = this.props;
+        const { mode } = this.state;
+
+        if (dates.length === 0) {
+            // sometimes all the dates we selected are overlapping.
+            // in this case just show a message :p
+            this.setState({
+                status: { message: 'No dates to create!', type: 'success' },
+            });
+            return;
         }
 
         const variables = {
             dates,
         };
 
-        let response = null;
         try {
-            response = await executeUpsertWorkingTimes({ variables });
+            await executeUpsertWorkingTimes({ variables });
         } catch (err) {
             const error = new ApiError(err);
             this.setState({ status: { message: error.userMessage(), type: 'error' } });
             return;
         }
 
-        console.log('response: ', response);
+        // display message and deselect selected_dates
         const message = mode === 'edit' ? 'Updated working time!' : 'Added new working times!';
-        this.setState({ status: { message, type: 'success' } });
-
-        // do something to update calendar
+        this.setState({ status: { message, type: 'success' }, selected_dates: [] });
     }
 
     // Adds/removes a date from the states selected_dates array
@@ -184,19 +273,11 @@ class EmployeeSchedule extends Component {
     // and opens the dialog in 'edit' mode for the working time if found
     editDate(date) {
         const selected_date = parse(date.dateString);
-        console.log('editing date: ', selected_date);
         let working_time_edit_id = null;
         let start_time = null;
         let end_time = null;
 
-        const {
-            getWorkingTimes: { employees },
-        } = this.props;
-
-        // get working times
-        const {
-            schedule: { workingTimes },
-        } = employees[0];
+        const workingTimes = this.getWorkingTimes();
 
         // find working times for selected date
         for (let i = 0; i < workingTimes.length; i += 1) {
@@ -207,14 +288,12 @@ class EmployeeSchedule extends Component {
                 working_time_edit_id = id;
                 start_time = start;
                 end_time = end;
-                console.log('found date: ', start);
                 break;
             }
         }
 
         // check if we found a working time for today
         if (start_time != null) {
-            console.log('opening dialog');
             // open dialog in correct mode
             this.setState({
                 mode: 'edit',
@@ -232,8 +311,9 @@ class EmployeeSchedule extends Component {
             time_picker_visible,
             start_time,
             end_time,
-            editing_time_for,
+            edit_time_name,
             status,
+            confirm,
             mode,
         } = this.state;
 
@@ -255,6 +335,11 @@ class EmployeeSchedule extends Component {
         return (
             <View>
                 <StatusBar message={status.message} type={status.type} />
+                <ConfirmDialog
+                    message={confirm.message}
+                    visible={confirm.visible}
+                    onConfirm={confirm.onConfirm}
+                />
                 {/* Calendar */}
                 <Calendar
                     onDayPress={date => this.selectDate(date)}
@@ -294,7 +379,7 @@ class EmployeeSchedule extends Component {
                                 onPress={() => {
                                     this.setState({
                                         time_picker_visible: true,
-                                        editing_time_for: 'start_time',
+                                        edit_time_name: 'start_time',
                                     });
                                 }}
                             />
@@ -307,7 +392,7 @@ class EmployeeSchedule extends Component {
                                 onPress={() => {
                                     this.setState({
                                         time_picker_visible: true,
-                                        editing_time_for: 'end_time',
+                                        edit_time_name: 'end_time',
                                     });
                                 }}
                             />
@@ -315,23 +400,23 @@ class EmployeeSchedule extends Component {
                         <DateTimePicker
                             isVisible={time_picker_visible}
                             mode="time"
-                            onConfirm={time => {
+                            onConfirm={picked_time => {
                                 // update datetime object to avoid changing the date as
                                 // onConfirm returns a date object for the current day
-                                let { [editing_time_for]: time_to_edit } = this.state;
-                                // time to edit is either 'start_time' or 'end_time'
+                                let { [edit_time_name]: edit_time_object } = this.state;
+                                // edit_time_name is either 'start_time' or 'end_time'
 
                                 // update hours and minutes of currently editing time object
-                                const hours = getHours(time);
-                                const minutes = getMinutes(time);
+                                const hours = getHours(picked_time);
+                                const minutes = getMinutes(picked_time);
 
-                                time_to_edit = setHours(time_to_edit, hours);
-                                time_to_edit = setMinutes(time_to_edit, minutes);
+                                edit_time_object = setHours(edit_time_object, hours);
+                                edit_time_object = setMinutes(edit_time_object, minutes);
 
                                 // error check the new time
-                                if (editing_time_for === 'start_time') {
+                                if (edit_time_name === 'start_time') {
                                     // editing start and the time is after the end time, throw error
-                                    if (isAfter(time_to_edit, end_time)) {
+                                    if (isAfter(edit_time_object, end_time)) {
                                         this.setState({
                                             time_picker_visible: false,
                                             status: {
@@ -343,8 +428,8 @@ class EmployeeSchedule extends Component {
                                     }
 
                                     // editing end and the time is before the start time, throw error
-                                } else if (editing_time_for === 'end_time') {
-                                    if (!isAfter(time_to_edit, start_time)) {
+                                } else if (edit_time_name === 'end_time') {
+                                    if (!isAfter(edit_time_object, start_time)) {
                                         this.setState({
                                             time_picker_visible: false,
                                             status: {
@@ -358,7 +443,7 @@ class EmployeeSchedule extends Component {
 
                                 // update time states
                                 this.setState({
-                                    [editing_time_for]: time_to_edit,
+                                    [edit_time_name]: edit_time_object,
                                     time_picker_visible: false,
                                 });
                             }}
@@ -367,7 +452,24 @@ class EmployeeSchedule extends Component {
                         <Button
                             title="Confirm"
                             onPress={() => {
-                                this.upsertWorkingTimes();
+                                const { dates, overlapping_times } = this.validateAndFormatDates();
+
+                                // check for overlapping times
+                                if (overlapping_times.length) {
+                                    // dialog to confirm we want to upsert all non overlapping times
+                                    const message =
+                                        "The time you have selected overlaps with working times. Do you want to create working times for all dates that don't overlap";
+                                    this.setState({
+                                        confirm: {
+                                            visible: true,
+                                            message,
+                                            onConfirm: () => this.upsertWorkingTimes(dates),
+                                        },
+                                    });
+                                } else {
+                                    // no overlapping, upsert
+                                    this.upsertWorkingTimes(dates);
+                                }
                             }}
                         />
                         {mode === 'edit' ? (
@@ -419,6 +521,12 @@ const EmployeeScheduleGet = graphql(GET_WORKING_TIMES, {
     name: 'getWorkingTimes',
 })(EmployeeScheduleAdd);
 
-const EmployeeScheduleRedux = connect(mapStateToProps)(EmployeeScheduleGet);
+// query for deleteing working times
+const EmployeeScheduleDelete = graphql(DELETE_WORKING_TIMES, {
+    options: () => ({ refetchQueries: ['getWorkingTimes'] }), // refetch working times on upsert
+    name: 'deleteWorkingTimes',
+})(EmployeeScheduleGet);
+
+const EmployeeScheduleRedux = connect(mapStateToProps)(EmployeeScheduleDelete);
 
 export default EmployeeScheduleRedux;

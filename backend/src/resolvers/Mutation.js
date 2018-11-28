@@ -253,6 +253,17 @@ async function upsertWorkingTimes(parent, args, ctx) {
     return updated_schedule;
 }
 
+async function deleteWorkingTimes(parent, args, ctx) {
+    console.log('DATE IDS: ', args.date_ids);
+    const { count } = await ctx.db.deleteManyWorkingTimes({
+        id_in: args.date_ids,
+    });
+
+    console.log('DELETE_COUNT: ', count);
+
+    return count;
+}
+
 module.exports = {
     signup,
     login,
@@ -260,4 +271,5 @@ module.exports = {
     addService,
     updateService,
     upsertWorkingTimes,
+    deleteWorkingTimes,
 };

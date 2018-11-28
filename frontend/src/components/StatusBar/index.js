@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import PropTypes from 'prop-types';
 import { ERROR_RED } from 'src/constants';
 import { Ionicons } from '@expo/vector-icons';
 
 const BAR_HEIGHT = 60;
-const ANIMATION_DURATION = 2000;
+const ANIMATION_DURATION = 500;
+
+// show/hide timer
+let timer = null;
 
 /*
  * Status bar for rendering ui messages to the user
@@ -28,6 +31,11 @@ class StatusBar extends Component {
         if (message !== current_message && message !== '') {
             this.show();
         }
+    }
+
+    componentWillUnmount() {
+        // stop the timeout when the status bar no longer exists
+        clearTimeout(timer);
     }
 
     // show the bar
@@ -60,12 +68,12 @@ class StatusBar extends Component {
 
         // use negative numbers to indicate timeout. Only set timeout if status bar is visible
         if (timeout > 0 && show) {
-            setTimeout(() => {
+            timer = setTimeout(() => {
                 this.hide();
             }, timeout);
         }
 
-        // render a status if one exists
+        // render the bar, will be hidden at first due to top_position forcing the bar to be off the screen
         return (
             <Animated.View style={[styles[type], styles.bar, { top: top_position }]}>
                 <Text style={styles.text}>{message}</Text>
@@ -74,9 +82,6 @@ class StatusBar extends Component {
                 </TouchableOpacity>
             </Animated.View>
         );
-
-        // otherwise render an empty view
-        return <View />;
     }
 }
 

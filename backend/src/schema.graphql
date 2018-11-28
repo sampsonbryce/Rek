@@ -17,6 +17,7 @@ type Mutation {
     addService(name: String!, male_title: String!, female_title: String!): Service
     updateService(id: String!, name: String!, male_title: String!, female_title: String!): Service
     upsertWorkingTimes(dates: [WorkingTimeInput!]!): EmployeeSchedule!
+    deleteWorkingTimes(date_ids: [ID!]!): Int!
 }
 
 # This input use used to submit working times for add/update
