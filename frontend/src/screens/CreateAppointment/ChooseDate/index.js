@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { View, FlatList, Text } from 'react-native';
-import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
-import Button from 'src/components/Button';
+// import { connect } from 'react-redux';
+import { View } from 'react-native';
+// import gql from 'graphql-tag';
+// import { graphql } from 'react-apollo';
+// import Button from 'src/components/Button';
 import { PropTypes } from 'prop-types';
 import { Navigation } from 'react-native-navigation';
-import _ from 'lodash';
-import { setSelectedPeopleAction } from 'src/actions';
+// import _ from 'lodash';
+// import { setSelectedPeopleAction } from 'src/actions';
 import { Calendar } from 'react-native-calendars';
 
 // const GET_PEOPLE = gql`

@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
 import { StyleSheet, FlatList, Text, TouchableHighlight } from 'react-native';
 import { BERRY_MAROON } from 'src/constants';
+import PropTypes from 'prop-types';
 
 class TimeList extends Component {
+    propTypes = {
+        activeTimes: PropTypes.arrayOf(Date).isRequired,
+        onTimePress: PropTypes.func.isRequired,
+    };
+
     listOfTimes() {
         // get active times so we can indicate which times are selected
         const { activeTimes } = this.props;

@@ -12,6 +12,7 @@ import ApiError from 'src/class/Error';
 import StatusBar from 'src/components/StatusBar';
 import { ERROR_RED } from 'src/constants';
 import ErrorUtils from 'src/utils/ErrorUtils';
+import PropTypes from 'prop-types';
 import {
     startOfToday,
     endOfToday,
@@ -27,6 +28,7 @@ import {
 } from 'date-fns';
 import ConfirmDialog from '../../components/ConfirmDialog';
 
+// GQL STATEMENTS
 const UPSERT_WORKING_TIMES = gql`
     mutation($dates: [WorkingTimeInput!]!) {
         upsertWorkingTimes(dates: $dates) {
@@ -63,21 +65,35 @@ const GET_WORKING_TIMES = gql`
  * Contains logic for employees to add/edit their working times for each day
  */
 class EmployeeSchedule extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            status: { message: '', type: null },
-            confirm: { message: '', visible: false, onConfirm: null },
-            date_dialog_visible: false,
-            time_picker_visible: false,
-            start_time: startOfToday(), // default val
-            end_time: endOfToday(),
-            working_time_edit_id: null, // the id of the working time we are editing
-            edit_time_name: null, //  the state field we want the TimePicker to update ( start or end)
-            selected_dates: [],
-            mode: 'add', // 'add' or 'edit'
-        };
-    }
+    propTypes = {
+        getWorkingTimes: PropTypes.shape({
+            employees: PropTypes.shape({
+                schedule: PropTypes.shape({
+                    workingTimes: PropTypes.shape({
+                        id: PropTypes.number.isRequired,
+                        start: PropTypes.string.isRequired,
+                        end: PropTypes.string.isRequired,
+                    }),
+                }),
+            }),
+            loading: PropTypes.bool.isRequired,
+            error: PropTypes.string.isRequired,
+        }).isRequired,
+    };
+
+    // initial state
+    state = {
+        status: { message: '', type: null },
+        confirm: { message: '', visible: false, onConfirm: null },
+        date_dialog_visible: false,
+        time_picker_visible: false,
+        start_time: startOfToday(), // default val
+        end_time: endOfToday(),
+        working_time_edit_id: null, // the id of the working time we are editing
+        edit_time_name: null, //  the state field we want the TimePicker to update ( start or end)
+        selected_dates: [],
+        mode: 'add', // 'add' or 'edit'
+    };
 
     // Handles parsing the getWorkingTimes query and creates the calendares marked_dates
     // object from both the query and the selected_dates list
@@ -180,6 +196,12 @@ class EmployeeSchedule extends Component {
         }
     }
 
+    /**
+     * Checks the selected dates and determines if there are overlapping times for the dates
+     *
+     * @return { dates, overlapping_dates } An object with two variables, dates (all dates that do not have overlapping times)
+     *                                      and overlapping_times which is all the dates with overlapping times in them
+     */
     validateAndFormatDates() {
         const { selected_dates, start_time, end_time, mode, working_time_edit_id } = this.state;
         const id = mode === 'edit' ? working_time_edit_id : null;
@@ -340,6 +362,7 @@ class EmployeeSchedule extends Component {
                     visible={confirm.visible}
                     onConfirm={confirm.onConfirm}
                 />
+
                 {/* Calendar */}
                 <Calendar
                     onDayPress={date => this.selectDate(date)}
