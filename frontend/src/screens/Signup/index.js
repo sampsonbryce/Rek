@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image, KeyboardAvoidingView } from 'react-native';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import t from 'tcomb-form-native';
@@ -7,26 +7,65 @@ import Button from 'src/components/Button';
 import { PropTypes } from 'prop-types';
 import { Navigation } from 'react-native-navigation';
 import { connect } from 'react-redux';
-import StatusBar from '../../components/StatusBar';
-import { userLogin } from '../../actions';
+import ApiError from 'src/class/Error';
+import { userLogin } from 'src/actions';
+import { BERRY_DARK_BLUE, BERRY_LIGHT_BLUE } from 'src/constants';
+import StatusBar from 'src/components/StatusBar';
+import Images from 'src/assets/images';
 
 // create form structure
 const { Form } = t.form;
 
-const SignupType = t.struct({
-    name: t.String,
-    email: t.String,
-    password: t.String,
-    confirm_password: t.String,
-});
+// https://github.com/gcanti/tcomb-validation#form-validation   GoTo Refinements
+const emailValidation = email_dirty => {
+    const email = email_dirty.trim().toLowerCase();
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+};
+
+const passValidation = pass => {
+    const password = pass.trim();
+    if (password.length < 6) {
+        return false;
+    }
+    return true;
+};
+
+const Email = t.refinement(t.String, emailValidation);
+
+const Password = t.refinement(t.String, passValidation);
+
+// https://github.com/gcanti/tcomb-form/issues/233
+function SamePassword(x) {
+    return x.password === x.confirm_password;
+}
+
+const SignupType = t.subtype(
+    t.struct({
+        name: t.String,
+        email: Email,
+        password: Password,
+        confirm_password: Password,
+    }),
+    SamePassword
+);
 
 const SignupOptions = {
+    error: 'Passwords must match',
     fields: {
+        name: {
+            error: 'Name cannot be left blank and must contain non-numeric characters.',
+        },
+        email: {
+            error: 'Invalid email. Must be in form "example@example.com"',
+        },
         password: {
             secureTextEntry: true,
+            error: 'Passwords be at least characters 6 in length.',
         },
         confirm_password: {
             secureTextEntry: true,
+            error: 'Passwords do not match.',
         },
     },
     auto: 'placeholders',
@@ -41,6 +80,11 @@ const SIGNUP_MUTATION = gql`
                 id
                 name
                 email
+                roles {
+                    user
+                    employee
+                    admin
+                }
             }
         }
     }
@@ -50,10 +94,6 @@ const SIGNUP_MUTATION = gql`
  * Component for rendering the signup form and handling user signup
  */
 class SignupComponent extends Component {
-    static navigationOptions = {
-        header: null,
-    };
-
     static propTypes = {
         navigation: PropTypes.instanceOf(Navigation).isRequired,
         onUserSignup: PropTypes.func.isRequired,
@@ -67,7 +107,7 @@ class SignupComponent extends Component {
         // init state
         this.state = {
             status: {
-                msg: '',
+                message: '',
                 type: null,
             },
         };
@@ -77,9 +117,10 @@ class SignupComponent extends Component {
         const { onUserSignup, navigation } = this.props;
         // get form data
         const value = this.form.current.getValue();
+
+        this.setState({ status: { msg: '', type: 'error' } });
         if (!value) {
             // Validation failed
-            this.setState({ status: { msg: 'Login or Password is incorrect', type: 'error' } });
             return;
         }
 
@@ -90,19 +131,9 @@ class SignupComponent extends Component {
 
             // Error Handling
         } catch (err) {
-            console.log(err);
-            // parse error
-            const e = err.graphQLErrors[0];
+            const error = new ApiError(err);
+            this.setState({ status: { message: error.userMessage(), type: 'error' } });
 
-            // get message
-            let msg = null;
-            if (e.name === 'UniqueFieldAlreadyExists') {
-                msg = e.data.message;
-            } else {
-                msg = e.message;
-            }
-
-            this.setState({ status: { msg, type: 'error' } });
             return;
         }
 
@@ -115,6 +146,8 @@ class SignupComponent extends Component {
         // update gui
         this.setState({ status: { msg: 'New user created!' } });
 
+        // global.id = user.id;
+
         // navigate on success
         navigation.navigate('Dashboard');
     }
@@ -124,31 +157,38 @@ class SignupComponent extends Component {
         const { navigation } = this.props;
 
         return (
-            <View style={styles.container}>
+            <KeyboardAvoidingView style={styles.container} behavior="padding">
                 {/* Page Status */}
-                <StatusBar message={status.msg} type={status.type} />
+                <StatusBar message={status.message} type={status.type} />
+
+                <Image source={Images.logoSilverTransparent} style={styles.image} />
 
                 {/* Signup Form */}
                 <Form ref={this.form} type={SignupType} options={SignupOptions} />
 
-                {/* Submit form button/mutation */}
-                <Mutation mutation={SIGNUP_MUTATION}>
-                    {(signup, { loading }) => (
-                        <Button
-                            onPress={() => this.submit(signup)}
-                            title={loading ? 'Loading...' : 'Signup'}
-                        />
-                    )}
-                </Mutation>
+                <View style={styles.buttonContainer}>
+                    {/* Submit form button/mutation */}
+                    <Mutation mutation={SIGNUP_MUTATION}>
+                        {(signup, { loading }) => (
+                            <Button
+                                style={styles.signupButton}
+                                onPress={() => this.submit(signup)}
+                                title={loading ? 'Loading...' : 'Signup'}
+                            />
+                        )}
+                    </Mutation>
 
-                {/* Go to login */}
-                <Button
-                    onPress={() => {
-                        navigation.navigate('Login');
-                    }}
-                    title="Login"
-                />
-            </View>
+                    {/* Go to login */}
+                    <Button
+                        style={styles.loginButton}
+                        textStyle={styles.loginButtonText}
+                        title="Already have an account?"
+                        onPress={() => {
+                            navigation.navigate('Login');
+                        }}
+                    />
+                </View>
+            </KeyboardAvoidingView>
         );
     }
 }
@@ -156,9 +196,28 @@ class SignupComponent extends Component {
 // component styles
 const styles = StyleSheet.create({
     container: {
-        justifyContent: 'center',
-        // alignItems: 'center',
+        justifyContent: 'space-between',
+        height: '100%',
         padding: 20,
+    },
+    signupButton: {
+        width: '100%',
+    },
+    loginButton: {
+        width: '75%',
+        backgroundColor: BERRY_LIGHT_BLUE,
+    },
+    buttonContainer: {
+        alignItems: 'center',
+    },
+    loginButtonText: {
+        color: BERRY_DARK_BLUE,
+    },
+    image: {
+        width: '100%',
+        resizeMode: 'contain',
+        flex: 1,
+        margin: 10,
     },
 });
 

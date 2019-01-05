@@ -1,36 +1,56 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import Button from 'src/components/Button';
 import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation';
+import { connect } from 'react-redux';
+import User from '../../class/User';
 
 const Dashboard = props => {
-    const { navigation } = props;
+    const { navigation, user } = props;
+
     return (
         <View>
-            <Text>No appointments</Text>
-
             {/* Button to Schedule Appointments */}
             <Button
                 onPress={() => {
-                    navigation.navigate('FindServices');
+                    navigation.navigate('CreateAppointment');
                 }}
                 title="Schedule Appointment"
             />
 
-            {/* Button to Admin */}
             <Button
                 onPress={() => {
-                    navigation.navigate('Admin');
+                    navigation.navigate('Profile');
                 }}
-                title="Admin"
+                title="Profile"
             />
+
+            {/* Button to Admin */}
+            {user.roles.admin && (
+                <Button
+                    onPress={() => {
+                        navigation.navigate('Admin');
+                    }}
+                    title="Admin"
+                />
+            )}
         </View>
     );
 };
 
 Dashboard.propTypes = {
     navigation: PropTypes.instanceOf(Navigation).isRequired,
+    user: PropTypes.shape(User).isRequired,
 };
 
-export default Dashboard;
+Dashboard.navigationOptions = {
+    header: null,
+};
+
+const mapStateToProps = state => ({ user: state.user });
+
+export default connect(
+    mapStateToProps,
+    null
+)(Dashboard);

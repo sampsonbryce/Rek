@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { Navigation } from 'react-native-navigation/lib/dist/Navigation';
+import Images from 'src/assets/images';
 import ServiceListItem from '../ServiceListItem';
 
 /*
@@ -22,10 +23,26 @@ export default class ServiceList extends Component {
                     name: 'Bob',
                     title: 'Barber',
                     services: ['Cutting', 'Grooming', 'Styling', 'Shaving'],
+                    image: Images.profilePic3,
                 },
-                { name: 'Dave', title: 'Pedicurist', services: ['Pedicure'] },
-                { name: 'Brian', title: 'Masseur', services: ['Head', 'Back', 'Full body'] },
-                { name: 'Janice', title: 'Manicurist', services: ['Manicure'] },
+                {
+                    name: 'Dave',
+                    title: 'Pedicurist',
+                    services: ['Pedicure'],
+                    image: Images.profilePic2,
+                },
+                {
+                    name: 'Brian',
+                    title: 'Masseur',
+                    services: ['Head', 'Back', 'Full body'],
+                    image: Images.profilePic1,
+                },
+                {
+                    name: 'Janice',
+                    title: 'Manicurist',
+                    services: ['Manicure'],
+                    image: Images.profilePic4,
+                },
             ],
         };
     }
@@ -46,6 +63,7 @@ export default class ServiceList extends Component {
                             title={item.title}
                             services={item.services}
                             navigation={navigation}
+                            image={item.image}
                         />
                     )}
                 />

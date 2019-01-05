@@ -15,6 +15,7 @@ const Theme = {
     initGlobalFormStyles() {
         const styles = t.form.Form.stylesheet;
         styles.textbox.normal.borderRadius = 20;
+        styles.textbox.error.borderRadius = 20;
     },
 };
 

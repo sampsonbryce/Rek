@@ -3,13 +3,38 @@ type Query {
     info: String!
     user(id: String!): User!
     users: [User!]!
-    userSearch(name: String!): [User!]!
+    service(id: String!): Service!
+    services: [Service!]!
+    employees(filterData: EmployeeServiceTimeFilter): [Employee!]!
+    servicesByEmployeesAndAvailability(filterData: EmployeeServiceTimeFilter): [Service!]!
+    workingTimes(employee: ID!, days: [DateTime!]): [WorkingTime!]!
 }
 
 type Mutation {
     signup(email: String!, password: String!, name: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
     updateUserWithRoles(id: String!, email: String!, name: String!, roles: UpdateRoleInput!): User
+    addService(name: String!, male_title: String!, female_title: String!): Service
+    updateService(id: String!, name: String!, male_title: String!, female_title: String!): Service
+    upsertWorkingTimes(dates: [WorkingTimeInput!]!): EmployeeSchedule!
+    deleteWorkingTimes(date_ids: [ID!]!): Int!
+}
+
+# This input use used to submit working times for add/update
+input WorkingTimeInput{
+    id: ID
+    start: DateTime!
+    end: DateTime!
+}
+
+input EmployeeServiceTimeFilter{
+    employeeFilterIds: [ID!]
+    serviceFilterIds:[ID!]
+    desiredStartTime: DateTime 
+}
+
+type AvailableUsersWithService{
+    users: [User!]!
 }
 
 type AuthPayload {
@@ -22,10 +47,18 @@ type User {
     name: String!
     email: String!
     roles: Role!
+    userSchedule: UserSchedule 
+    employeeSchedule: EmployeeSchedule
+    services: [Service!]!
 }
 
 input UpdateRoleInput{
     user: Boolean!
     admin: Boolean!
     employee: Boolean!
+}
+
+type ServiceEmployees{
+    service: Service
+    employees: [User]!
 }
